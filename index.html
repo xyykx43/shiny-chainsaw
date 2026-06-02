@@ -601,7 +601,7 @@
             margin: 10px 0;
         }
 
-        /* 更新日志样式 */
+        /* 更新日志样式 - 添加滚动条 */
         .changelog-panel {
             margin: 20px 0 10px;
             border: 1px solid var(--border-light);
@@ -629,7 +629,11 @@
             padding: 0 18px;
             background: rgba(0,0,0,0.01);
         }
-        .changelog-content.open { max-height: 500px; padding: 12px 18px 18px; }
+        .changelog-content.open {
+            max-height: 500px;
+            padding: 12px 18px 18px;
+            overflow-y: auto;  /* 关键：添加滚动条 */
+        }
         .changelog-content p { margin: 8px 0; font-size: 0.75rem; }
         .changelog-content ul { margin: 6px 0 6px 20px; font-size: 0.7rem; }
         .contact-links a { color: var(--accent-gold); text-decoration: none; margin-right: 16px; }
@@ -708,11 +712,7 @@
                     <li><strong>v2.0 - 2026.06.03</strong>：全面重构解读引擎，整合能量总结、逆位过半提醒、元素分析，话术动态匹配问题场景。</li>
                     <li><strong>v3.0 - 2026.06.03</strong>：正式版——所有已知bug修复，分享图片完美生成，牌意库与话术库达到完美预期，并加入更新日志面板记录工程。</li>
                 </ul>
-                <p><strong>📢 有任何需求或建议，欢迎联系开发者：</strong></p>
-                <div class="contact-links">
-                    <a href="http://wpa.qq.com/msgrd?v=3&uin=2143742498&site=qq&menu=yes" target="_blank">💬 QQ 2143742498</a><br>
-                    <span>📱 微信: ea7-4398 (添加请备注“星尘塔罗”)</span>
-                </div>
+                <p><strong>📢 如有建议或需求，欢迎通过留言板交流～</strong></p>
                 <p style="margin-top:12px; font-size:0.7rem; color:var(--text-secondary);">⭐ 感谢使用星尘塔罗，愿星尘指引你的道路。</p>
             </div>
         </div>
@@ -756,12 +756,8 @@
         <p>如果塔罗的解语对你有帮助，请我吃颗糖～ 随意打赏，心意最大 ✨</p>
         <div class="donate-qrcodes">
             <div class="donate-qrcode-item">
-                <img id="wechatQr" src="" alt="微信收款码">
-                <span>₍ᵔ･•･ᵔ₎微信</span>
-            </div>
-            <div class="donate-qrcode-item">
-                <img id="alipayQr" src="" alt="支付宝收款码">
-                <span>(｡- .•)支付宝</span>
+                <img id="donateQr" src="" alt="赞赏码">
+                <span>🍬 赞赏码</span>
             </div>
         </div>
         <p style="margin-top: 16px; font-size: 12px;">🌟 •͈ᴗ⁃͈ ✧你的支持是我继续更新的动力 🌟</p>
@@ -783,10 +779,8 @@ function getBackImageUrl() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const wechatImg = document.getElementById('wechatQr');
-    const alipayImg = document.getElementById('alipayQr');
-    if (wechatImg) wechatImg.src = IMAGE_BASE_URL + 'weixin.png';
-    if (alipayImg) alipayImg.src = IMAGE_BASE_URL + 'zhifubao.png';
+    const donateQr = document.getElementById('donateQr');
+    if (donateQr) donateQr.src = IMAGE_BASE_URL + 'zanshangma.png';
 });
 
 // ==================== 牌库 78张 ====================
