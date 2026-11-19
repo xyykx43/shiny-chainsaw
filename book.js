@@ -256,8 +256,15 @@ function sceneForest() {
     <!-- 门 + 光 -->
     <ellipse cx="195" cy="310" rx="66" ry="54" fill="url(#doorGlow)"/>
     <path d="M176 330 L176 282 a19 19 0 0 1 38 0 L214 330 Z" fill="${C.ochre}"/>
-    <path d="M176 330 L176 282 a19 19 0 0 1 38 0 L214 330" fill="none" stroke="${C.ink}" stroke-width="2.2"/>
-    <path d="M195 266 L195 330" stroke="${C.ink}" stroke-width="1.6" opacity=".8"/>
+    <g class="doorleaf" data-side="L">
+      <path d="M176 330 L176 282 a19 19 0 0 1 19 19 L195 330 Z" fill="${C.ink}"/>
+      <path d="M176 330 L176 282 a19 19 0 0 1 19 19 L195 330" fill="none" stroke="${C.violet}" stroke-width="1.2"/>
+    </g>
+    <g class="doorleaf" data-side="R">
+      <path d="M214 330 L214 282 a19 19 0 0 0 -19 19 L195 330 Z" fill="${C.ink}"/>
+      <path d="M214 330 L214 282 a19 19 0 0 0 -19 19 L195 330" fill="none" stroke="${C.violet}" stroke-width="1.2"/>
+    </g>
+    <path d="M195 266 L195 330" stroke="${C.paper}" stroke-width="1.3" opacity=".5"/>
     <!-- 窗 -->
     <path d="M150 220 L150 202 a9 9 0 0 1 18 0 L168 220 Z" fill="${C.ochre}" opacity=".9"/>
     <path d="M222 220 L222 202 a9 9 0 0 1 18 0 L240 220 Z" fill="${C.ochre}" opacity=".9"/>
@@ -488,16 +495,10 @@ function sceneWorld(spec, seed = 3) {
   for (let i = 0; i < 34; i++) {
     const x = 30 + r() * 330, y = 60 + r() * 300, s = .6 + r() * 1.5;
     motes += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${s.toFixed(2)}" fill="${mc}" opacity="${(.12+r()*.45).toFixed(2)}">
-      <animate attributeName="opacity" values="${(.08+r()*.3).toFixed(2)};${(.45+r()*.5).toFixed(2)};${(.08+r()*.3).toFixed(2)}" dur="${(4+r()*6).toFixed(1)}s" repeatCount="indefinite"/></circle>`;
+</circle>`;
   }
 
-  // 脚灯
-  let foot = '';
-  for (let i = 0; i < 9; i++) {
-    const x = 44 + i * 38;
-    foot += `<circle class="fdot" cx="${x}" cy="${GY + 96}" r="2.2" fill="${C.ochre}" opacity="0"/>
-      <ellipse cx="${x}" cy="${GY + 96}" rx="9" ry="4" fill="${C.ochre}" opacity=".10"/>`;
-  }
+  const foot = '';
 
   return `<svg viewBox="0 0 390 546" preserveAspectRatio="xMidYMid slice">
   <defs>
@@ -526,7 +527,6 @@ function sceneWorld(spec, seed = 3) {
     <path d="M0 ${GY} L390 ${GY} L390 546 L0 546 Z" fill="#0F0A13"/>
     <path d="M0 ${GY} L390 ${GY}" stroke="${tint}" stroke-width="1.6" opacity=".55"/>
     <rect y="${GY}" width="390" height="${546-GY}" fill="url(#hw2)" opacity=".6"/>
-    ${foot}
   </g>
   <!-- 浮尘 -->
   <g class="ly" data-d=".7">${motes}</g>
@@ -589,6 +589,7 @@ function applyCam(ms = 0, ease = 'cubic-bezier(.22,.5,.24,1)') {
     g.style.transform = `translate3d(${(-cam.x * d).toFixed(2)}px, ${(-cam.y * d).toFixed(2)}px,0) scale(${z.toFixed(4)})`;
   });
 }
+function setForeground(svg) { $('#fg').innerHTML = svg; }
 function setScene(svg, fadeIn = true) {
   const art = $('#art');
   art.innerHTML = svg;
@@ -642,6 +643,54 @@ function linocut(src, accent) {
 const imgUrl = id => './' + String(id - 1).padStart(2, '0') + '.png';
 const hex2rgb = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
 
+function grassStrip(y0, y1, seed, col) {
+  const r = R(seed); let d = `M0 ${y1} L0 ${y0} `;
+  let x = 0;
+  while (x < 390) { const w = 6 + r() * 15, h = 8 + r() * 38; d += `q${(w/2).toFixed(1)} ${(-h).toFixed(1)} ${w.toFixed(1)} 0 `; x += w; }
+  d += `L390 ${y1} Z`;
+  return `<path d="${d}" fill="${col}"/>`;
+}
+function fgForest() {
+  return `<svg viewBox="0 0 390 546" preserveAspectRatio="xMidYMid slice">
+    ${grassStrip(452, 546, 7, '#0A0709')}
+    ${grassStrip(484, 546, 11, '#15101a')}
+    ${branch([-22, 546], [70, 468], [168, 440], -1, 3, 6.2, 6)}
+    ${branch([412, 462], [322, 452], [240, 462], 1, 17, 5.6, 6)}
+    ${branch([-14, 6], [96, 70], [170, 44], 1, 5, 3.6, 5)}
+  </svg>`;
+}
+function fgRoom() {
+  return `<svg viewBox="0 0 390 546" preserveAspectRatio="xMidYMid slice">
+    ${branch([-20, 546], [66, 470], [150, 436], -1, 11, 5.4, 6)}
+    ${branch([410, 478], [328, 470], [258, 478], 1, 29, 4.8, 6)}
+  </svg>`;
+}
+function fgWorld(tint) {
+  return `<svg viewBox="0 0 390 546" preserveAspectRatio="xMidYMid slice">
+    <!-- 台口拱 -->
+    <path class="archline" pathLength="1" d="M26 470 L26 150 a169 169 0 0 1 338 0 L364 470"
+      fill="none" stroke="${C.violet}" stroke-width="3.2"/>
+    <path d="M38 470 L38 152 a157 157 0 0 1 314 0 L352 470" fill="none" stroke="${C.violetD}" stroke-width="1.2"/>
+    <!-- 垂幕 -->
+    <g class="curtain" data-side="L"><path d="M0 0 H46 Q38 120 52 250 Q60 360 44 470 L0 470 Z" fill="${C.ink}"/>
+      ${[0,1,2,3].map(i=>`<path d="M${14+i*9} 0 Q${6+i*9} 200 ${16+i*9} 470" fill="none" stroke="${C.violetD}" stroke-width="1" opacity=".5"/>`).join('')}</g>
+    <g class="curtain" data-side="R"><path d="M390 0 H344 Q352 120 338 250 Q330 360 346 470 L390 470 Z" fill="${C.ink}"/>
+      ${[0,1,2,3].map(i=>`<path d="M${376-i*9} 0 Q${384-i*9} 200 ${374-i*9} 470" fill="none" stroke="${C.violetD}" stroke-width="1" opacity=".5"/>`).join('')}</g>
+    <path d="M46 0 Q38 120 52 250 Q60 360 44 470" fill="none" stroke="${C.violet}" stroke-width="2"/>
+    <path d="M344 0 Q352 120 338 250 Q330 360 346 470" fill="none" stroke="${C.violet}" stroke-width="2"/>
+    <!-- 台口前沿挡板 -->
+    <path d="M0 470 L390 470 L390 546 L0 546 Z" fill="${C.ink}"/>
+    <path d="M0 470 L390 470" stroke="${C.violet}" stroke-width="2.4"/>
+    <path d="M0 480 L390 480" stroke="${C.violetD}" stroke-width="1" opacity=".6"/>
+    <!-- 脚灯 -->
+    ${Array.from({length:9},(_,i)=>`<circle class="fdot" cx="${44+i*38}" cy="${492}" r="2.2" fill="${C.ochre}" opacity="0"/>`).join('')}
+    ${Array.from({length:9},(_,i)=>`<ellipse cx="${44+i*38}" cy="${492}" rx="9" ry="4" fill="${C.ochre}" opacity=".10"/>`).join('')}
+    <!-- 台口外悬下的藤 -->
+    ${branch([-14, 8], [80, 52], [150, 30], 1, 41, 3.2, 5)}
+    ${branch([404, 14], [330, 50], [258, 30], -1, 43, 2.8, 4)}
+  </svg>`;
+}
+
 /* ============================ 文本工具 ============================ */
 const txt = $('#txt');
 function clearTxt() { txt.innerHTML = ''; }
@@ -663,25 +712,26 @@ window.addEventListener('error', e => LOG.push('ERR ' + e.message));
 
 async function boot() {
   setScene(sceneForest());
-  cam.z = 1.04; applyCam(2400);
-  await wait(260);
+  setForeground(fgForest());
+  cam.z = 1.05; applyCam(3000);
+  await wait(300);
   await intro();
 }
 
 async function intro() {
   clearTxt();
   $('#scrim').classList.add('on');
-  await wait(500);
+  await wait(800);
   line('很 久 很 久 以 前 ，', 'ochre');
-  await wait(700);
+  await wait(1300);
   line('森林最深处有一间塔罗屋，', 'big');
-  await wait(1250);
+  await wait(1900);
   line('它不收钱，只收一个真的想问的问题。', 'big');
-  await wait(1500);
+  await wait(2200);
   line('今夜，门开着。', 'dim');
-  await wait(1100);
+  await wait(1700);
   const h = document.createElement('div');
-  h.className = 'hint'; h.textContent = '推 门';
+  h.className = 'hint'; h.textContent = '点 门 进 去';
   txt.appendChild(h);
   requestAnimationFrame(() => h.classList.add('on'));
   $('#page').addEventListener('click', enterDoor, { once: true });
@@ -692,17 +742,26 @@ async function enterDoor() {
   if (state !== 'forest') return;
   state = 'pushing';
   clearTxt();
-  cam.z = 2.75; cam.y = 96;
-  applyCam(1750, 'cubic-bezier(.4,.02,.6,1)');
-  await wait(900);
-  $('#dimmer').style.background = 'rgba(10,7,9,.96)';
-  await wait(760);
-  setScene(sceneRoom());
+  if (navigator.vibrate) navigator.vibrate(14);
+  // 门先打开
+  document.querySelectorAll('#art .doorleaf').forEach(l => {
+    l.style.transition = 'transform 760ms cubic-bezier(.5,.05,.32,1)';
+    l.style.transform = 'scaleX(.03)';
+  });
+  await wait(620);
+  // 对准门心，推镜穿过
+  cam.y = -26; cam.z = 3.0;
+  applyCam(1500, 'cubic-bezier(.45,.04,.5,1)');
+  await wait(1120);
+  $('#dimmer').style.background = 'rgba(10,7,9,1)';
+  await wait(430);
+  setScene(sceneRoom(), false);
+  setForeground(fgRoom());
   cam.z = 1.12; cam.y = 0; applyCam(0);
   $('#dimmer').style.background = 'rgba(10,7,9,0)';
-  await wait(220);
-  cam.z = 1.02; applyCam(1900);
-  await wait(420);
+  await wait(260);
+  cam.z = 1.02; applyCam(2000);
+  await wait(460);
   await chooseMode();
 }
 
@@ -776,7 +835,10 @@ async function startDeal() {
   line('点 一 张 。', 'dim');
 
   LOG.push('pick'); state = 'pick';
-  els.forEach((el, i) => { el.onclick = () => pick(el, i, els); });
+  els.forEach((el, i) => {
+    el.classList.add('live');
+    el.onclick = () => pick(el, i, els);
+  });
 }
 
 let picked = 0;
@@ -784,23 +846,31 @@ async function pick(el, i, els) {
   if (state !== 'pick' || el.dataset.done) return;
   el.dataset.done = '1';
   picked++;
+  if (navigator.vibrate) navigator.vibrate(20);
+  // 反馈：一圈扩散
+  const rp = document.createElement('span'); rp.className = 'ripple';
+  el.appendChild(rp); setTimeout(() => rp.remove(), 600);
+  el.classList.remove('live');
   // 飞近
   el.style.zIndex = 20 + picked;
   el.style.transform = `translateY(-26px) scale(1.22)`;
   el.style.cursor = 'default';
-  // 周围变黑（逐张加深）
-  $('#dimmer').classList.add('on');
-  $('#dimmer').style.background = `rgba(10,7,9,${(.30 + picked * .16).toFixed(2)})`;
+  // 周围慢慢变黑（逐张加深，但不是瞬间）
+  $('#dimmer').style.background = `rgba(10,7,9,${(.26 + picked * .15).toFixed(2)})`;
   if (picked === 1) { clearTxt(); line('牌 已 经 到 你 手 里 。', 'ochre'); }
+  else if (picked < spread) { clearTxt(); line('还 有 ' + (spread - picked) + ' 张 。', 'dim'); }
   if (picked === spread) {
     LOG.push('flip'); state = 'flip';
-    await wait(520);
     clearTxt();
+    await wait(700);
+    line('牌 已 揭 晓 。', 'ochre');
+    await wait(500);
     for (let k = 0; k < els.length; k++) {
       await reveal(els[k], k);
-      await wait(k < els.length - 1 ? 420 : 300);
+      await wait(240);
     }
-    await wait(380);
+    // 等最后一张的翻面动画完全走完，再进黑场
+    await wait(760);
     LOG.push('riseWorld>');
     await riseWorld();
   }
@@ -813,7 +883,7 @@ async function reveal(el, i) {
   front.innerHTML = `<img src="${url}" alt="${c.label || c.name}" style="${rev ? 'transform:rotate(180deg)' : ''}">`;
   el.classList.add('flip');
   el.style.transform = `translateY(-26px) scale(1.22) rotateY(180deg)`;
-  await wait(320);
+  await wait(980);
 }
 
 async function riseWorld() {
@@ -825,23 +895,24 @@ async function riseWorld() {
   await wait(620);
   // 换世界；牌保留
   setScene(sceneWorld(spec, chosen[0].id * 7 + 3));
+  setForeground(fgWorld(spec.tints[0] || C.violet));
   [...document.querySelectorAll('#cards .card')].forEach(el => { el.onclick = null; });
   $('#dimmer').style.transition = 'background 1100ms ease';
-  $('#dimmer').style.background = 'rgba(10,7,9,.22)';
+  $('#dimmer').style.background = 'rgba(10,7,9,.18)';
   cam.z = 1.10; applyCam(0);
   playStage();
   cam.z = 1.0; applyCam(3200, 'cubic-bezier(.22,.5,.24,1)');
   $('#scrim').classList.add('on');
-  await wait(3600);
+  await wait(3800);
   // 世界定型后：硬停 1.2 秒
   await wait(400);
   await readCards();
 }
 
 function playStage() {
-  const art = $('#art');
-  // 幕布从两侧合拢
-  art.querySelectorAll('.curtain').forEach((g, i) => {
+  const art = $('#art'), fg = $('#fg');
+  // 幕布从两侧合拢（在前景）
+  fg.querySelectorAll('.curtain').forEach((g, i) => {
     g.style.transform = `translateX(${g.dataset.side === 'L' ? -72 : 72}px)`;
     g.style.transition = 'none';
     requestAnimationFrame(() => {
@@ -849,8 +920,8 @@ function playStage() {
       g.style.transform = 'translateX(0)';
     });
   });
-  // 台口拱一笔画出来
-  art.querySelectorAll('.archline').forEach(p => {
+  // 台口拱一笔画出来（在前景）
+  fg.querySelectorAll('.archline').forEach(p => {
     p.style.strokeDashoffset = '1';
     p.style.transition = 'none';
     requestAnimationFrame(() => {
@@ -858,8 +929,8 @@ function playStage() {
       p.style.strokeDashoffset = '0';
     });
   });
-  // 脚灯一盏盏亮
-  art.querySelectorAll('.fdot').forEach((c, i) => {
+  // 脚灯一盏盏亮（在前景）
+  fg.querySelectorAll('.fdot').forEach((c, i) => {
     setTimeout(() => {
       c.style.transition = 'opacity 220ms ease';
       c.style.opacity = '.8';
@@ -927,7 +998,8 @@ async function reset() {
   $('#dimmer').style.background = 'rgba(10,7,9,0)';
   $('#scrim').classList.remove('on');
   setScene(sceneForest());
-  cam.x = 0; cam.y = 0; cam.z = 1.04; applyCam(1200);
+  setForeground(fgForest());
+  cam.x = 0; cam.y = 0; cam.z = 1.05; applyCam(1200);
   clearTxt();
   await wait(500);
   line('门 还 开 着 。', 'dim');
