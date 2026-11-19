@@ -1292,61 +1292,101 @@ body.modal-open { overflow: hidden; }
           background:linear-gradient(180deg,rgba(252,246,232,.97),rgba(244,233,210,.97))}
         body{display:block;padding:0}
         .tarot-wrapper{padding:0 3vw}
-        /* ===== 宿命态：世界透出，面板下沉 ===== */
-        body.fate .tarot-wrapper{padding-top:15vh}
+                /* ===== 宿命态：世界在上，实心纸页从下方升起 ===== */
+        body.fate .tarot-wrapper{padding-top:30vh}
         body.fate .divination-pane{
-          background:transparent;box-shadow:none;max-width:min(92%,430px);margin:0 auto 6vh;border:none}
+          background:linear-gradient(180deg,#fdf5e0,#efe1c2 92%);
+          border-radius:14px 14px 0 0;
+          box-shadow:0 -30px 60px -28px rgba(0,0,0,.95),inset 0 0 0 1px rgba(140,114,69,.55),
+                     inset 0 0 0 6px rgba(255,252,240,.55),inset 0 0 0 7px rgba(140,114,69,.28);
+          max-width:min(94%,460px);margin:0 auto 0;padding:20px 18px 34px;
+          animation:sheetUp 1.05s cubic-bezier(.2,.85,.25,1);
+          max-height:64vh;overflow-y:auto;overscroll-behavior:contain}
+        @keyframes sheetUp{from{transform:translateY(46px);opacity:.4}to{transform:none;opacity:1}}
+        body.fate .spread-area{margin-top:-6px}
         body.fate .top-bar button,body.fate .mode-btn,body.fate .btn-draw,body.fate .quick-tag{
-          background:rgba(10,7,5,.55);border-color:rgba(240,226,196,.3);color:#f0e4c8}
-        body.fate .mode-btn.active{background:rgba(200,165,103,.85);color:#14100c}
-        body.fate .today-card,body.fate .question-area label,body.fate .history-title,
-        body.fate .guestbook-note,body.fate .footer-disclaimer{color:rgba(240,228,200,.8);
-          border-color:rgba(240,226,196,.2)}
-        body.fate .input-wrapper input{color:#f4e8ce;border-bottom-color:rgba(240,226,196,.4)}
-        body.fate .card-result{background:rgba(250,243,226,.96);box-shadow:0 18px 40px -20px #000}
-        body.fate .reading-block{background:rgba(250,243,226,.96);color:#2b2118;
-          box-shadow:inset 0 0 0 4px rgba(250,243,226,.9),inset 0 0 0 5px rgba(140,114,69,.4)}
-        body.fate .history-list li{color:rgba(240,228,200,.85);border-left-color:rgba(200,165,103,.4)}
-        body.fate .changelog-panel,body.fate .favorites-panel{
-          background:rgba(10,7,5,.5);border-color:rgba(200,165,103,.25)}
-        body.fate .changelog-header{color:rgba(240,228,200,.85)}
-        /* ===== 宿命态 v2：一排放牌，把画面让给世界 ===== */
-        body.fate .spread-area{flex-wrap:nowrap;gap:8px;justify-content:center;align-items:flex-start;margin:0 0 14px}
-        body.fate .card-result{width:calc((100% - 16px)/3);padding:7px 5px;border-radius:3px;
-          box-shadow:0 16px 34px -18px rgba(0,0,0,.9),inset 0 0 0 3px rgba(250,243,226,.9),
-                     inset 0 0 0 4px rgba(140,114,69,.35)}
-        body.fate .card-result img{width:100%;max-height:74px;object-fit:contain;border-radius:2px;margin-bottom:5px}
-        body.fate .card-result .card-name{font-size:.78rem;letter-spacing:.06em}
-        body.fate .card-result .card-orient{font-size:.62rem;letter-spacing:.16em;color:#8c7245}
-        body.fate .card-result .card-short{font-size:.58rem;line-height:1.45;
-          display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#5b4a36}
-        body.fate .reading-block{font-size:.8rem;line-height:1.85}
-        body.fate .spread-area .card-result:nth-child(2){transform:translateY(10px)}
-        body.fate .spread-area .card-result:nth-child(3){transform:translateY(20px)}
-        /* 顶部训示 */
-        .fate-title{position:fixed;left:0;right:0;top:3.5vh;z-index:4;text-align:center;pointer-events:none;
-          font-size:13px;letter-spacing:.6em;text-indent:.6em;color:#f2e6c9;opacity:0;
-          text-shadow:0 2px 20px rgba(0,0,0,.95);transition:opacity 1.4s ease}
-        body.fate .fate-title{opacity:.55}
-        /* ===== 前景荆棘层：大幅视差 ===== */
-        .scene-fg{position:fixed;left:-18%;right:-18%;z-index:1;pointer-events:none;
-          background:url("./assets/scene/keyart/fg-thorn.webp") center top/150% no-repeat;
-          opacity:.8;filter:brightness(.42) blur(1.1px);will-change:transform}
-        .scene-fg.top{top:-8%;height:58%;
-          transform:translate3d(calc(var(--px) * 2.4),calc(var(--py) * 2.4),0)}
-        .scene-fg.bottom{bottom:-6%;height:52%;background-position:center bottom;
-          transform:translate3d(calc(var(--px) * -1.8),calc(var(--py) * -1.8),0) scaleY(-1)}
-        body.fate .scene-fg{opacity:.55}
+          background:rgba(255,252,240,.7);border-color:rgba(140,114,69,.4);color:#3a2c1c}
+        body.fate .mode-btn.active{background:#8c6a34;color:#fdf5e0}
+        body.fate .reading-block{background:#fbf3dc;color:#2b2118}
 
-        /* ===== 舞台分页：一屏一幕 ===== */
-        .cine{display:block;position:relative;min-height:66vh}
-        .cine-page{display:none;flex-direction:column;animation:pageIn .62s cubic-bezier(.2,.8,.25,1)}
-        .cine-page.on{display:flex}
-        @keyframes pageIn{from{opacity:0;transform:translateY(20px) scale(.985)}to{opacity:1;transform:none}}
-        .cine-nav{display:flex;justify-content:center;align-items:center;gap:14px;margin:18px 0 4px}
-        .cine-dot{width:6px;height:6px;border-radius:50%;background:rgba(200,165,103,.28);transition:.3s}
-        .cine-dot.on{background:var(--accent-gold);transform:scale(1.5)}
-        body.fate .cine-nav{opacity:.65}
+        /* ===== v8 书页式舞台 ===== */
+        body{display:block;padding:0;overflow:hidden}
+        .tarot-wrapper{position:relative;z-index:2;height:100dvh;max-width:none;width:100%}
+        .cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+          gap:14px;padding:0 8%;text-align:center;background:none;border:none;box-shadow:none;min-height:0}
+        .kicker{font-size:10px;letter-spacing:.6em;text-indent:.6em;color:rgba(240,226,196,.6)}
+        .cover h1{font-size:clamp(26px,8.6vw,40px);font-weight:400;letter-spacing:.18em;text-indent:.18em;
+          color:#f5e9cb;text-shadow:0 3px 28px rgba(0,0,0,.95)}
+        .rule{width:92px;height:1px;background:linear-gradient(90deg,transparent,var(--accent-gold),transparent);position:relative}
+        .rule::after{content:"";position:absolute;left:50%;top:-3px;width:7px;height:7px;transform:translateX(-50%) rotate(45deg);
+          background:#dcc08e;box-shadow:0 0 12px rgba(220,192,142,.9)}
+        .cover p{font-size:11.5px;letter-spacing:.2em;color:rgba(240,226,196,.78);background:none;padding:0;margin:0;text-shadow:0 2px 14px #000}
+
+        .divination-pane{position:absolute;inset:0;display:none;padding:0;background:transparent;border:none;box-shadow:none;border-radius:0}
+        .divination-pane.active{display:block;opacity:1;transform:none}
+        .page{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+          padding:max(18px,4vh) 16px calc(84px + env(safe-area-inset-bottom))}
+        .page.on{display:flex;animation:pageIn .6s cubic-bezier(.2,.85,.25,1)}
+        @keyframes pageIn{from{opacity:0;transform:translateY(18px) scale(.99)}to{opacity:1;transform:none}}
+        .plate{background:linear-gradient(180deg,rgba(253,246,229,.965),rgba(240,228,203,.965));
+          border-radius:10px;padding:20px 18px;max-width:440px;width:100%;margin:0 auto;
+          box-shadow:0 30px 60px -30px #000,inset 0 0 0 1px rgba(140,114,69,.5),
+                     inset 0 0 0 6px rgba(255,252,240,.5),inset 0 0 0 7px rgba(140,114,69,.25);
+          max-height:100%;overflow-y:auto;color:#2b2118}
+        .plate-title{text-align:center;font-size:12px;letter-spacing:.42em;text-indent:.42em;color:#6b5334;
+          padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid rgba(140,114,69,.4)}
+        .slips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+        .slips .quick-tag{background:rgba(255,252,240,.75);border:1px solid rgba(140,114,69,.45);
+          color:#4a3620;border-radius:2px;padding:8px 14px;font-size:.78rem;letter-spacing:.14em}
+        .row{margin:12px 0;display:flex;justify-content:center}
+        .row select{width:100%;max-width:320px}
+        .row.center{gap:12px;margin-top:16px}
+        .btn-draw.small{font-size:.72rem;padding:9px 16px}
+        .ribbon{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;
+          padding:10px 0 calc(12px + env(safe-area-inset-bottom));
+          background:linear-gradient(180deg,transparent,rgba(6,4,3,.85) 42%)}
+        .ribbon button{background:rgba(14,10,7,.6);border:1px solid rgba(200,165,103,.32);border-radius:2px;
+          color:rgba(240,228,200,.8);font-family:inherit;font-size:12px;letter-spacing:.3em;text-indent:.3em;
+          padding:9px 22px;cursor:pointer}
+        .ribbon button.on{background:rgba(200,165,103,.9);color:#14100c;border-color:rgba(200,165,103,.9)}
+        .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+        .tools-grid button{background:rgba(255,252,240,.7);border:1px solid rgba(140,114,69,.42);
+          color:#3a2c1c;border-radius:2px;padding:10px 6px;font-family:inherit;font-size:.74rem;letter-spacing:.1em}
+        .result-area{padding:0;max-height:100%;overflow-y:auto}
+
+        /* ===== 帧级转场 ===== */
+        @keyframes dealIn{
+          0%{opacity:0;transform:translateY(46px) rotate(-9deg) scale(.9)}
+          62%{opacity:1;transform:translateY(-6px) rotate(1.5deg) scale(1.02)}
+          100%{opacity:1;transform:none}
+        }
+        .spread-area .card-container{animation:dealIn .68s cubic-bezier(.22,.9,.28,1) both}
+        .spread-area .card-container:nth-child(1){animation-delay:0ms}
+        .spread-area .card-container:nth-child(2){animation-delay:120ms}
+        .spread-area .card-container:nth-child(3){animation-delay:240ms}
+        .spread-area .card-container:nth-child(4){animation-delay:360ms}
+        .spread-area .card-container:nth-child(5){animation-delay:480ms}
+        .card-inner{transition:transform .64s cubic-bezier(.34,1.42,.5,1)}
+        .card-container.flipped .card-inner{transform:rotateY(180deg)}
+        .card-container.flipped{animation:land .5s cubic-bezier(.3,1.3,.5,1)}
+        @keyframes land{0%{transform:translateY(0)}45%{transform:translateY(-5px)}100%{transform:none}}
+        .blackout.on{animation:blink .55s ease}
+        @keyframes blink{0%{opacity:0}8%{opacity:.25}100%{opacity:1}}
+        .result-area .reading-block{animation:sheetUp 1.05s cubic-bezier(.2,.85,.25,1) both}
+        @keyframes sheetUp{from{opacity:0;transform:translateY(56px)}to{opacity:1;transform:none}}
+
+        /* ===== 牌阵尺寸 ===== */
+        .spread-area{display:flex;flex-wrap:nowrap;justify-content:center;gap:10px;margin:6px 0 10px}
+        .card-container{width:calc((100% - 20px)/3);max-width:104px}
+        .card-front,.card-back{min-height:150px;padding:8px 6px}
+        .card-front img{width:72px}
+        .card-name{font-size:.8rem}
+        .card-orient{font-size:.62rem}
+        .card-short{font-size:.58rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;
+          -webkit-box-orient:vertical;overflow:hidden}
+        .result-area{padding-bottom:96px}
+        #resultArea{max-height:calc(100dvh - 120px);overflow-y:auto}
+        #resultArea > div[style*="text-align:center"]{margin:10px 0 0 !important}
     </style>
 </head>
 <body>
@@ -1391,111 +1431,102 @@ body.modal-open { overflow: hidden; }
 </script>
 
 <div class="tarot-wrapper">
-    <div id="coverLayer" class="cover">
-        <div class="star-line">✧*̣̩  ✦  ✧*̣̩</div>
-        <h1>✧*̣̩ 星尘·古牌 *̣̩✧</h1>
-        <div class="star-line">⋆｡°✩  🃟  ✩°｡⋆</div>
-        <p style="color:#b8a78d;">𓂀 78张古牌 · 原版解语 · 星辰指引 𓂀</p>
-        <button id="enterBtn" class="enter-btn">✧ 入内 ✧</button>
-    </div>
-    <div id="divinationPane" class="divination-pane">
+  <div id="coverLayer" class="cover">
+    <div class="kicker">七 十 八 张</div>
+    <h1>星尘古牌</h1>
+    <div class="rule"></div>
+    <p>翻一张牌，问一件放在心里太久的事</p>
+    <button id="enterBtn" class="enter-btn">入 内 问 牌</button>
+  </div>
+
+  <div id="divinationPane" class="divination-pane">
+    <section class="page on" data-p="ask">
+      <div class="plate">
+        <div class="plate-title">写 下 你 的 问 题</div>
+        <div id="todayCard" class="today-card">今日古牌 · 点击查看</div>
+        <div class="slips">
+          <button data-quick="感情发展" class="quick-tag">感情</button>
+          <button data-quick="事业方向" class="quick-tag">事业</button>
+          <button data-quick="财运状况" class="quick-tag">财运</button>
+          <button data-quick="人际关系" class="quick-tag">人际</button>
+          <button data-quick="学业进展" class="quick-tag">学业</button>
+          <button data-quick="自我成长" class="quick-tag">成长</button>
+        </div>
+        <div class="input-wrapper">
+          <input type="text" id="questionInput" placeholder="或自己写一句" autocomplete="off">
+          <span id="clearInputBtn" class="clear-input">✕</span>
+        </div>
+        <div class="row">
+          <select id="spreadSelect">
+            <option value="3">三牌 · 过去现在未来</option>
+            <option value="2">二牌 · 抉择</option>
+            <option value="5">五牌 · 深入</option>
+          </select>
+        </div>
         <div class="mode-group">
-            <button id="modeStandardBtn" class="mode-btn active">🎴 标准翻牌</button>
-            <button id="ModeSelectBtn" class="mode-btn">🎲 选牌模式</button>
+          <button id="modeStandardBtn" class="mode-btn active">标准翻牌</button>
+          <button id="ModeSelectBtn" class="mode-btn">选牌模式</button>
         </div>
-        <div class="top-bar">
-            <button id="themeToggleBtn">🌙 深色 · 护眼</button>
-            <button id="clearHistoryBtn">🗑️ 清空历史</button>
-            <button id="exportBtn">📋 分享文本</button>
-            <button id="shareImageBtn">📸 分享图片</button>
-            <button id="favoriteBtn">⭐ 收藏</button>
-            <button id="toggleFavBtn">📖 查看收藏</button>
-            <select id="spreadSelect">
-                <option value="3">🃟 三牌 · 过去现在未来</option>
-                <option value="2">⚖️ 二牌 · 抉择</option>
-                <option value="5">🔮 五牌 · 深入</option>
-            </select>
+        <div class="row center">
+          <button id="drawBtn" class="btn-draw">开 始 翻 牌</button>
+          <button id="toggleManualBtn" class="btn-draw small">自选编号</button>
         </div>
-        <div id="todayCard" class="today-card">✨ 今日古牌指引 ✨ 点击查看</div>
-        <div class="question-area">
-            <label style="font-size:0.8rem;">•͈ᴗ⁃͈ ✧ 你想问什么？</label>
-            <div class="input-wrapper">
-                <input type="text" id="questionInput" placeholder="例如：感情发展 / 工作选择" autocomplete="off">
-                <span id="clearInputBtn" class="clear-input">✕</span>
-            </div>
-            <div style="margin-top:8px;">
-                <button data-quick="感情发展" class="quick-tag">✿ 感情</button>
-                <button data-quick="事业方向" class="quick-tag">✿ 事业</button>
-                <button data-quick="财运状况" class="quick-tag">✿ 财运</button>
-                <button data-quick="人际关系" class="quick-tag">✿ 人际</button>
-                <button data-quick="学业进展" class="quick-tag">✿ 学业</button>
-                <button data-quick="自我成长" class="quick-tag">✿ 成长</button>
-            </div>
-        </div>
-        <div style="text-align:center;">
-            <button id="drawBtn" class="btn-draw">✨ 开始翻牌 ✨</button>
-            <button id="toggleManualBtn" class="btn-draw" style="font-size:0.8rem;">🎴 自选编号</button>
-        </div>
-
-        <div class="changelog-panel">
-            <div class="changelog-header" id="changelogHeader">
-                <span class="changelog-icon">❁ 更新日志 ❁</span>
-                <span>▼</span>
-            </div>
-            <div class="changelog-content" id="changelogContent">
-                <p><strong>📜 版本历史</strong></p>
-                <ul>
-                    <li><strong>v0.1 - 2026.06.01</strong>：基础框架搭建，实现78张牌库、标准翻牌模式、手动选牌基础功能。</li>
-                    <li><strong>v0.2 - 2026.06.01</strong>：加入完整牌意库（大阿卡纳+小阿卡纳+宫廷牌），正逆位解释各具特色。</li>
-                    <li><strong>v0.3 - 2026.06.02</strong>：新增深色/浅色模式切换，优化卡片翻牌动画和震动反馈。</li>
-                    <li><strong>v0.4 - 2026.06.02</strong>：添加历史记录与收藏功能，支持复盘与导出JSON。</li>
-                    <li><strong>v0.5 - 2026.06.02</strong>：上线每日古牌指引（基于日期随机种子），增加分享文本和分享图片功能。</li>
-                    <li><strong>v0.6 - 2026.06.12</strong>：修复自选编号锁，改为首次翻牌后解锁，优化选牌模式界面。</li>
-                    <li><strong>v0.7 - 2026.06.02</strong>：扩充话术库，增加「直白提醒」「星尘指引」「星之低语」三层建议。</li>
-                    <li><strong>v0.8 - 2026.06.02</strong>：集成腾讯文档留言板，匿名互动；增加捐赠打赏入口。</li>
-                    <li><strong>v0.9 - 2026.06.02</strong>：多牌阵支持（二牌抉择、五牌深入），牌阵位置自动适配。</li>
-                    <li><strong>v1.0 - 2026.06.02</strong>：首个稳定版，修复分享图片牌背显示问题，优化图片跨域加载。</li>
-                    <li><strong>v1.3 - 2026.11.19</strong>：可用性与可读性——新增「备份数据 / 导入备份」（历史 + 收藏 + 主题一次导出，换机可恢复，导入自动去重）；新增「全部翻开」按钮，五牌阵不必逐张点击；次要文字颜色加深（对比度 3.91 → 5.4，达到 WCAG AA），正文与备注字号整体上调一档。</li>
-                    <li><strong>v1.2 - 2026.11.19</strong>：逻辑修复——盲抽改为洗牌后不重复取牌（原三牌阵约 3.8%、五牌阵约 12.3% 概率抽到同一张牌，现为 0）；修复分享图片时图片未就绪导致的空白；移除已失效的网易云背景音乐外链（链接返回网页而非音频），音乐按钮一并下线；同一问题 30 秒内重复抽牌时给出提示。</li>
-                    <li><strong>v1.1 - 2026.11.19</strong>：性能与加载优化——牌面图改为同源直连（移除第三方图床代理，实测由超时变为 1-3 秒）；截图库改为点击「分享图片」时才按需加载，首屏不再等待外网脚本；补齐页面描述、分享卡片（OG）与主题色等元信息；新增 PWA 离线安装（manifest + Service Worker + 图标）；牌背图预加载。</li>
-                    <li><strong>v1.5 - 2026.06.02</strong>：自选编号功能完善，支持输入多个编号一次性开牌，增加输入框防呆校验。</li>
-                    <li><strong>v2.0 - 2026.06.03</strong>：全面重构解读引擎，整合能量总结、逆位过半提醒、元素分析，话术动态匹配问题场景。</li>
-                    <li><strong>v3.0 - 2026.06.03</strong>：正式版——所有已知bug修复，分享图片完美生成，牌意库与话术库达到完美预期。</li>
-                </ul>
-                <p><strong>📢 如有建议或需求，欢迎通过留言板交流～</strong></p>
-                <p style="margin-top:12px; font-size:0.8rem; color:var(--text-secondary);">⭐ 感谢使用星尘古牌，愿星尘指引你的道路。</p>
-            </div>
-        </div>
-
         <div id="manualPanel" class="manual-panel">
-            <p>📝 请输入卡牌编号 (1~78)，每个位置一个</p>
-            <div id="manualInputs" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
-            <button id="manualDrawBtn" class="btn-draw">✦ 开牌 ✦</button>
+          <p>输入卡牌编号 1~78</p>
+          <div id="manualInputs" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
+          <button id="manualDrawBtn" class="btn-draw">开 牌</button>
         </div>
-        <div id="resultArea" class="result-area" style="opacity:0;"></div>
+      </div>
+    </section>
+
+    <section class="page" data-p="cards">
+      <div id="resultArea" class="result-area"></div>
+    </section>
+
+    <section class="page" data-p="tools">
+      <div class="plate">
+        <div class="plate-title">柜</div>
+        <div class="tools-grid">
+          <button id="themeToggleBtn">切换主题</button>
+          <button id="clearHistoryBtn">清空历史</button>
+          <button id="exportBtn">分享文本</button>
+          <button id="shareImageBtn">分享图片</button>
+          <button id="favoriteBtn">收藏本局</button>
+          <button id="toggleFavBtn">我的收藏</button>
+          <button id="backupBtn">备份数据</button>
+          <button id="importBtn">导入备份</button>
+        </div>
         <div id="favoritesPanel" class="favorites-panel">
-            <strong>★ 我的收藏 <button id="exportFavBtn" style="font-size:0.7rem;">📎 导出JSON</button></strong>
-            <ul id="favList"></ul>
+          <strong>我的收藏 <button id="exportFavBtn" style="font-size:.7rem;">导出JSON</button></strong>
+          <ul id="favList"></ul>
         </div>
-        <div class="backup-bar"><button id="backupBtn" class="quick-tag">💾 备份数据</button><button id="importBtn" class="quick-tag">📥 导入备份</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></div>
-        <div class="history-title">▼ 占卜历史 <input type="text" id="historySearch" class="history-search" placeholder="🔍 搜索历史..."></div>
+        <div class="history-title"><span class="rule-title">占卜历史</span>
+          <input type="text" id="historySearch" class="history-search" placeholder="搜索">
+        </div>
         <ul class="history-list" id="historyList"><li>—— 暂无 ——</li></ul>
-
-        <!-- 腾讯文档留言板 - 已替换为你提供的两个新链接 -->
+        <div class="changelog-panel">
+          <div class="changelog-header" id="changelogHeader"><span>更新日志</span><span>▼</span></div>
+          <div class="changelog-content" id="changelogContent">
+            <p><strong>版本历史</strong></p>
+            <ul><li>v2.0 版画场景、舞台分幕</li></ul>
+          </div>
+        </div>
         <div class="guestbook-buttons">
-            <a href="https://docs.qq.com/form/page/DWURYVXBSTHdQb0dj" class="guestbook-btn" target="_blank">📝 我要留言</a>
-            <a href="https://docs.qq.com/smartsheet/DWWdUYXpIY2hrRGhU" class="guestbook-btn" target="_blank">👀 查看留言</a>
+          <a href="https://docs.qq.com/form/page/DWURYVXBSTHdQb0dj" class="guestbook-btn" target="_blank">我要留言</a>
+          <a href="https://docs.qq.com/smartsheet/DWWdUYXpIY2hrRGhU" class="guestbook-btn" target="_blank">查看留言</a>
         </div>
-        <div class="guestbook-note">
-            ✨ 点击「我要留言」写下你的想法（匿名，无需登录）<br>
-            💬 点击「查看留言」浏览大家的寄语
-        </div>
+        <div class="guestbook-note">匿名，无需登录</div>
+        <div class="footer-disclaimer">心理娱乐参考 · 请理性看待</div>
+      </div>
+      <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+    </section>
 
-        <div class="footer-disclaimer">
-            ✧ 心理娱乐参考，请理性看待 ✧<br>
-            ❁ 严谨封建迷信，仅个人娱乐 ❁
-        </div>
-    </div>
+    <nav class="ribbon">
+      <button data-go="ask" class="on">问</button>
+      <button data-go="cards">牌</button>
+      <button data-go="tools">柜</button>
+    </nav>
+  </div>
 </div>
 
 <div id="shareCardContainer" class="share-card-container"></div>
@@ -2099,56 +2130,26 @@ window.onclick = (event) => { if (event.target === donateModal) donateModal.styl
     },{passive:true});
 })();
 
-// ===== 舞台分页：把长页面切成三幕 =====
+// ===== v8 书页导航 =====
 (function(){
     var pane=document.getElementById('divinationPane');
-    if(!pane || document.querySelector('.cine')) return;
-    var wrap=document.createElement('div'); wrap.className='cine';
-    var pages={};
-    ['q','read','tools'].forEach(function(id){
-        var sec=document.createElement('section');
-        sec.className='cine-page'; sec.id='page-'+id;
-        wrap.appendChild(sec); pages[id]=sec;
-    });
-    function mv(sel,to){ Array.prototype.forEach.call(document.querySelectorAll(sel),function(n){ if(n) to.appendChild(n); }); }
-    mv('.mode-group',pages.tools);
-    mv('.top-bar',pages.tools);
-    mv('.today-card',pages.q);
-    mv('.question-area',pages.q);
-    var drawBtn=document.getElementById('drawBtn');
-    if(drawBtn && drawBtn.parentElement) pages.q.appendChild(drawBtn.parentElement);
-    mv('#resultArea',pages.read);
-    mv('#manualPanel',pages.read);
-    mv('#favoritesPanel',pages.tools);
-    mv('.changelog-panel',pages.tools);
-    mv('.backup-bar',pages.tools);
-    mv('.history-title',pages.tools);
-    mv('#historyList',pages.tools);
-    mv('.guestbook-buttons',pages.tools);
-    mv('.guestbook-note',pages.tools);
-    mv('.footer-disclaimer',pages.tools);
-    pane.appendChild(wrap);
-
-    var nav=document.createElement('div'); nav.className='cine-nav';
-    ['q','read','tools'].forEach(function(id){
-        var d=document.createElement('span'); d.className='cine-dot'; d.setAttribute('data-p',id);
-        d.addEventListener('click',function(){ show(id); });
-        nav.appendChild(d);
-    });
-    wrap.appendChild(nav);
-
-    function show(id){
-        Object.keys(pages).forEach(function(k){ pages[k].classList.toggle('on',k===id); });
-        var dots=document.querySelectorAll('.cine-dot');
-        Array.prototype.forEach.call(dots,function(d){ d.classList.toggle('on',d.getAttribute('data-p')===id); });
+    if(!pane) return;
+    var pages=Array.prototype.slice.call(document.querySelectorAll('.page'));
+    var ribbon=document.querySelectorAll('.ribbon button');
+    function show(name){
+        pages.forEach(function(pg){ pg.classList.toggle('on', pg.getAttribute('data-p')===name); });
+        Array.prototype.forEach.call(ribbon,function(b){ b.classList.toggle('on', b.getAttribute('data-go')===name); });
+        document.body.setAttribute('data-page',name);
     }
-    window.__cineShow=show;
-    show('q');
+    Array.prototype.forEach.call(ribbon,function(b){
+        b.addEventListener('click',function(){ show(b.getAttribute('data-go')); });
+    });
+    window.__page=show;
     var db=document.getElementById('drawBtn');
-    if(db) db.addEventListener('click',function(){ setTimeout(function(){ show('read'); },80); });
-    new MutationObserver(function(){
-        if(document.body.classList.contains('fate')) show('read');
-    }).observe(document.body,{attributes:true,attributeFilter:['class']});
+    if(db) db.addEventListener('click',function(){ setTimeout(function(){ show('cards'); },120); });
+    var md=document.getElementById('manualDrawBtn');
+    if(md) md.addEventListener('click',function(){ setTimeout(function(){ show('cards'); },200); });
+    show('ask');
 })();
 
 // PWA：注册 Service Worker（仅 HTTPS 生效，本地打开自动跳过）
