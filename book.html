@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0A0709">
+<title>星尘古牌 · 塔罗屋</title>
+<link rel="icon" href="./00.png">
+<style>
+@font-face{font-family:'XCSerif';src:url('./assets/fonts/noto-serif-sc-subset.woff2') format('woff2');font-display:swap}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#0A0709; --ink2:#141019; --wall:#201826;
+  --violet:#6E5C75; --violetD:#3E3446; --violetL:#8F7C96;
+  --paper:#F9EFD7; --paperHi:#FFFCF0; --paperMid:#E8D8B6; --paperD:#C9AC80;
+  --ochre:#DE915F; --red:#D93A33;
+  --serif:'XCSerif','Noto Serif CJK SC','Songti SC','PingFang SC',serif;
+}
+html,body{height:100%;background:#070507;overflow:hidden}
+body{display:grid;place-items:center;font-family:var(--serif);color:var(--paper);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+#page{position:relative;width:min(100vw,480px);aspect-ratio:5/7;max-height:100dvh;overflow:hidden;
+  background:var(--ink);box-shadow:0 0 0 1px #241c2a,0 28px 90px rgba(0,0,0,.75);isolation:isolate}
+
+/* ============ 画面 ============ */
+#art{position:absolute;inset:0}
+#art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ly{will-change:transform;transform-origin:50% 62%}
+#scrim{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,7,9,0) 46%,rgba(10,7,9,.55) 62%,rgba(10,7,9,.92) 78%,#0A0709 88%);
+  opacity:0;transition:opacity 1.1s ease}
+#scrim.on{opacity:1}
+
+/* 整屏调光（变黑） */
+#dimmer{position:absolute;inset:0;pointer-events:none;background:rgba(10,7,9,0);
+  mix-blend-mode:multiply;transition:background 1.2s ease}
+#dimmer.on{background:rgba(10,7,9,.72)}
+
+/* ============ 文字 ============ */
+#txt{position:absolute;left:0;right:0;bottom:0;height:42%;padding:0 26px 22px;display:flex;flex-direction:column;
+  justify-content:flex-end;pointer-events:none}
+#txt>*{pointer-events:auto}
+.line{font-size:14.5px;line-height:2.05;letter-spacing:.10em;color:var(--paper);
+  opacity:0;transform:translateY(10px);transition:opacity .95s ease,transform .95s ease}
+.line.on{opacity:1;transform:none}
+.line.dim{color:var(--violetL)}
+.line.big{font-size:17px;line-height:1.9;letter-spacing:.16em;color:var(--paperHi)}
+.line.ochre{color:var(--ochre);font-size:10px;letter-spacing:.42em;line-height:2.6}
+.rule{height:1px;background:var(--violet);opacity:.42;margin:14px 0 12px;width:100%}
+.hint{font-size:9.5px;letter-spacing:.36em;color:var(--violetL);margin-top:12px}
+
+/* 选项 */
+#opts{display:flex;flex-direction:column;gap:0;margin-top:4px}
+.opt{display:flex;align-items:center;gap:14px;padding:13px 2px;position:relative;cursor:pointer;
+  opacity:0;transform:translateY(8px);transition:opacity .7s ease,transform .7s ease}
+.opt.on{opacity:1;transform:none}
+.opt .n{font-size:9px;color:var(--violetL);letter-spacing:0;width:14px;flex:none}
+.opt .t{font-size:14.5px;letter-spacing:.12em;color:var(--paper)}
+.opt .d{font-size:9.5px;letter-spacing:.2em;color:var(--violetL);margin-left:auto}
+.opt .l{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--violet);opacity:.28}
+.opt:active .t{color:var(--red)}
+.opt.sel .t{color:var(--paperHi)}
+.opt.sel .l{background:var(--red);opacity:1;height:2px}
+
+/* 盖印按钮 */
+.seal{margin-top:18px;width:100%;display:flex;align-items:center;gap:14px;cursor:pointer;
+  opacity:0;transform:translateY(8px);transition:opacity .7s,transform .7s}
+.seal.on{opacity:1;transform:none}
+.seal .box{width:40px;height:40px;background:var(--red);color:var(--paperHi);display:grid;place-items:center;
+  font-size:13px;letter-spacing:.05em;box-shadow:3px 3px 0 rgba(10,7,9,.45)}
+.seal .cap{font-size:10px;letter-spacing:.34em;color:var(--violetL)}
+
+/* 解读 */
+#read{display:none;flex-direction:column}
+#read.on{display:flex}
+.rcard{font-size:9.5px;letter-spacing:.4em;color:var(--ochre);margin-bottom:6px}
+.rname{font-size:15px;letter-spacing:.14em;color:var(--paperHi);margin-bottom:8px}
+.rtext{font-size:12.5px;line-height:1.95;letter-spacing:.06em;color:#E6DCC4;
+  max-height:132px;overflow:hidden;display:block}
+#dots{display:flex;gap:8px;margin-top:14px;align-items:center}
+#dots i{width:16px;height:2px;background:var(--violet);opacity:.35;transition:.4s}
+#dots i.on{background:var(--red);opacity:1;width:26px}
+
+/* ============ 卡 ============ */
+#cards{position:absolute;inset:0;pointer-events:none;perspective:1000px}
+.card{position:absolute;width:74px;height:118px;pointer-events:auto;cursor:pointer;
+  transition:transform .85s cubic-bezier(.22,.5,.24,1),opacity .6s;
+  transform-style:preserve-3d;will-change:transform}
+.card .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:3px 4px 0 rgba(10,7,9,.35)}
+.card .back{background:var(--ink);border:1px solid var(--violet)}
+.card .back::before{content:'';position:absolute;inset:5px;border:1px solid var(--violet);opacity:.55}
+.card .back::after{content:'';position:absolute;left:50%;top:26%;width:16px;height:16px;margin-left:-8px;
+  border-radius:50%;background:var(--paper);opacity:.9;
+  box-shadow:-8px 3px 0 0 var(--ink),10px 12px 0 -5px var(--paper),-4px 34px 0 -6px var(--ochre)}
+.card .front{transform:rotateY(180deg);background:var(--paper);border:1px solid var(--ink);overflow:hidden}
+.card .front img{width:100%;height:100%;object-fit:cover;display:block}
+.card.flip{transform:rotateY(180deg)}
+.st{opacity:0;transform:translate(var(--tx,0px),var(--ty,90px)) scale(var(--sc,1));transform-origin:50% 100%}
+.archline{stroke-dasharray:1;stroke-dashoffset:1}
+.curtain{will-change:transform}
+#art>svg{transform-origin:50% 46%}
+.card .idx{position:absolute;left:0;right:0;bottom:-16px;text-align:center;font-size:8px;
+  letter-spacing:.3em;color:var(--violetL);opacity:.9}
+</style>
+</head>
+<body>
+<div id="page">
+  <div id="art"></div>
+  <div id="cards"></div>
+  <div id="scrim"></div>
+  <div id="dimmer"></div>
+  <div id="txt"></div>
+</div>
+<script src="./book.js"></script>
+</body>
+</html>
