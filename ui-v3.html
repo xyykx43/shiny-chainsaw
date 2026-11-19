@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#120C0A">
+<title>星尘·古牌 · 书页版</title>
+<style>
+/* ==================================================================
+   插画叙事版
+   · 每一页 = 一帧画面 + 一条旁白
+   · 翻页是真的绕书脊旋转，带纸面阴影扫过
+   · 点击推进，画面分层浮现
+   ================================================================== */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+:root{
+  --desk:#120C0A;
+  --paper:#EFE5CE;
+  --paper-2:#F8F1E1;
+  --ink:#2B2118;
+  --ink-2:#5C4B39;
+  --rubric:#8C3A2E;
+  --brass:#A98B4F;
+  --serif:"Songti SC","Noto Serif SC",Georgia,serif;
+  --latin:"Didot","Times New Roman",Georgia,serif;
+  --ease:cubic-bezier(.32,.72,.3,1);
+}
+body{
+  background:var(--desk);color:var(--paper);min-height:100dvh;
+  font-family:var(--serif);overflow:hidden;position:relative;
+  -webkit-font-smoothing:antialiased;user-select:none;
+}
+.desk{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(80% 50% at 50% 18%,rgba(190,158,104,.14),transparent 72%),
+    radial-gradient(120% 90% at 50% 116%,#080605,transparent 62%),
+    linear-gradient(180deg,#1C1411,#0D0908);}
+.desk::after{content:"";position:absolute;inset:0;opacity:.055;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='.5'/></svg>");}
+
+/* ---------------- 舞台 ---------------- */
+.stage{
+  position:relative;z-index:2;height:100dvh;width:100%;max-width:560px;margin:0 auto;
+  perspective:1900px;perspective-origin:50% 40%;
+  display:flex;align-items:center;justify-content:center;
+  padding:calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom));
+}
+
+/* ---------------- 封面 ---------------- */
+.cover{
+  position:relative;width:100%;max-width:460px;aspect-ratio:3/4.2;
+  background:
+    radial-gradient(110% 80% at 50% 0%,rgba(120,84,52,.38),transparent 62%),
+    linear-gradient(160deg,#3A241C,#241511 55%,#180F0C);
+  border:1px solid rgba(169,139,79,.32);
+  box-shadow:0 50px 90px -50px #000,inset 0 0 80px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:32px 24px;
+  transform-origin:left center;
+  transition:transform 1s var(--ease),opacity .9s var(--ease);
+  cursor:pointer;
+}
+.cover::before{content:"";position:absolute;inset:9px;border:1px solid rgba(169,139,79,.55);pointer-events:none;}
+.cover::after{content:"";position:absolute;inset:15px;border:1px solid rgba(169,139,79,.24);pointer-events:none;}
+.cover .cn-corner{position:absolute;width:22px;height:22px;opacity:.8;}
+.cover .cn-corner.tl{top:6px;left:6px;}
+.cover .cn-corner.tr{top:6px;right:6px;transform:rotate(90deg);}
+.cover .cn-corner.br{bottom:6px;right:6px;transform:rotate(180deg);}
+.cover .cn-corner.bl{bottom:6px;left:6px;transform:rotate(270deg);}
+.cover .seal{margin-top:26px;opacity:.9;}
+.cover.open{transform:rotateY(-172deg);opacity:0;}
+.cover .top{font-family:var(--latin);font-size:.54rem;letter-spacing:.46em;color:var(--brass);text-transform:uppercase;}
+.cover h1{margin-top:26px;font-size:clamp(1.55rem,6.6vw,2.1rem);font-weight:500;letter-spacing:.26em;text-indent:.26em;color:var(--paper-2);line-height:1.4;white-space:nowrap;}
+.cover .lat{margin-top:14px;font-family:var(--latin);font-size:.54rem;letter-spacing:.4em;color:var(--brass);text-transform:uppercase;opacity:.9;}
+.cover .rule{display:flex;align-items:center;gap:10px;width:64%;margin:24px auto 0;}
+.cover .rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(169,139,79,.7),transparent);}
+.cover .rule b{width:4px;height:4px;background:var(--brass);transform:rotate(45deg);}
+.cover .sub{margin-top:18px;font-size:.72rem;letter-spacing:.34em;text-indent:.34em;color:rgba(239,229,206,.6);}
+.cover .tap{margin-top:34px;font-family:var(--latin);font-size:.52rem;letter-spacing:.34em;color:rgba(169,139,79,.8);text-transform:uppercase;
+  animation:breathe 3.4s ease-in-out infinite;}
+@keyframes breathe{0%,100%{opacity:.4;}50%{opacity:1;}}
+
+/* ---------------- 书页 ---------------- */
+.book{position:absolute;inset:calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom));
+  display:none;transform-style:preserve-3d;}
+.book.on{display:block;}
+
+.sheet{
+  position:absolute;inset:0;
+  background:var(--paper);color:var(--ink);
+  box-shadow:0 30px 70px -40px #000;
+  transform-origin:left center;
+  transform-style:preserve-3d;
+  overflow:hidden;
+  will-change:transform;
+}
+.sheet.turning{transition:transform .82s cubic-bezier(.44,.06,.28,1),box-shadow .82s ease;}
+.sheet.turning-in{transition:transform .82s cubic-bezier(.44,.06,.28,1);}
+
+/* 纸纹 / 压边 */
+.page{backface-visibility:hidden;}          /* 转过 90° 后正文消失 */
+.backside{position:absolute;inset:0;z-index:5;pointer-events:none;
+  transform:rotateY(180deg);backface-visibility:hidden;
+  background:linear-gradient(200deg,#F3EAD6,#E6DBC1 60%,#DFD3B7);
+  box-shadow:inset 0 0 46px rgba(90,74,56,.26);}
+.backside::after{content:"";position:absolute;inset:0;opacity:.18;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/></filter><rect width='170' height='170' filter='url(%23b)' opacity='.4'/></svg>");}
+.sheet .grain{position:absolute;inset:0;pointer-events:none;opacity:.20;mix-blend-mode:multiply;z-index:6;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/></filter><rect width='170' height='170' filter='url(%23p)' opacity='.42'/></svg>");}
+.sheet .edge{position:absolute;inset:0;pointer-events:none;z-index:6;
+  box-shadow:inset 0 0 52px rgba(90,74,56,.20),inset 0 -22px 34px -18px rgba(90,74,56,.20);}
+.sheet .spine-shade{position:absolute;left:0;top:0;bottom:0;width:56px;z-index:7;pointer-events:none;opacity:0;
+  background:linear-gradient(90deg,rgba(20,14,10,.55),transparent);}
+.sheet.turning .spine-shade{opacity:1;transition:opacity .4s;}
+/* 翻页时扫过的高光 */
+.sheet .sweep{position:absolute;inset:0;z-index:8;pointer-events:none;opacity:0;
+  background:linear-gradient(100deg,rgba(255,246,225,.55) 0%,rgba(255,246,225,.08) 28%,transparent 46%);}
+.sheet.turning .sweep{animation:sweep .82s linear;}
+@keyframes sweep{0%{opacity:0;}18%{opacity:.85;}60%{opacity:.25;}100%{opacity:0;}}
+
+/* 中世纪花边 */
+.ruleframe{position:absolute;inset:10px;border:1px solid rgba(43,33,24,.5);z-index:4;pointer-events:none;}
+.ruleframe::before{content:"";position:absolute;inset:3px;border:1px solid rgba(169,139,79,.55);}
+.corner{position:absolute;width:24px;height:24px;z-index:5;pointer-events:none;}
+.corner svg{width:100%;height:100%;display:block;}
+.corner.tl{top:5px;left:5px;}
+.corner.tr{top:5px;right:5px;transform:rotate(90deg);}
+.corner.br{bottom:5px;right:5px;transform:rotate(180deg);}
+.corner.bl{bottom:5px;left:5px;transform:rotate(270deg);}
+
+/* 页内布局 */
+.page{position:absolute;inset:0;display:flex;flex-direction:column;padding:24px 18px 16px;z-index:3;}
+.main{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;}
+.runhead{display:flex;justify-content:space-between;font-family:var(--latin);font-size:.5rem;
+  letter-spacing:.28em;text-transform:uppercase;color:var(--ink-2);opacity:.7;padding:0 8px;}
+.plateno{margin-top:16px;text-align:center;font-family:var(--latin);font-size:.56rem;letter-spacing:.42em;
+  text-transform:uppercase;color:var(--rubric);}
+
+/* 画面 */
+.art{
+  position:relative;margin:10px auto 0;width:min(74%,286px);aspect-ratio:270/456;
+  border:1px solid rgba(43,33,24,.55);padding:5px;background:rgba(255,255,255,.45);
+  box-shadow:0 16px 34px -24px rgba(43,33,24,.95);
+  overflow:hidden;
+}
+.art::before{content:"";position:absolute;inset:3px;border:1px solid rgba(169,139,79,.6);z-index:2;pointer-events:none;}
+.art img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 0;
+  /* 不用 transform 缩放：部分机型上会导致图片底部出现灰色未绘制块 */
+  filter:sepia(.10) contrast(1.03) saturate(.92);}
+.art .glaze{position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% 0%,transparent 45%,rgba(60,44,30,.28) 100%);}
+
+/* 旁白带 */
+.band{
+  width:min(74%,286px);margin:0 auto;position:relative;
+  background:linear-gradient(180deg,rgba(34,25,20,.96),rgba(24,17,13,.97));
+  color:var(--paper-2);padding:11px 12px 12px;text-align:center;
+  box-shadow:0 12px 26px -20px #000;
+  border-top:1px solid rgba(169,139,79,.55);
+}
+.band .en{font-family:var(--latin);font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(230,208,164,.75);margin-bottom:7px;}
+.band .cn{font-size:.84rem;line-height:1.75;letter-spacing:.04em;}
+
+/* 逐条浮现 */
+.rise{opacity:0;transform:translateY(14px);}
+.sheet.enter .rise{animation:riseIn .8s var(--ease) forwards;}
+.sheet.enter .r1{animation-delay:.10s;}
+.sheet.enter .r2{animation-delay:.24s;}
+.sheet.enter .r3{animation-delay:.38s;}
+.sheet.enter .r4{animation-delay:.52s;}
+@keyframes riseIn{to{opacity:1;transform:none;}}
+
+/* 牌说 */
+.moral{margin:16px auto 0;width:min(74%,286px);padding-top:12px;font-size:.78rem;line-height:1.9;
+  color:var(--ink-2);border-top:1px solid rgba(43,33,24,.18);}
+.moral b{color:var(--rubric);font-weight:400;letter-spacing:.18em;margin-right:6px;}
+.folio{padding:10px 0 2px;text-align:center;font-family:var(--latin);font-size:.54rem;
+  letter-spacing:.36em;color:var(--ink-2);opacity:.7;}
+
+/* 提问页 */
+.qwrap{margin-top:22px;padding:0 4px;}
+.qwrap label{display:block;font-family:var(--latin);font-size:.52rem;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--rubric);margin-bottom:10px;}
+.qwrap input{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(43,33,24,.45);
+  font-family:var(--serif);font-size:1.05rem;color:var(--ink);padding:10px 1px;outline:none;}
+.qwrap input::placeholder{color:rgba(90,74,56,.5);}
+.stamps{display:flex;gap:8px;flex-wrap:wrap;margin:16px 4px 0;}
+.stamp{padding:6px 13px;border:1px solid rgba(140,58,46,.5);background:transparent;color:var(--rubric);
+  font-family:var(--serif);font-size:.72rem;letter-spacing:.14em;cursor:pointer;transition:all .3s;}
+.stamp.on{background:var(--rubric);color:var(--paper-2);}
+.drawzone{margin-top:28px;padding-top:0;text-align:center;}
+.drawzone button{padding:14px 42px;background:transparent;border:1px solid var(--rubric);color:var(--rubric);
+  font-family:var(--serif);font-size:.84rem;letter-spacing:.34em;text-indent:.34em;cursor:pointer;transition:all .35s;}
+.drawzone button:active{background:var(--rubric);color:var(--paper-2);}
+
+/* 结语 */
+.endp{display:flex;flex-direction:column;height:100%;justify-content:center;text-align:center;padding:0 8px;}
+.endp h2{font-size:1.05rem;font-weight:500;letter-spacing:.24em;color:var(--ink);}
+.endp .lat{font-family:var(--latin);font-size:.54rem;letter-spacing:.36em;text-transform:uppercase;color:var(--rubric);margin-top:10px;}
+.endp p{margin-top:20px;font-size:.88rem;line-height:2.1;color:var(--ink);text-align:justify;}
+.endp .orn{display:flex;align-items:center;justify-content:center;gap:8px;margin:22px 0;}
+.endp .orn i{width:30px;height:1px;background:rgba(43,33,24,.3);}
+
+/* 点击区与提示 */
+.taphint{position:absolute;bottom:calc(18px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  z-index:60;font-family:var(--latin);font-size:.5rem;letter-spacing:.32em;text-transform:uppercase;
+  color:rgba(230,208,164,.55);pointer-events:none;transition:opacity .5s;white-space:nowrap;}
+.taphint.hide{opacity:0;}
+.chev{position:absolute;top:50%;transform:translateY(-50%);z-index:60;color:rgba(169,139,79,.55);
+  font-size:1.1rem;pointer-events:none;opacity:0;transition:opacity .4s;}
+.chev.l{left:8px;}
+.chev.r{right:8px;}
+.book.on .chev{opacity:.8;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+}
+
+
+/* ---- 应用版补充 ---- */
+.endp{overflow:auto;justify-content:flex-start;padding-top:14px}
+.endp .sum{text-align:justify;font-size:.86rem;line-height:2.05;color:var(--ink)}
+.endp .sum b{font-weight:400;color:var(--rubric);letter-spacing:.16em;margin-right:6px}
+.again{display:block;margin:24px auto 0;padding:12px 34px;background:none;border:1px solid var(--rubric);
+  color:var(--rubric);font-family:var(--serif);font-size:.8rem;letter-spacing:.34em;text-indent:.34em;cursor:pointer}
+.again:active{background:var(--rubric);color:var(--paper-2)}
+.moral{max-height:none}
+.art,.band,.moral{width:min(74%,272px)}
+.endp{justify-content:center}
+.endp .folio{margin-top:18px}
+</style>
+</head>
+<body>
+<div class="desk"></div>
+<div class="stage">
+  <section class="cover" id="cover">
+    <div class="top">Liber Sortium</div>
+    <h1>星尘·古牌</h1>
+    <div class="lat">The Book of Gilded Arcana</div>
+    <div class="rule"><i></i><b></b><i></i></div>
+    <p class="sub">一次只问一件事</p>
+    <div class="seal"><svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+      <circle cx="23" cy="23" r="21" stroke="rgba(169,139,79,.55)" stroke-width=".8"/>
+      <circle cx="23" cy="23" r="16.5" stroke="rgba(169,139,79,.3)" stroke-width=".6"/>
+      <path d="M23 11 L25.6 20.4 L35 23 L25.6 25.6 L23 35 L20.4 25.6 L11 23 L20.4 20.4 Z" fill="rgba(169,139,79,.75)"/>
+    </svg></div>
+    <div class="tap">tap to open</div>
+  </section>
+
+  <section class="book" id="book">
+    <article class="sheet" id="sheetA">
+      <div class="ruleframe"></div>
+      <div class="corner tl"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="corner tr"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="corner br"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="corner bl"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="page" id="bodyA"></div>
+      <div class="backside"></div>
+      <div class="grain"></div><div class="edge"></div>
+      <div class="spine-shade"></div><div class="sweep"></div>
+    </article>
+    <article class="sheet" id="sheetB" style="display:none;">
+      <div class="ruleframe"></div>
+      <div class="corner tl"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="corner tr"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="corner br"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="corner bl"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
+      <div class="page" id="bodyB"></div>
+      <div class="backside"></div>
+      <div class="grain"></div><div class="edge"></div>
+      <div class="spine-shade"></div><div class="sweep"></div>
+    </article>
+    <div class="chev l">‹</div>
+    <div class="chev r">›</div>
+    <div class="taphint" id="hint">轻点右侧翻页</div>
+  </section>
+</div>
+
+<script>
+const MEANINGS = {"愚者": {"up": "天真如初生之犊，脚下是未知的悬崖，心中却是星辰大海。你即将踏上一段全新的旅程，无关经验只关乎勇气。这张牌提醒你：信任内在的冲动，但别忘了带上行囊。", "rev": "愚者的步伐被迟疑绊倒。你害怕出丑，或者过度依赖他人的意见。真正的危险不是悬崖，而是停在原地假装看不见梦想。请找回那份不计后果的纯真。"}, "魔术师": {"up": "四元素齐聚指尖，你拥有创造现实所需的一切工具。清晰的意图+坚定的行动=显化奇迹。现在不是犹豫的时刻，而是将灵感化为物质的黄金瞬间。", "rev": "牌面倒转，能量错位。你可能在欺骗自己或他人，或者空有才华却无从下手。检查你的动机——是恐惧在操纵你吗？先清空杂念，再重新连接你的力量。"}, "女祭司": {"up": "月光下的幕帘之后，藏着所有未说出的真理。你需要的答案不在外界，而在静默的呼吸之间。信任直觉，即使它无法用逻辑解释。", "rev": "忽视内心的声音，会被表面喧嚣淹没。你可能压抑了灵性的一面，或者过度依赖理性的分析。请给自己一段独处的时间，那扇门并未关闭。"}, "女皇": {"up": "大地丰饶，情感绽放。你正处在创造与滋养的高峰——孕育新生命、新项目或新阶段的自我。敞开接受宇宙的馈赠，分享你的温柔力量。", "rev": "创造力受阻，或过度牺牲自我。你可能在照顾别人时遗忘了自己，或感到情感枯竭。回归大自然，触碰土地，重新连接你内在的女皇能量。"}, "皇帝": {"up": "秩序的基石，权威的象征。你需要像皇帝一样制定规则、建立结构。理性控制情绪，长远规划胜过一时冲动。这是建立事业或稳固家庭的好时机。", "rev": "权威受挑战或变成暴君。你可能过于严苛、固执，或者相反——软弱无力，不敢承担责任。寻找平衡点：温柔而坚定地守护你的疆域。"}, "教皇": {"up": "传统与信仰的桥梁。你可能会遇到导师、贵人，或者需要遵循某种既定体系。群体智慧有时比个人冒险更安全。婚礼、教育、精神仪式皆受庇佑。", "rev": "教条束缚或反叛。你可能在抗拒常规，或遇到了虚伪的权威。不要盲从，也不要为了叛逆而叛逆——聆听自己内在的道德指南针。"}, "恋人": {"up": "重大的选择，关于爱与价值观。这张牌不只代表浪漫，更是灵魂的契约。你需要做出忠于本心的决定，天平两端都是礼物，但只能选一个。", "rev": "关系失衡或自我矛盾。你可能逃避承诺，或者在两个选项之间反复拉扯。回到初心，问问自己：什么才是我真正不后悔的答案？"}, "战车": {"up": "意志力驾驭矛盾的对立。黑马白马象征你内在的冲突，但只要紧握缰绳，就能驶向胜利。坚持、自律、不放弃——前方就是荣耀。", "rev": "失控的马车横冲直撞。你可能被情绪淹没，或目标模糊导致行动无效。停下来，重新校准方向，有时候后退是为了更好的跳跃。"}, "力量": {"up": "以柔克刚，驯服内心的野兽。真正的力量不是嘶吼，而是耐心与同理心。你正用温柔化解一场冲突，或者克服某种瘾症。狮子愿意低下头，是因为你值得信赖。", "rev": "内在的野性失控。你可能压抑愤怒太久，导致突然爆发；或感到软弱无力，被他人掌控。学会设立边界，用自信代替攻击。"}, "隐士": {"up": "独行于雪山之巅，手中明灯只为自己照亮。这是退隐、内省、寻找深层智慧的时期。暂时离群索居，答案会在寂静中浮现。", "rev": "孤独演变成孤僻，或拒绝必要的指引。你可能沉溺于自我怀疑，不愿向他人求助。记住：隐士的灯也能照亮同行者的路。"}, "命运之轮": {"up": "轮盘转动，好运将至。你无法控制命运的起伏，但可以调整姿态迎接转变。抓住机遇，接受改变——这是宇宙为你安排的转折点。", "rev": "轮盘卡滞，阻力重重。你可能在抗拒必然的变化，或被困在坏运气的循环里。接受当下的无常，暴风雨总会过去。"}, "正义": {"up": "因果之剑，天平不偏不倚。你种下的因正在结果，无论是奖赏还是教训。诚实面对自己，承担应有的责任，法律事务对你有利。", "rev": "不公正或逃避责任。你可能在自欺欺人，或遭遇不公平对待。检视过去的决定，修正错误的轨迹，正义终将到来。"}, "倒吊人": {"up": "自愿的牺牲，换个角度看世界。你被困住，却因此获得顿悟。有时候，放手、投降、等待是最有力的行动。", "rev": "无谓的挣扎或牺牲毫无意义。你可能在假装奉献，实则逃避核心问题。重新评估你的付出是否值得。"}, "死神": {"up": "终结即新生。旧的模式、关系或身份必须死亡，才能让新的生命扎根。不要惧怕结束，它是蜕变的必经之路。", "rev": "抗拒结束，紧抓不放。你试图用胶水黏合碎掉的花瓶，却划伤了自己。允许悲伤，然后放手，春天藏在冬天的背后。"}, "节制": {"up": "融合对立，调和矛盾。你像炼金术士一样，将水火风土化为金丹。耐心、中庸、艺术创作——平衡带来疗愈。", "rev": "失衡，极端，情绪过山车。你可能暴饮暴食，或工作与生活严重失调。找回你的中心，从小事开始重新平衡。"}, "恶魔": {"up": "物质与欲望的锁链。你被困在金钱、权力或性的执念里，以为那是自由。看清枷锁，才能挣脱。", "rev": "挣脱束缚，觉醒。你开始意识到什么在控制你，并鼓起勇气斩断链条。重获自由的第一步是承认自己曾经被囚禁。"}, "高塔": {"up": "轰然崩塌的旧结构。你以为坚固的城堡，其实地基已腐。突如其来的变故是残酷的恩典——它摧毁假象，让你重见蓝天。", "rev": "灾难缓和，或死死抓住残骸。你可能勉强维持摇摇欲坠的局面，但最终仍会倒塌。主动拆除比被动毁灭更有尊严。"}, "星星": {"up": "希望之水浇灌干涸的大地。经历风暴后，你终于看见了北极星。伤口开始结痂，梦想重新发芽。保持信心，宇宙正在回应你的祈祷。", "rev": "希望黯淡，或无法信任未来。你可能觉得被命运抛弃，失去方向。抬头看看，星星从未熄灭，只是被乌云暂时遮住。"}, "月亮": {"up": "潜意识之潮，梦境与恐惧。你走在迷雾笼罩的森林，看不清是敌是友。信任直觉，夜晚的野兽往往只是你自己的阴影。", "rev": "恐惧消散，真相浮出。混淆的幻觉渐渐清晰，你开始分辨真实与想象。黎明前的黑暗最浓，但曙光已近。"}, "太阳": {"up": "光芒万丈，喜悦满溢。所有阴霾一扫而空，你像孩子一样自由奔跑。成功、健康、婚礼、新生——纯粹的快乐时刻。", "rev": "短暂的阴云，或过度乐观。你可能暂时感到孤独或受挫，但太阳从未消失。再坚持一下，温暖会回来。"}, "审判": {"up": "因果清算，灵魂的觉醒。你听到了内心的召唤，必须回应。过去的功过被揭示，宽恕与重生就在此刻。", "rev": "抗拒改变，耳聋于召唤。你可能拖延重要的决定，害怕面对真实的自己。静下来，那声音从未停止。"}, "世界": {"up": "圆满完成，周期终结。你跳舞于世界之轮的中心，整合了所有碎片。旅行、毕业、目标达成——完美句号，也是新篇章的序曲。", "rev": "接近终点但差一步。你可能因为小疏忽而延迟成功，或者不愿结束美好时光。完成最后的仪式，然后放手。"}, "权杖1": {"up": "火苗初燃，行动的开端。新的热情、机会或灵感正等着你伸手去抓。不要犹豫，迈出第一步。", "rev": "热情受阻，计划延迟。你可能缺乏动力或信心，先点燃内在的火花再行动。"}, "权杖2": {"up": "手握权杖眺望远方，你在计划和选择之间权衡。未来充满可能性，但不必急于决定。", "rev": "犹豫不决，恐惧未知。过度分析导致瘫痪，相信你的直觉。"}, "权杖3": {"up": "火势蔓延，团队合作或事业的初期成功。你看到了努力的成果，继续推动。", "rev": "进展受阻，小冲突。合作中出现分歧，耐心沟通。"}, "权杖4": {"up": "稳固的成果，庆祝与休整。你暂时安全，可以享受劳动的果实。", "rev": "停滞不前，安逸陷阱。别沉迷现状，寻找新的挑战。"}, "权杖5": {"up": "竞争与冲突，为了地盘而战。你可能面临挑战者，需要捍卫立场。", "rev": "无谓的争斗，或内耗结束。放下骄傲，寻求和解。"}, "权杖6": {"up": "胜利的凯旋，获得认可。你的努力被看见，荣誉和地位提升。", "rev": "失败或骄傲自满。小心从高处跌落，保持谦逊。"}, "权杖7": {"up": "勇气面对压力，即使在劣势也不退缩。你像战士一样坚守阵地。", "rev": "优柔寡断，过度防御。有时候撤退比硬拼更明智。"}, "权杖8": {"up": "火之矢急速飞行，行动迅捷。变化来得突然，你需快速反应。", "rev": "方向错误，或冲突升级。检查你的目标是否值得如此匆忙。"}, "权杖9": {"up": "积蓄力量，最后的防御。你疲惫但不愿倒下，再坚持一下就能看到曙光。", "rev": "崩溃或固执。接受援助，放手让别人分担。"}, "权杖10": {"up": "火之重担，被责任压垮。你可能承担太多，需要燃烧殆尽才能重生。", "rev": "减负后的轻松，或逃避。学会拒绝，保护你的能量。"}, "圣杯1": {"up": "爱意满溢，新的情感开始。友谊、爱情或喜悦流入你的生活，敞开接纳。", "rev": "情绪堵塞，或拒绝付出。你可能害怕受伤而封闭自己，让水流动起来。"}, "圣杯2": {"up": "双向奔赴，灵魂的联结。一段关系进入蜜月期，彼此滋养。", "rev": "关系失衡，或单相思。检视付出与回报是否对等。"}, "圣杯3": {"up": "庆祝与友谊，丰收的喜悦。聚会、婚礼、团队欢庆，快乐加倍。", "rev": "过度放纵，或秘密泄露。小心乐极生悲。"}, "圣杯4": {"up": "厌倦与冷漠，对拥有的不满足。你坐在树荫下，却看不见头顶的圣杯。", "rev": "新视角，重新感恩。尝试转换心态，世界没那么糟。"}, "圣杯5": {"up": "悲伤与失落，眼泪流尽后的空旷。你抓着空杯不放，却看不见身后的桥。", "rev": "疗愈开始，旧路回归。接受失去，未来仍有爱。"}, "圣杯6": {"up": "回忆与怀旧，来自过去的礼物。老友、童年或旧情重现，温柔以待。", "rev": "沉迷过去，或被旧事纠缠。向前看，别让回忆成为枷锁。"}, "圣杯7": {"up": "幻象与选择，众多诱惑让你迷失。你以为每个杯子都是真的，其实只有一个是实在的。", "rev": "清醒，或逃避。脚踏实地，拒绝空想。"}, "圣杯8": {"up": "离开不滋养的关系，勇敢走向未知。你背对旧有的圣杯，独自上路。", "rev": "回头或停滞。确保你不是因为恐惧才离开。"}, "圣杯9": {"up": "梦想成真，心灵满足。你独坐彩虹下，一切都刚刚好。", "rev": "贪心或虚假满足。小心表面的快乐掩盖了真实需求。"}, "圣杯10": {"up": "永恒的幸福，家庭和谐。圣杯的彩虹覆盖家园，爱与丰盛代代相传。", "rev": "家庭纷争或关系破裂。沟通是唯一的解药。"}, "宝剑1": {"up": "思维之剑，清晰的决断。你终于看清了真相，哪怕残酷。", "rev": "混乱或自我欺骗。真相可能伤人，但逃避更糟。"}, "宝剑2": {"up": "盲目的选择，心如迷宫。你蒙着眼举着剑，不知该刺向哪边。", "rev": "犹豫结束，或真相显露。去掉眼罩，选择并不难。"}, "宝剑3": {"up": "心碎之痛，言语如刀。一次争吵或背叛让你承受巨大悲伤。", "rev": "伤口愈合，或原谅。时间会抚平一切。"}, "宝剑4": {"up": "休息与冥想，暂时的避风港。你需要从战斗中抽离，给大脑放个假。", "rev": "焦虑难眠，或逃避现实。适度休息，但别沉溺。"}, "宝剑5": {"up": "卑鄙的胜利，赢了一场空。你为了赢不择手段，却失去了更重要的东西。", "rev": "和解或重新思考。承认错误，有些仗不值得打。"}, "宝剑6": {"up": "远行或过渡，离开风暴中心。你乘船驶向平静，告别过去的纠纷。", "rev": "困在原地，或拒绝离开。即使前路未知，也好过死水。"}, "宝剑7": {"up": "隐藏与策略，偷偷拿走别人的剑。你处在暗中，需要智取而非蛮力。", "rev": "秘密暴露，或良心不安。诚实才是最锋利的剑。"}, "宝剑8": {"up": "束缚与无力，被想法困住。你觉得自己无路可逃，其实是心魔作祟。", "rev": "解脱，或挣脱束缚。你一直都有钥匙。"}, "宝剑9": {"up": "噩梦与焦虑，深夜的恐惧。失眠、担忧、自责循环，最黑的黑夜。", "rev": "希望之光，或求助。别一个人扛，天快亮了。"}, "宝剑10": {"up": "毁灭的结局，彻底的失败。一切崩塌，但死亡也是新生。", "rev": "低谷反弹，或逃避。接受结束才能重新开始。"}, "星币1": {"up": "物质基础，新的事业或财富开端。一颗种子，值得培育。", "rev": "错过机会，或财务不稳。审视你的根基。"}, "星币2": {"up": "平衡与调度，玩弄两枚金币。你需要在工作、家庭、金钱之间周旋。", "rev": "失衡，或压力过大。优先排序，别什么都想要。"}, "星币3": {"up": "匠人精神，团队协作。你的技能被认可，作品逐渐成形。", "rev": "平庸或被低估。再打磨一下细节。"}, "星币4": {"up": "守财与固执，紧握金币不放。你害怕失去，因此拒绝分享。", "rev": "放松控制，或损失。金钱只是工具。"}, "星币5": {"up": "贫困与失落，精神与物质的双重匮乏。你感到被世界抛弃。", "rev": "转机，或求助。总有人愿意拉你一把。"}, "星币6": {"up": "慷慨与施舍，分享财富。你给与别人帮助，或接受馈赠。", "rev": "吝啬，或债务。检查你的付出是否带有条件。"}, "星币7": {"up": "评估与等待，看着长出的庄稼。你需要耐心，不是所有种子都立即结果。", "rev": "急躁，或计划失败。别拔苗助长。"}, "星币8": {"up": "学徒与精进，日复一日雕琢。你要么在埋头苦干，要么在精修技能。", "rev": "无聊，或工作狂。寻找乐趣，劳逸结合。"}, "星币9": {"up": "自给自足，物质丰盛。你拥有花园和美酒，独享宁静富足。", "rev": "依赖他人，或虚假安全。你的安全感应来自于内在。"}, "星币10": {"up": "世代财富，家族传承。你站在祖先的肩膀上，也可以成为后人的根基。", "rev": "破产，或家族纷争。打破恶性循环。"}, "权杖·侍从": {"up": "火信使，热情的新消息。你会收到激动人心的邀请或机会，充满好奇心。", "rev": "延误或幼稚。信息可能不实，再确认一下。"}, "权杖·骑士": {"up": "火之骑士，行动如风。他带来快速的进展或旅行，但缺乏持久力。", "rev": "躁动，或方向错误。小心冲动引起的冲突。"}, "权杖·王后": {"up": "火之女王，自信而温暖。她善于激励他人，是团队的精神领袖。", "rev": "控制欲强，或嫉妒。你的热情可能烫伤别人。"}, "权杖·国王": {"up": "火之国王，成熟且富有远见。他建立帝国，但也懂得休息。", "rev": "独裁，或事业危机。放下权威，多听意见。"}, "圣杯·侍从": {"up": "水信使，情感启蒙。你可能会坠入爱河，或收到艺术灵感。", "rev": "情绪化，或谎言。小心被人利用你的善良。"}, "圣杯·骑士": {"up": "水之骑士，浪漫的追求者。他会为了爱情或理想远行，充满诗意。", "rev": "失望，或逃避。对方可能不靠谱。"}, "圣杯·王后": {"up": "水之女王，直觉与慈悲。她像月亮一样滋养他人，是疗愈者。", "rev": "情绪淹没，或过度敏感。保护你的能量，别当情绪垃圾桶。"}, "圣杯·国王": {"up": "水之国王，冷静的情感掌控者。他成熟温柔，善于倾听。", "rev": "压抑情感，或操控。你可能隐藏真实感受。"}, "宝剑·侍从": {"up": "风信使，警觉的哨兵。他会带来真相或监控信息，但可能不够成熟。", "rev": "流言蜚语，或偷窥。小心口舌之争。"}, "宝剑·骑士": {"up": "风之骑士，言辞犀利。他快速辩论或发起攻击，不留余地。", "rev": "好斗，或伤人。你的话像刀，收一收锋芒。"}, "宝剑·王后": {"up": "风之女王，理智而独立。她能看透谎言，是卓越的咨询师。", "rev": "刻薄，或孤独。你的犀利可能推开关心你的人。"}, "宝剑·国王": {"up": "风之国王，权威的智者。他用逻辑统治，公正不阿。", "rev": "冷酷，或操纵。别忘了人情味。"}, "星币·侍从": {"up": "土信使，勤奋的学生。你正在学习新技能或处理财务事务。", "rev": "懒惰，或错过学习机会。别拖延。"}, "星币·骑士": {"up": "土之骑士，稳健的前行者。他脚踏实地，缓慢但坚定地积累财富。", "rev": "固执，或停滞。你可能太保守。"}, "星币·王后": {"up": "土之女王，丰盛与自然。她连接大地，擅长园艺、理财、照顾家庭。", "rev": "物质主义，或失去根基。别被金钱奴役。"}, "星币·国王": {"up": "土之国王，成功的商业领袖。他稳重、可靠，是财富的象征。", "rev": "贪婪，或破产危机。检查你的资产安全。"}};
+const MAJORS=["愚者","魔术师","女祭司","女皇","皇帝","教皇","恋人","战车","力量","隐士","命运之轮","正义","倒吊人","死神","节制","恶魔","高塔","星星","月亮","太阳","审判","世界"];
+const SUITS=["权杖","圣杯","宝剑","星币"];
+const CARDS=[];
+MAJORS.forEach(function(n,i){CARDS.push({id:i+1,name:n,suit:"大阿卡纳"});});
+SUITS.forEach(function(s){
+  for(var i=1;i<=10;i++) CARDS.push({id:CARDS.length+1,name:s+i,suit:s});
+  ["侍从","骑士","王后","国王"].forEach(function(c){CARDS.push({id:CARDS.length+1,name:s+"·"+c,suit:s});});
+});
+const POS=[{cn:"过去",en:"Past",rn:"I"},{cn:"现在",en:"Present",rn:"II"},{cn:"未来",en:"Future",rn:"III"}];
+function imgUrl(id){return "./"+String(id-1).padStart(2,"0")+".png";}
+
+const S={q:"",cards:[],revs:[],pages:[],idx:0,front:"A",busy:false};
+const bodyA=document.getElementById("bodyA"), bodyB=document.getElementById("bodyB");
+const sheetA=document.getElementById("sheetA"), sheetB=document.getElementById("sheetB");
+const book=document.getElementById("book"), cover=document.getElementById("cover"), hint=document.getElementById("hint");
+
+function meaningOf(card,rev){ const m=MEANINGS[card.name]||{up:"",rev:""}; return rev?m.rev:m.up; }
+function splitFirst(t){ const m=t.match(/^[^。！？]*[。！？]/); if(!m) return [t,""]; return [m[0], t.slice(m[0].length).trim()]; }
+
+function drawSpread(){
+  const pool=CARDS.slice();
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
+  S.cards=pool.slice(0,3); S.revs=S.cards.map(function(){return Math.random()<0.5;});
+}
+
+function askHTML(){
+  return '<div class="runhead"><span>Liber Sortium</span><span>Quaestio</span></div>'+
+  '<div class="main">'+
+    '<div class="plateno">The Question</div>'+
+    '<div class="qwrap rise r1"><label>You ask</label><input id="qInput" placeholder="写下你要问的那件事" autocomplete="off" value="'+S.q.replace(/"/g,"&quot;")+'"></div>'+
+    '<div class="stamps rise r2">'+
+      ['感情发展','事业方向','财运状况','人际关系','学业进展','自我成长'].map(function(t){
+        return '<button class="stamp" data-q="'+t+'">'+({'感情发展':'感情','事业方向':'事业','财运状况':'财运','人际关系':'人际','学业进展':'学业','自我成长':'成长'})[t]+'</button>';
+      }).join('')+
+    '</div>'+
+    '<p class="rise r3" style="margin:20px 4px 0;font-size:.78rem;line-height:1.95;color:#5C4B39;text-align:center;">把问题写在纸上，牌才知道要回答什么。</p>'+
+    '<div class="drawzone rise r4"><button id="drawBtn">抽 牌</button></div>'+
+  '</div><div class="folio">— 序 —</div>';
+}
+
+function cardHTML(i){
+  const c=S.cards[i], rev=S.revs[i], pos=POS[i], text=meaningOf(c,rev);
+  const parts=splitFirst(text);
+  return '<div class="runhead"><span>Liber Sortium</span><span>'+pos.en+'</span></div>'+
+  '<div class="main">'+
+    '<div class="plateno rise r1">'+pos.cn+' · Plate '+pos.rn+'</div>'+
+    '<div class="art rise r1"><img src="'+imgUrl(c.id)+'" alt="'+c.name+'"><div class="glaze"></div></div>'+
+    '<div class="band rise r2"><div class="en">'+c.name+' — '+(rev?'Reversed':'Upright')+'</div><div class="cn">'+parts[0]+'</div></div>'+
+    '<div class="moral rise r3"><b>牌 说</b>'+parts[1]+'</div>'+
+  '</div><div class="folio rise r4">— '+pos.rn+' —</div>';
+}
+
+function synth(){
+  const fire=S.cards.filter(function(c){return c.suit==="权杖";}).length;
+  const water=S.cards.filter(function(c){return c.suit==="圣杯";}).length;
+  const air=S.cards.filter(function(c){return c.suit==="宝剑";}).length;
+  const earth=S.cards.filter(function(c){return c.suit==="星币";}).length;
+  let energy="四元素俱在，宜顺势而为。";
+  if(fire>=2) energy="火气偏盛：你已经知道要动了，缺的只是动。";
+  else if(water>=2) energy="水气偏盛：先把情绪安放好，再谈决定。";
+  else if(air>=2) energy="风气偏盛：想得多，落笔少，先写下来再走一步。";
+  else if(earth>=2) energy="土气偏盛：稳是优点，别稳成不动。";
+  const revs=S.revs.filter(Boolean).length;
+  const advice = revs>=2 ? "逆位过半——这三天不做决定，比硬冲更有用。" : "三张牌里没有一张在催你，按自己的节奏走。";
+  return '<p class="rise r2"><b>牌 阵</b>三张牌分别是「'+S.cards[0].name+'」「'+S.cards[1].name+'」「'+S.cards[2].name+'」。同一副牌，落在过去、现在、未来三个位置上，说的其实是同一件事的三层。</p>'+
+         '<p class="rise r3"><b>能 量</b>'+energy+'</p>'+
+         '<p class="rise r3"><b>一 句</b>'+advice+'</p>';
+}
+
+function endHTML(){
+  return '<div class="endp">'+
+    '<div class="runhead" style="position:absolute;top:22px;left:26px;right:26px;"><span>Liber Sortium</span><span>Finis</span></div>'+
+    '<h2 class="rise r1">牌说完了</h2>'+
+    '<div class="lat rise r1">Here the reading rests</div>'+
+    '<div class="orn rise r2"><i></i><svg width="20" height="8" viewBox="0 0 20 8" fill="none"><path d="M10 1 L12.4 4 L10 7 L7.6 4 Z" fill="rgba(140,58,46,.6)"/></svg><i></i></div>'+
+    '<div class="sum">'+synth()+'</div>'+
+    '<button class="again rise r4" id="againBtn">再 问 一 次</button>'+
+    '<div class="folio rise r4" style="margin-top:22px;">— 终 —</div>'+
+  '</div>';
+}
+
+function htmlFor(p){
+  if(p.kind==="ask") return askHTML();
+  if(p.kind==="card") return cardHTML(p.i);
+  return endHTML();
+}
+
+function paint(){
+  const el = S.front==="A" ? bodyA : bodyB;
+  el.innerHTML = htmlFor(S.pages[S.idx]);
+  const sheet = S.front==="A" ? sheetA : sheetB;
+  sheet.classList.remove("enter"); void sheet.offsetWidth; sheet.classList.add("enter");
+  bind(S.pages[S.idx], el);
+}
+
+function bind(p, el){
+  if(p.kind==="ask"){
+    const input=el.querySelector("#qInput");
+    el.querySelectorAll(".stamp").forEach(function(s){
+      s.onclick=function(e){ e.stopPropagation();
+        el.querySelectorAll(".stamp").forEach(function(x){x.classList.remove("on");});
+        s.classList.add("on"); input.value=s.dataset.q;
+      };
+    });
+    el.querySelector("#drawBtn").onclick=function(e){
+      e.stopPropagation();
+      const v=(input.value||"").trim(); if(!v){ input.focus(); return; }
+      S.q=v; drawSpread();
+      S.pages=[{kind:"ask"},{kind:"card",i:0},{kind:"card",i:1},{kind:"card",i:2},{kind:"fin"}];
+      S.idx=1; turn(1,true);
+    };
+  }
+  if(p.kind==="fin"){
+    const a=el.querySelector("#againBtn");
+    if(a) a.onclick=function(e){ e.stopPropagation(); S.pages=[{kind:"ask"}]; S.idx=0; turn(-1,true); };
+  }
+}
+
+function turn(dir, force){
+  if(S.busy) return;
+  const next=S.idx+dir;
+  if(!force){
+    if(next<0 || next>S.pages.length-1) return;
+  } else {
+    if(next<0) return;
+  }
+  S.busy=true;
+  const curBody=S.front==="A"?bodyA:bodyB, curSheet=S.front==="A"?sheetA:sheetB;
+  const nextSheet=S.front==="A"?sheetB:sheetA, nextBody=S.front==="A"?bodyB:bodyA;
+  if(force && next>S.pages.length-1){ S.busy=false; return; }
+  S.idx=next;
+  nextBody.innerHTML=htmlFor(S.pages[S.idx]);
+  nextSheet.style.display="block"; nextSheet.style.transform="rotateY(0deg)"; nextSheet.style.zIndex=1;
+  nextSheet.classList.remove("enter"); void nextSheet.offsetWidth; nextSheet.classList.add("enter");
+  curSheet.style.zIndex=2;
+  bind(S.pages[S.idx], nextBody);
+  if(dir>0){
+    curSheet.classList.add("turning");
+    requestAnimationFrame(function(){ curSheet.style.transform="rotateY(-176deg)"; curSheet.style.boxShadow="60px 0 80px -40px rgba(0,0,0,.75)"; });
+    setTimeout(function(){
+      curSheet.classList.remove("turning"); curSheet.style.display="none";
+      curSheet.style.transform="rotateY(0deg)"; curSheet.style.boxShadow="";
+      finish(nextSheet);
+    },820);
+  } else {
+    nextSheet.style.transform="rotateY(-176deg)"; nextSheet.classList.add("turning-in"); nextSheet.style.zIndex=3;
+    void nextSheet.offsetWidth;
+    requestAnimationFrame(function(){ nextSheet.style.transform="rotateY(0deg)"; });
+    setTimeout(function(){ nextSheet.classList.remove("turning-in"); finish(nextSheet); },820);
+  }
+  hint.classList.add("hide");
+}
+
+function finish(newSheet){
+  S.front = S.front==="A" ? "B" : "A";
+  const other = S.front==="A" ? sheetB : sheetA;
+  other.style.display="none"; other.style.zIndex=1;
+  newSheet.style.zIndex=2;
+  newSheet.classList.remove("enter"); void newSheet.offsetWidth; newSheet.classList.add("enter");
+  S.busy=false;
+  if(navigator.vibrate) navigator.vibrate(8);
+}
+
+cover.onclick=function(){
+  cover.classList.add("open");
+  setTimeout(function(){
+    cover.style.display="none"; book.classList.add("on");
+    S.pages=[{kind:"ask"}]; S.idx=0; S.front="A";
+    sheetA.style.display="block"; sheetB.style.display="none";
+    paint(); hint.classList.remove("hide");
+  },700);
+};
+
+book.addEventListener("click",function(e){
+  if(S.busy) return;
+  if(e.target.closest("input,button,.qwrap,.stamps,.drawzone,.again")) return;
+  if(e.target.closest(".endp")) return;
+  const r=book.getBoundingClientRect(), x=e.clientX-r.left;
+  turn(x>r.width*0.38?1:-1);
+});
+
+let sx=0,sy=0;
+document.addEventListener("touchstart",function(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+document.addEventListener("touchend",function(e){
+  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)<45||Math.abs(dy)>Math.abs(dx)) return;
+  turn(dx<0?1:-1);
+},{passive:true});
+</script>
+</body>
+</html>

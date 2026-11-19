@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0806">
+<title>星尘古牌 · 屋（分层场景）</title>
+<style>
+@font-face{font-family:"Xingchen Serif";src:url("./assets/fonts/noto-serif-sc-subset.woff2") format("woff2");font-display:swap}
+:root{
+  --serif:"Xingchen Serif","Songti SC","Noto Serif CJK SC",Georgia,serif;
+  --paper:#EFE3C8; --ink:#120c08; --accent:#7A2E2A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#070504;overflow:hidden}
+body{font-family:var(--serif);display:flex;align-items:center;justify-content:center}
+
+.stage{position:relative;width:100%;height:100dvh;max-width:560px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 80% at 50% 40%,#2a211a,#0b0806 70%)}
+
+/* 纸底 */
+.paper{position:absolute;inset:-4%;
+  background:
+    radial-gradient(60% 40% at 50% 38%, #f2e7cd 0%, #e6d7b6 46%, #cdbb97 100%);
+}
+.paper::after{content:"";position:absolute;inset:0;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E")}
+
+.layer{position:absolute;will-change:transform;pointer-events:none;background-repeat:no-repeat;background-position:center bottom;background-size:contain}
+.l-far{left:-10%;right:-10%;bottom:44%;height:34%;
+  background-image:url("./assets/scene/room/far.png");background-position:center bottom}
+.l-city{left:50%;transform:translateX(-50%);bottom:30%;width:104%;height:44%;
+  background-image:url("./assets/scene/room/city.png");background-position:center bottom;opacity:.95}
+.l-wall{left:50%;transform:translateX(-50%);top:-10%;width:88%;height:72%;
+  background-image:url("./assets/scene/room/wall.png");background-position:center top}
+.l-ground{left:-6%;right:-6%;bottom:0%;height:26%;
+  background-image:url("./assets/scene/room/ground.png");background-position:center bottom}
+.l-curtain{left:-14%;top:-8%;width:40%;height:118%;
+  background-image:url("./assets/scene/room/curtain.png");background-position:left top}
+.l-thorn{left:34%;top:-12%;width:78%;height:64%;
+  background-image:url("./assets/scene/room/thorn.png");background-position:center top;filter:brightness(.55)}
+
+/* 窗内光 */
+.glow{position:absolute;left:50%;top:34%;width:52%;height:34%;transform:translateX(-50%);
+  background:radial-gradient(closest-side,rgba(255,226,170,.34),rgba(255,200,130,.10) 55%,transparent 76%);
+  mix-blend-mode:screen;filter:blur(10px);pointer-events:none}
+
+/* 牌 */
+.cards{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;gap:14px;z-index:20}
+.card{width:78px;height:122px;perspective:600px;cursor:pointer}
+.card .in{position:relative;width:100%;height:100%;transform-style:preserve-3d;
+  transition:transform .62s cubic-bezier(.4,.05,.2,1)}
+.card.flip .in{transform:rotateY(180deg)}
+.f{position:absolute;inset:0;backface-visibility:hidden;border-radius:2px;
+  border:1px solid rgba(239,227,200,.5);box-shadow:0 16px 26px -14px rgba(0,0,0,.9)}
+.f.back{background:#140e0b url("./beibu.png") center/cover no-repeat;filter:sepia(.4) contrast(1.1) brightness(.55)}
+.f.front{transform:rotateY(180deg);background:#efe3c8 url("./00.png") center/cover no-repeat}
+.card:nth-child(2) .f.front{background-image:url("./02.png")}
+.card:nth-child(3) .f.front{background-image:url("./10.png")}
+
+/* 后期 */
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:30;
+  background:radial-gradient(110% 70% at 50% 44%,transparent 26%,rgba(10,7,5,.88) 100%)}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:31;opacity:.16;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* UI */
+.title{position:absolute;left:0;right:0;top:7.5%;text-align:center;z-index:40;pointer-events:none;
+  font-size:20px;letter-spacing:.44em;text-indent:.44em;color:#f2e6c9;
+  text-shadow:0 2px 18px rgba(0,0,0,.9),0 0 40px rgba(0,0,0,.6)}
+.sub{position:absolute;left:0;right:0;top:16.5%;text-align:center;z-index:40;pointer-events:none;
+  font-size:9.5px;letter-spacing:.34em;text-indent:.34em;color:rgba(242,230,201,.55)}
+.hint{position:absolute;left:0;right:0;bottom:8%;text-align:center;z-index:40;pointer-events:none;
+  font-size:10px;letter-spacing:.3em;color:rgba(242,230,201,.5)}
+.btn{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);z-index:41;
+  padding:10px 26px;border:1px solid rgba(239,227,200,.45);border-radius:2px;
+  background:rgba(18,12,8,.55);color:#f2e6c9;font-family:var(--serif);
+  font-size:11px;letter-spacing:.3em;text-indent:.3em;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="paper"></div>
+  <div class="layer l-far"  data-d="0.10"></div>
+  <div class="layer l-city" data-d="0.22"></div>
+  <div class="glow"></div>
+  <div class="layer l-wall" data-d="0.40"></div>
+  <div class="layer l-ground" data-d="0.55"></div>
+  <div class="layer l-curtain" data-d="0.72"></div>
+  <div class="layer l-thorn" data-d="1.00"></div>
+
+  <div class="cards" id="cards">
+    <div class="card"><div class="in"><div class="f back"></div><div class="f front"></div></div></div>
+    <div class="card"><div class="in"><div class="f back"></div><div class="f front"></div></div></div>
+    <div class="card"><div class="in"><div class="f back"></div><div class="f front"></div></div></div>
+  </div>
+
+  <div class="title">星 尘 古 牌</div>
+  <div class="sub">三 张 牌 · 一 个 问 题</div>
+  <button class="btn" id="enterBtn">推 门 进 去</button>
+  <div class="hint" id="hint">轻触牌面翻开</div>
+
+  <div class="vignette"></div>
+  <div class="grain"></div>
+</div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var layers=[].slice.call(document.querySelectorAll('.layer'));
+  var cards=[].slice.call(document.querySelectorAll('.card'));
+  var enterBtn=document.getElementById('enterBtn');
+  var hint=document.getElementById('hint');
+
+  var cam={z:1.0, x:0, y:0};
+  var target={z:1.0, x:0, y:0};
+  var started=false, t0=0;
+
+  function apply(){
+    for(var i=0;i<layers.length;i++){
+      var el=layers[i], d=parseFloat(el.dataset.d)||0.4;
+      var s=1+(cam.z-1)*(0.35+0.65*d);
+      var tx=-cam.x*d*30-(el.classList.contains('l-city')?0:0);
+      var ty=-cam.y*d*24;
+      var base=el.classList.contains('l-city')?'translateX(-50%) ':'';
+      el.style.transform=base+'translate3d('+tx.toFixed(2)+'px,'+ty.toFixed(2)+'px,0) scale('+s.toFixed(4)+')';
+    }
+  }
+
+  var pmx=0,pmy=0;
+  stage.addEventListener('pointermove',function(e){
+    var r=stage.getBoundingClientRect();
+    pmx=((e.clientX-r.left)/r.width-0.5)*0.22;
+    pmy=((e.clientY-r.top)/r.height-0.5)*0.16;
+  });
+
+  function loop(t){
+    if(!started){
+      cam.z=1.0+Math.sin(t/6000)*0.006;
+      cam.x=pmx; cam.y=pmy+Math.sin(t/7000)*0.01;
+    } else {
+      var k=Math.min(1,(t-t0)/6000);
+      var e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      cam.z=1.0+e*0.16;
+      cam.x=pmx*(1-e*0.5);
+      cam.y=pmy*(1-e*0.5)+e*0.04;
+    }
+    apply();
+    requestAnimationFrame(loop);
+  }
+
+  enterBtn.addEventListener('click',function(){
+    started=true; t0=performance.now();
+    enterBtn.style.transition='opacity .6s'; enterBtn.style.opacity='0';
+    setTimeout(function(){enterBtn.style.display='none';},650);
+    hint.textContent='轻触牌面翻开';
+  });
+
+  var flipped=0;
+  cards.forEach(function(c){
+    c.addEventListener('click',function(){
+      if(c.classList.contains('flip')) return;
+      c.classList.add('flip'); flipped++;
+      if(flipped===3) hint.textContent='三张牌都翻开了';
+    });
+  });
+
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
