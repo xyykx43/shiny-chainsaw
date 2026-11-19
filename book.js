@@ -176,14 +176,14 @@ function rose(x, y, s, col) {
     <path d="M3.4 7.6 q4.6 5.6 1.6 9.6 q-5.4 -2.4 -1.6 -9.6 Z" fill="${C.ink}"/>
   </g>`;
 }
-function tree(x, base, h, w, seed, col = C.ink) {
+function tree(x, base, h, w, seed, col = C.ink, rimOn = true) {
   const r = R(seed);
   const rim = `stroke="${C.paper}" stroke-width=".8" fill="none" opacity=".34"`;
   let g = `<path d="M${x-w*.14} ${base} L${x-w*.04} ${base-h*.52} L${x+w*.04} ${base-h*.52} L${x+w*.14} ${base} Z" fill="${col}"/>`;
   const blobs = [[0,-h*.55,w*.55,h*.22],[ -w*.3,-h*.72,w*.42,h*.17],[ w*.32,-h*.7,w*.42,h*.17],[0,-h*.86,w*.28,h*.13]];
-  blobs.forEach(([ox,oy,rx,ry],i)=>{
+  blobs.forEach(([ox,oy,rx,ry]) => {
     g += `<ellipse cx="${x+ox}" cy="${base+oy}" rx="${rx}" ry="${ry}" fill="${col}"/>`;
-    g += `<ellipse cx="${x+ox}" cy="${base+oy}" rx="${rx}" ry="${ry}" ${rim}/>`;
+    if (rimOn) g += `<ellipse cx="${x+ox}" cy="${base+oy}" rx="${rx}" ry="${ry}" ${rim}/>`;
   });
   return g;
 }
@@ -351,108 +351,128 @@ function sceneRoom(idle) {
   </svg>`;
 }
 
+
+/* 天际线：一段连续的建筑轮廓（墙、尖顶、山墙、塔），填成整片剪影 */
+function skyline(seed, base, scale, fill, detail) {
+  const r = R(seed);
+  let d = `M-20 ${base} `;
+  let x = -20;
+  while (x < 410) {
+    const w = 24 + r() * 40;
+    const h = (62 + r() * 146) * scale;
+    const style = r();
+    const top = base - h;
+    d += `L${x.toFixed(1)} ${top.toFixed(1)} `;
+    if (style < .22) {                      // 尖顶塔
+      d += `L${(x + w / 2).toFixed(1)} ${(top - h * .34).toFixed(1)} L${(x + w).toFixed(1)} ${top.toFixed(1)} `;
+    } else if (style < .44) {               // 山墙
+      d += `L${(x + w * .18).toFixed(1)} ${(top - h * .2).toFixed(1)} L${(x + w * .82).toFixed(1)} ${(top - h * .2).toFixed(1)} L${(x + w).toFixed(1)} ${top.toFixed(1)} `;
+    } else if (style < .6) {                // 圆顶
+      d += `Q${(x + w / 2).toFixed(1)} ${(top - h * .28).toFixed(1)} ${(x + w).toFixed(1)} ${top.toFixed(1)} `;
+    } else if (style < .74) {               // 阶梯垛口
+      d += `L${(x + w * .3).toFixed(1)} ${(top - 6 * scale).toFixed(1)} L${(x + w * .3).toFixed(1)} ${top.toFixed(1)} L${(x + w * .7).toFixed(1)} ${top.toFixed(1)} L${(x + w * .7).toFixed(1)} ${(top - 6 * scale).toFixed(1)} L${(x + w).toFixed(1)} ${top.toFixed(1)} `;
+    } else {                                // 平顶
+      d += `L${(x + w).toFixed(1)} ${top.toFixed(1)} `;
+    }
+    x += w;
+  }
+  d += `L410 ${base + 200} L-20 ${base + 200} Z`;
+  let out = `<path d="${d}" fill="${fill}"/>`;
+  if (detail) {
+    // 少量窗洞：让剪影不是死块
+    let win = '';
+    const rr = R(seed + 77);
+    for (let i = 0; i < 26; i++) {
+      const wx = 10 + rr() * 370, wy = base - 20 - rr() * 70 * scale;
+      win += `<rect x="${wx.toFixed(1)}" y="${wy.toFixed(1)}" width="${(2.2 * scale).toFixed(1)}" height="${(3.6 * scale).toFixed(1)}" fill="${detail}" opacity="${(.25 + rr() * .35).toFixed(2)}"/>`;
+    }
+    out += win;
+  }
+  return out;
+}
+
 /* ============================ 三幕：舞台剧 ============================ */
 /* 每一个建筑都是一张"蒙版剪纸片"：硬边平涂 + 受光侧亮边 + 剪口高光 */
-function flat(kind, x, base, s, tint, seed) {
+function flat(kind, x, base, s, tint, seed, far) {
   x = +x; base = +base; s = +s;
-  const r = R(seed), h = 104 * s, w = 34 * s;
-  const FILL = '#0A0709', RIM = tint;
-  const edge = `stroke="${C.paper}" stroke-width="${1.0 * s}" opacity=".42" fill="none"`;
-  const rim = `stroke="${C.paper}" stroke-width="${1.0 * s}" fill="none" opacity=".30"`;
+  const r = R(seed);
+  const h = 122 * s, w = 40 * s;
+  const FILL = far ? '#2A2340' : '#0A0709';
+  const RIM = far ? '' : `stroke="${C.paper}" stroke-width="${(0.9*s).toFixed(2)}" fill="none" opacity=".24"`;
+  const ACC = far ? 'none' : tint;
+  const tip = (d) => `<path d="${d}" ${RIM}/>`;
   switch (kind) {
     case 'tower':
       return `<g><path d="M${x-w/2} ${base} L${x-w/2} ${base-h} L${x} ${base-h*1.42} L${x+w/2} ${base-h} L${x+w/2} ${base} Z" fill="${FILL}"/>
-        <path d="M${x-w/2} ${base} L${x-w/2} ${base-h} L${x} ${base-h*1.42} L${x+w/2} ${base-h} L${x+w/2} ${base}" ${rim}/>
-        <path d="M${x-w/2} ${base-h*.55} L${x-w/2} ${base-h*.78}" ${edge}/>
-        <path d="M${x} ${base-h*.2} L${x} ${base-h*.34}" stroke="${RIM}" stroke-width="${1.4*s}" opacity=".7"/>
-        <path d="M${x-w*.16} ${base-h*.2} L${x-w*.16} ${base-h*.34}" stroke="${RIM}" stroke-width="${1.2*s}" opacity=".5"/></g>`;
+        ${tip(`M${x-w/2} ${base} L${x-w/2} ${base-h} L${x} ${base-h*1.42} L${x+w/2} ${base-h} L${x+w/2} ${base}`)}
+        <rect x="${x-w*.1}" y="${base-h*.42}" width="${w*.2}" height="${h*.1}" fill="${ACC}" opacity="${far?0:.75}"/></g>`;
     case 'gate':
-      return `<g><path d="M${x-w*.85} ${base} L${x-w*.85} ${base-h*.6} a${w*.85} ${w*.7} 0 0 1 ${w*1.7} 0 L${x+w*.85} ${base} Z" fill="${FILL}"/>
-        <path d="M${x-w*.85} ${base} L${x-w*.85} ${base-h*.6} a${w*.85} ${w*.7} 0 0 1 ${w*1.7} 0 L${x+w*.85} ${base}" ${rim}/>
-        <path d="M${x-w*.5} ${base} L${x-w*.5} ${base-h*.5} a${w*.5} ${w*.42} 0 0 1 ${w} 0 L${x+w*.5} ${base}" fill="${RIM}" opacity=".16"/></g>`;
+      return `<g><path d="M${x-w*.8} ${base} L${x-w*.8} ${base-h*.62} a${w*.8} ${w*.66} 0 0 1 ${w*1.6} 0 L${x+w*.8} ${base} Z" fill="${FILL}"/>
+        ${tip(`M${x-w*.8} ${base} L${x-w*.8} ${base-h*.62} a${w*.8} ${w*.66} 0 0 1 ${w*1.6} 0 L${x+w*.8} ${base}`)}</g>`;
     case 'obelisk':
-      return `<g><path d="M${x-w*.2} ${base} L${x-w*.12} ${base-h} L${x+w*.12} ${base-h} L${x+w*.2} ${base} Z" fill="${FILL}"/>
-        <path d="M${x-w*.2} ${base} L${x-w*.12} ${base-h} L${x+w*.12} ${base-h} L${x+w*.2} ${base}" ${rim}/>
-        <path d="M${x-w*.12} ${base-h} L${x+w*.12} ${base-h}" ${edge}/></g>`;
+      return `<g><path d="M${x-w*.18} ${base} L${x-w*.1} ${base-h} L${x+w*.1} ${base-h} L${x+w*.18} ${base} Z" fill="${FILL}"/>
+        ${tip(`M${x-w*.18} ${base} L${x-w*.1} ${base-h} L${x+w*.1} ${base-h} L${x+w*.18} ${base}`)}</g>`;
     case 'tree':
-      return `<g>${tree(x, base, h*1.15, w*.95, seed, FILL)}
-        <path d="M${x-w*.5} ${base-h*.72} q${w*.5} ${-h*.18} ${w} 0" ${rim}/></g>`;
+      return `<g>${tree(x, base, h*1.1, w*.9, seed, FILL, false)}</g>`;
     case 'deadwood':
-      return `<g><path d="M${x} ${base} L${x} ${base-h*.95}" stroke="${FILL}" stroke-width="${5*s}"/>
-        <path d="M${x} ${base-h*.55} l${w*.95} ${-h*.22}" stroke="${FILL}" stroke-width="${3*s}"/>
-        <path d="M${x} ${base-h*.74} l${-w*.85} ${-h*.18}" stroke="${FILL}" stroke-width="${2.6*s}"/>
-        <path d="M${x} ${base-h*.95} l${w*.4} ${-h*.1}" stroke="${RIM}" stroke-width="${1.2*s}" opacity=".7"/></g>`;
+      return `<g><path d="M${x} ${base} L${x} ${base-h*.92}" stroke="${FILL}" stroke-width="${(3.4*s).toFixed(2)}"/>
+        <path d="M${x} ${base-h*.52} l${w*.9} ${-h*.2}" stroke="${FILL}" stroke-width="${(2.2*s).toFixed(2)}"/>
+        <path d="M${x} ${base-h*.72} l${-w*.8} ${-h*.16}" stroke="${FILL}" stroke-width="${(2*s).toFixed(2)}"/></g>`;
     case 'cliff':
-      return `<g><path d="M${x-w*1.8} ${base} L${x-w*.55} ${base-h*.55} L${x} ${base-h*.3} L${x+w*.9} ${base-h*.68} L${x+w*1.8} ${base}" fill="${FILL}"/>
-        <path d="M${x-w*1.8} ${base} L${x-w*.55} ${base-h*.55} L${x} ${base-h*.3} L${x+w*.9} ${base-h*.68} L${x+w*1.8} ${base}" ${rim}/></g>`;
-    case 'moon':
-      return `<g><circle cx="${x}" cy="${base-h*.78}" r="${15*s}" fill="${C.paper}"/>
-        <circle cx="${x+6*s}" cy="${base-h*.8}" r="${13*s}" fill="${FILL}"/></g>`;
-    case 'sun':
-      return `<g><circle cx="${x}" cy="${base-h*.8}" r="${15*s}" fill="${C.ochre}"/>
-        ${Array.from({length:12},(_,i)=>{const a=i/12*Math.PI*2;return `<path d="M${x+Math.cos(a)*19*s} ${base-h*.8+Math.sin(a)*19*s} L${x+Math.cos(a)*27*s} ${base-h*.8+Math.sin(a)*27*s}" stroke="${C.ochre}" stroke-width="${1.5*s}" opacity=".75"/>`}).join('')}</g>`;
+      return `<g><path d="M${x-w*1.7} ${base} L${x-w*.5} ${base-h*.5} L${x} ${base-h*.28} L${x+w*.85} ${base-h*.6} L${x+w*1.7} ${base}" fill="${FILL}"/>
+        ${tip(`M${x-w*1.7} ${base} L${x-w*.5} ${base-h*.5} L${x} ${base-h*.28} L${x+w*.85} ${base-h*.6} L${x+w*1.7} ${base}`)}</g>`;
+    case 'moon': return `<circle cx="${x}" cy="${base-h*.75}" r="${12*s}" fill="${C.paper}"/>`;
+    case 'sun': return `<circle cx="${x}" cy="${base-h*.75}" r="${13*s}" fill="${C.ochre}"/>`;
     case 'star':
-      return `<g><path d="M${x} ${base-h*1.0} l${2.6*s} ${6.4*s} l${6.4*s} ${2.6*s} l${-6.4*s} ${2.6*s} l${-2.6*s} ${6.4*s} l${-2.6*s} ${-6.4*s} l${-6.4*s} ${-2.6*s} l${6.4*s} ${-2.6*s} Z" fill="${C.paper}"/></g>`;
+      return `<path d="M${x} ${base-h*.9} l${2.2*s} ${5.4*s} l${5.4*s} ${2.2*s} l${-5.4*s} ${2.2*s} l${-2.2*s} ${5.4*s} l${-2.2*s} ${-5.4*s} l${-5.4*s} ${-2.2*s} l${5.4*s} ${-2.2*s} Z" fill="${C.paper}"/>`;
     case 'wheel':
-      return `<g><circle cx="${x}" cy="${base-h*.52}" r="${w*1.05}" fill="${FILL}" stroke="${RIM}" stroke-width="${1.8*s}"/>
-        ${Array.from({length:8},(_,i)=>{const a=i/8*Math.PI*2;return `<path d="M${x} ${base-h*.52} L${x+Math.cos(a)*w*1.05} ${base-h*.52+Math.sin(a)*w*1.05}" stroke="${RIM}" stroke-width="${1.1*s}" opacity=".55"/>`}).join('')}
-        <circle cx="${x}" cy="${base-h*.52}" r="${w*.22}" fill="${C.paper}" opacity=".8"/></g>`;
+      return `<g><circle cx="${x}" cy="${base-h*.5}" r="${w*.95}" fill="${FILL}" ${RIM}/>
+        ${Array.from({length:6},(_,i)=>{const a=i/6*Math.PI*2;return `<path d="M${x} ${base-h*.5} L${(x+Math.cos(a)*w*.95).toFixed(1)} ${(base-h*.5+Math.sin(a)*w*.95).toFixed(1)}" stroke="${far?'#3A3048':C.paper}" stroke-width="${(0.8*s).toFixed(2)}" opacity=".3"/>`}).join('')}</g>`;
     case 'garden':
-      return `<g>${[0,1,2,3,4].map(i=>`<path d="M${x-w+i*w*.5} ${base} q${w*.1} ${-h*.3} 0 ${-h*.46}" stroke="${FILL}" stroke-width="${2.4*s}"/>`).join('')}
-        ${[0,1,2,3,4].map(i=>`<circle cx="${x-w+i*w*.5}" cy="${base-h*.5}" r="${3.2*s}" fill="${RIM}"/>`).join('')}</g>`;
+      return `<g>${[0,1,2,3].map(i=>`<path d="M${x-w+i*w*.6} ${base} q${w*.1} ${-h*.26} 0 ${-h*.4}" stroke="${FILL}" stroke-width="${(2.2*s).toFixed(2)}"/>`).join('')}
+        ${far?'':[0,1,2,3].map(i=>`<circle cx="${x-w+i*w*.6}" cy="${base-h*.44}" r="${(2.4*s).toFixed(2)}" fill="${ACC}"/>`).join('')}</g>`;
     case 'fire':
-      return `<g><path d="M${x} ${base} q${8*s} ${-h*.28} 0 ${-h*.52} q${-8*s} ${-h*.22} 0 ${-h*.56}" fill="none" stroke="${C.ochre}" stroke-width="${2.6*s}" opacity=".95"/>
-        <path d="M${x} ${base} q${4*s} ${-h*.14} 0 ${-h*.26}" fill="none" stroke="${C.paperHi}" stroke-width="${1.4*s}" opacity=".8"/></g>`;
+      return `<g><path d="M${x} ${base} q${7*s} ${-h*.26} 0 ${-h*.48} q${-7*s} ${-h*.2} 0 ${-h*.5}" fill="none" stroke="${C.ochre}" stroke-width="${(2.2*s).toFixed(2)}" opacity=".9"/></g>`;
     case 'rain':
-      return `<g>${Array.from({length:14},(_,i)=>{const xx=x-w*.9+i*w*.13, yy=base-h*(.35+r()*.5);return `<path d="M${xx} ${yy} L${xx-4*s} ${yy+18*s}" stroke="${C.paper}" stroke-width="1" opacity=".28"/>`}).join('')}</g>`;
+      return `<g>${Array.from({length:10},(_,i)=>{const xx=x-w*.8+i*w*.16, yy=base-h*(.3+r()*.5);return `<path d="M${xx.toFixed(1)} ${yy.toFixed(1)} L${(xx-3*s).toFixed(1)} ${(yy+14*s).toFixed(1)}" stroke="${C.paper}" stroke-width=".9" opacity=".22"/>`}).join('')}</g>`;
     case 'veil':
-      return `<g><path d="M${x-w} ${base-h} L${x+w} ${base-h} L${x+w*.72} ${base} L${x-w*.72} ${base} Z" fill="${FILL}" opacity=".92"/>
-        <path d="M${x-w*.25} ${base-h} L${x-w*.25} ${base}" stroke="${RIM}" stroke-width="1.2" opacity=".6"/>
-        <path d="M${x+w*.3} ${base-h} L${x+w*.3} ${base}" stroke="${RIM}" stroke-width="1" opacity=".4"/></g>`;
+      return `<g><path d="M${x-w} ${base-h} L${x+w} ${base-h} L${x+w*.72} ${base} L${x-w*.72} ${base} Z" fill="${FILL}"/>
+        ${tip(`M${x-w} ${base-h} L${x+w} ${base-h} L${x+w*.72} ${base} L${x-w*.72} ${base}`)}</g>`;
     case 'pillar':
-      return `<g><rect x="${x-w*.28}" y="${base-h}" width="${w*.56}" height="${h}" fill="${FILL}"/>
-        <rect x="${x-w*.44}" y="${base-h-4*s}" width="${w*.88}" height="${4*s}" fill="${RIM}" opacity=".9"/>
-        <rect x="${x-w*.44}" y="${base-4*s}" width="${w*.88}" height="${4*s}" fill="${RIM}" opacity=".9"/>
-        <path d="M${x+w*.28} ${base-h} L${x+w*.28} ${base}" stroke="${C.paper}" stroke-width=".9" opacity=".35"/></g>`;
+      return `<g><rect x="${x-w*.26}" y="${base-h}" width="${w*.52}" height="${h}" fill="${FILL}"/>
+        <rect x="${x-w*.42}" y="${base-h-3*s}" width="${w*.84}" height="${3*s}" fill="${far?'#3A3048':C.paper}" opacity="${far?.5:.3}"/>
+        <rect x="${x-w*.42}" y="${base-3*s}" width="${w*.84}" height="${3*s}" fill="${far?'#3A3048':C.paper}" opacity="${far?.5:.3}"/></g>`;
     case 'bridge':
-      return `<g><path d="M${x-w*1.6} ${base} q${w*1.6} ${-h*.8} ${w*3.2} 0" fill="none" stroke="${RIM}" stroke-width="${2.6*s}"/>
-        ${[-1.2,1.2].map(i=>`<rect x="${x+i*w-.04*w}" y="${base-h*.3}" width="${w*.1}" height="${h*.3}" fill="${FILL}"/>`).join('')}</g>`;
-    case 'ring':
-      return `<circle cx="${x}" cy="${base-h*.6}" r="${w*1.15}" fill="none" stroke="${RIM}" stroke-width="${2.6*s}" opacity=".9"/>`;
+      return `<g><path d="M${x-w*1.5} ${base} q${w*1.5} ${-h*.72} ${w*3} 0" fill="none" ${far?'':`stroke="${C.paper}" stroke-width="${(1.4*s).toFixed(2)}" opacity=".28"`}/>
+        ${[-1.15,1.15].map(i=>`<rect x="${x+i*w-w*.05}" y="${base-h*.28}" width="${w*.1}" height="${h*.28}" fill="${FILL}"/>`).join('')}</g>`;
+    case 'ring': return `<circle cx="${x}" cy="${base-h*.58}" r="${w*1.05}" fill="none" stroke="${far?'#3A3048':C.paper}" stroke-width="${(1.6*s).toFixed(2)}" opacity=".35"/>`;
     case 'bell':
-      return `<g><path d="M${x-w*.55} ${base-h*.5} a${w*.55} ${w*.75} 0 0 1 ${w*1.1} 0 l${w*.16} ${w*.34} l${-w*1.42} 0 Z" fill="${FILL}"/>
-        <path d="M${x-w*.55} ${base-h*.5} a${w*.55} ${w*.75} 0 0 1 ${w*1.1} 0" ${rim}/>
-        <circle cx="${x}" cy="${base-h*.1}" r="${2.2*s}" fill="${RIM}"/></g>`;
+      return `<g><path d="M${x-w*.5} ${base-h*.48} a${w*.5} ${w*.7} 0 0 1 ${w} 0 l${w*.14} ${w*.3} l${-w*1.28} 0 Z" fill="${FILL}"/>
+        ${tip(`M${x-w*.5} ${base-h*.48} a${w*.5} ${w*.7} 0 0 1 ${w} 0 l${w*.14} ${w*.3} l${-w*1.28} 0`)}</g>`;
     case 'scales':
-      return `<g><path d="M${x} ${base-h*1.0} L${x} ${base-h*.5}" stroke="${RIM}" stroke-width="${1.8*s}"/>
-        <path d="M${x-w*.8} ${base-h*.5} L${x+w*.8} ${base-h*.5}" stroke="${RIM}" stroke-width="${1.5*s}"/>
-        ${[-1,1].map(i=>`<path d="M${x+i*w*.8} ${base-h*.5} l${-w*.26} ${h*.22} l${w*.52} 0 Z" fill="${FILL}" stroke="${RIM}" stroke-width="1.1"/>`).join('')}</g>`;
+      return `<g><path d="M${x} ${base-h*.95} L${x} ${base-h*.48}" stroke="${far?'#4A3F58':C.paper}" stroke-width="${(1.4*s).toFixed(2)}" opacity=".5"/>
+        <path d="M${x-w*.7} ${base-h*.48} L${x+w*.7} ${base-h*.48}" stroke="${far?'#4A3F58':C.paper}" stroke-width="${(1.2*s).toFixed(2)}" opacity=".5"/>
+        ${[-1,1].map(i=>`<path d="M${x+i*w*.7} ${base-h*.48} l${-w*.22} ${h*.18} l${w*.44} 0 Z" fill="${FILL}"/>`).join('')}</g>`;
     case 'throne':
-      return `<g><path d="M${x-w*.55} ${base} L${x-w*.55} ${base-h*.9} L${x} ${base-h*1.08} L${x+w*.55} ${base-h*.9} L${x+w*.55} ${base} Z" fill="${FILL}"/>
-        <path d="M${x-w*.55} ${base} L${x-w*.55} ${base-h*.9} L${x} ${base-h*1.08} L${x+w*.55} ${base-h*.9} L${x+w*.55} ${base}" ${rim}/>
-        <path d="M${x-w*.55} ${base-h*.52} L${x+w*.55} ${base-h*.52}" stroke="${RIM}" stroke-width="1.2" opacity=".7"/></g>`;
+      return `<g><path d="M${x-w*.5} ${base} L${x-w*.5} ${base-h*.86} L${x} ${base-h*1.02} L${x+w*.5} ${base-h*.86} L${x+w*.5} ${base} Z" fill="${FILL}"/>
+        ${tip(`M${x-w*.5} ${base} L${x-w*.5} ${base-h*.86} L${x} ${base-h*1.02} L${x+w*.5} ${base-h*.86} L${x+w*.5} ${base}`)}</g>`;
     case 'arcade':
-      return `<g>${[0,1,2].map(i=>`<path d="M${x-w+i*w*.95} ${base} L${x-w+i*w*.95} ${base-h*.52} a${w*.48} ${w*.42} 0 0 1 ${w*.95} 0 L${x-w+i*w*.95+w*.95} ${base}" fill="${FILL}" stroke="${RIM}" stroke-width="${1.4*s}" opacity=".95"/>`).join('')}</g>`;
+      return `<g>${[0,1,2].map(i=>`<path d="M${x-w+i*w*.85} ${base} L${x-w+i*w*.85} ${base-h*.5} a${w*.42} ${w*.38} 0 0 1 ${w*.85} 0 L${(x-w+i*w*.85+w*.85).toFixed(1)} ${base}" fill="${FILL}" ${RIM}/>`).join('')}</g>`;
     case 'lamp':
-      return `<g><path d="M${x} ${base} L${x} ${base-h*.78}" stroke="${FILL}" stroke-width="${2.6*s}"/>
-        <circle cx="${x}" cy="${base-h*.84}" r="${7*s}" fill="${C.ochre}"/>
-        <circle cx="${x}" cy="${base-h*.84}" r="${16*s}" fill="${C.ochre}" opacity=".16"/></g>`;
+      return `<g><path d="M${x} ${base} L${x} ${base-h*.72}" stroke="${FILL}" stroke-width="${(2.2*s).toFixed(2)}"/>
+        <circle cx="${x}" cy="${base-h*.78}" r="${(6*s).toFixed(2)}" fill="${C.ochre}"/>
+        <circle cx="${x}" cy="${base-h*.78}" r="${(14*s).toFixed(2)}" fill="${C.ochre}" opacity=".14"/></g>`;
     case 'vine':
-      return `<g><path d="M${x-w*.85} ${base} q${w*.85} ${-h*.55} ${w*1.7} ${-h*.32}" fill="none" stroke="${FILL}" stroke-width="${2.6*s}"/>
-        ${[0,1,2,3].map(i=>`<circle cx="${x-w*.6+i*w*.42}" cy="${base-h*(.3+i*.07)}" r="${2.6*s}" fill="${RIM}"/>`).join('')}</g>`;
+      return `<g><path d="M${x-w*.8} ${base} q${w*.8} ${-h*.5} ${w*1.6} ${-h*.3}" fill="none" stroke="${FILL}" stroke-width="${(2.2*s).toFixed(2)}"/></g>`;
     case 'wall':
-      return `<g><rect x="${x-w*1.5}" y="${base-h*.6}" width="${w*3}" height="${h*.6}" fill="${FILL}"/>
-        <path d="M${x-w*1.5} ${base-h*.6} L${x+w*1.5} ${base-h*.6}" ${edge}/>
-        ${Array.from({length:7},(_,i)=>`<rect x="${x-w*1.5+i*w*.43}" y="${base-h*.6}" width="${2*s}" height="${h*.6}" fill="${RIM}" opacity=".25"/>`).join('')}</g>`;
+      return `<g><rect x="${x-w*1.4}" y="${base-h*.52}" width="${w*2.8}" height="${h*.52}" fill="${FILL}"/>
+        ${tip(`M${x-w*1.4} ${base-h*.52} L${x+w*1.4} ${base-h*.52}`)}</g>`;
     case 'twintower':
-      return flat('tower', x-w*.95, base, s*.86, tint, seed) + flat('tower', x+w*.95, base, s*.86, tint, seed+1) +
-        `<path d="M${x-w*.95} ${base-h*.55} Q${x} ${base-h*.22} ${x+w*.95} ${base-h*.55}" fill="none" stroke="${RIM}" stroke-width="1.4" opacity=".7"/>`;
+      return flat('tower', x-w*.9, base, s*.85, tint, seed, far) + flat('tower', x+w*.9, base, s*.85, tint, seed+1, far) +
+        `<path d="M${(x-w*.9).toFixed(1)} ${base-h*.5} Q${x} ${base-h*.2} ${(x+w*.9).toFixed(1)} ${base-h*.5}" fill="none" stroke="${far?'#3A3048':C.paper}" stroke-width="1" opacity=".28"/>`;
     case 'pool':
-      return `<g><ellipse cx="${x}" cy="${base}" rx="${w*1.6}" ry="${h*.07}" fill="${RIM}" opacity=".22"/>
-        <ellipse cx="${x}" cy="${base}" rx="${w*1.6}" ry="${h*.07}" fill="none" stroke="${RIM}" stroke-width="1.2" opacity=".6"/>
-        <ellipse cx="${x}" cy="${base}" rx="${w*.7}" ry="${h*.03}" fill="none" stroke="${C.paper}" stroke-width="1" opacity=".35"/></g>`;
-    default:
-      return flat('tree', x, base, s, tint, seed);
+      return `<g><ellipse cx="${x}" cy="${base}" rx="${w*1.5}" ry="${h*.06}" fill="${far?'#3A3048':C.paper}" opacity=".16"/></g>`;
+    default: return flat('tree', x, base, s, tint, seed, far);
   }
 }
 
@@ -461,101 +481,72 @@ function sceneWorld(spec, seed = 3) {
   const r = R(seed);
   const tint = spec.tints[0] || C.violet;
   const bright = spec.light > 1.05;
-  const skyTop = bright ? '#3B3047' : spec.light > .92 ? '#2E2740' : '#221C2E';
-  const GY = 392;                       // 舞台后缘
-  const rimL = 26, rimR = 364;           // 台口
+  const GY = 336;
+  const skyTop = bright ? '#564A72' : spec.light > .92 ? '#463B60' : '#383050';
 
-  // 远山 / 台后天幕
-  let hills = `<path d="M0 ${GY} L0 ${GY-26} q52 -34 104 -10 q44 20 86 -16 q50 -42 100 -2 q38 24 100 -8 L390 ${GY} Z" fill="#171122" opacity=".92"/>`;
-
-  // 剪纸片：远 → 近，按深度排序
-  const flats = [];
-  const n = 9;
-  for (let i = 0; i < n; i++) {
-    const m = spec.motifs[i % Math.max(1, spec.motifs.length)] || 'tree';
-    const z = i / (n - 1);                      // 0 远 1 近
-    const x = z < .5 ? 44 + r() * 296 : 12 + r() * 366;
-    const base = GY + z * 96 + r() * 12;
-    const s = .95 + z * 1.45;
-    flats.push({ m, x, base, s, z, d: (.20 + z * .66).toFixed(2), delay: (i * .28).toFixed(2) });
+  let stars = '';
+  for (let i = 0; i < 26; i++) {
+    const x = 30 + r() * 330, y = 30 + r() * 220, s = .5 + r() * 1.1;
+    if (Math.hypot(x - 306, y - 76) < 40) continue;
+    stars += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${s.toFixed(2)}" fill="${C.paper}" opacity="${(.12 + r() * .4).toFixed(2)}"/>`;
   }
-  const flatsSVG = flats.map((o, i) => {
-    const dur = Math.round(1500 - o.z * 620);          // 远：慢；近：快
-    const ty  = Math.round(70 + o.z * 70);             // 远：只抬一点；近：从台下升
-    const tx  = (i % 3 === 0 ? (o.x < 195 ? -1 : 1) * (18 + o.z * 26) : 0);  // 部分从侧幕推入
-    const sc  = 1 + o.z * 0.05;
-    return `<g class="st" data-d="${o.d}" style="--dl:${o.delay}s;--dur:${dur}ms;--ty:${ty}px;--tx:${tx}px;--sc:${sc.toFixed(2)}">
-      ${flat(o.m, o.x.toFixed(1), o.base.toFixed(1), o.s.toFixed(2), tint, Math.floor(o.x * 7 + o.s * 13))}
-    </g>`;
-  }).join('');
+  const hills = `<path d="M0 ${GY} L0 ${GY-30} q52 -40 104 -12 q44 22 86 -18 q50 -46 100 -4 q38 26 100 -10 L390 ${GY} Z" fill="#251E38" opacity=".95"/>`;
 
-  // 浮尘
+  // 两层天际线 + 少量前景道具（远近不同、依次升起）
+  const farSky = `<g class="st" data-d=".14" style="--dl:0.00s;--dur:1500ms;--ty:70px;--tx:0px;--sc:1">
+      ${skyline(seed + 11, GY - 14, .82, '#332B4C', '#4A3F63')}</g>`;
+  const nearSky = `<g class="st" data-d=".34" style="--dl:0.30s;--dur:1250ms;--ty:96px;--tx:0px;--sc:1">
+      ${skyline(seed + 23, GY + 12, 1.0, '#0A0709', '#4A3F63')}</g>`;
+  const props = [[0, 'tree', 74, GY + 34, 1.5], [1, 'deadwood', 300, GY + 40, 1.35], [2, 'lamp', 348, GY + 46, 1.1]]
+    .map(([i, m, x, b, sc]) => {
+      const m2 = (spec.motifs[i] && ['gate','tower','throne','obelisk','cliff','veil'].includes(spec.motifs[i])) ? spec.motifs[i] : m;
+      return `<g class="st" data-d="${(.95 + i * .05).toFixed(2)}" style="--dl:${(0.62 + i * .16).toFixed(2)}s;--dur:${Math.round(980 - i * 90)}ms;--ty:110px;--tx:${i === 0 ? -24 : i === 2 ? 24 : 0}px;--sc:1">
+        ${flat(m2, x, b, sc, tint, seed + i * 31, false)}</g>`;
+    }).join('');
+  const flatsSVG = farSky + nearSky + props;
+
   let motes = '';
   const mc = spec.motifs.includes('fire') ? C.ochre : spec.motifs.includes('rain') ? '#8FA6C4' : C.paper;
-  for (let i = 0; i < 34; i++) {
-    const x = 30 + r() * 330, y = 60 + r() * 300, s = .6 + r() * 1.5;
-    motes += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${s.toFixed(2)}" fill="${mc}" opacity="${(.12+r()*.45).toFixed(2)}">
-</circle>`;
+  for (let i = 0; i < 26; i++) {
+    const x = 30 + r() * 330, y = 50 + r() * 270, s = .5 + r() * 1.2;
+    motes += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${s.toFixed(2)}" fill="${mc}" opacity="${(.10 + r() * .35).toFixed(2)}"/>`;
   }
-
-  const foot = '';
 
   return `<svg viewBox="0 0 390 546" preserveAspectRatio="xMidYMid slice">
   <defs>
-    ${hatch('hw1', tint, .16, 46, 6, .9)}
-    ${hatch('hw2', C.ink, .16, -42, 5, .9)}
+    ${hatch('hw1', tint, .12, 46, 6, .9)}
+    ${hatch('hw2', C.ink, .14, -42, 5, .9)}
     <linearGradient id="skyW" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="${skyTop}"/><stop offset="58%" stop-color="#221B2D"/>
-      <stop offset="100%" stop-color="#14101B"/></linearGradient>
-    <radialGradient id="halo" cx="50%" cy="46%" r="52%">
-      <stop offset="0%" stop-color="${tint}" stop-opacity=".34"/>
-      <stop offset="46%" stop-color="${tint}" stop-opacity=".12"/>
+      <stop offset="0%" stop-color="${skyTop}"/><stop offset="52%" stop-color="#3A3152"/>
+      <stop offset="100%" stop-color="#241D35"/></linearGradient>
+    <radialGradient id="halo" cx="50%" cy="42%" r="54%">
+      <stop offset="0%" stop-color="${tint}" stop-opacity=".30"/>
+      <stop offset="48%" stop-color="${tint}" stop-opacity=".10"/>
       <stop offset="100%" stop-color="${tint}" stop-opacity="0"/></radialGradient>
   </defs>
 
-  <!-- 天幕 -->
-  <g class="ly" data-d=".06">
+  <g class="ly" data-d=".05">
     <rect width="390" height="546" fill="url(#skyW)"/>
-    <ellipse cx="195" cy="${GY-96}" rx="176" ry="112" fill="url(#halo)"/>
+    <ellipse cx="195" cy="${GY - 90}" rx="170" ry="104" fill="url(#halo)"/>
   </g>
-  <!-- 远景 -->
-  <g class="ly" data-d=".14">${hills}</g>
-  <!-- 剪纸片建筑（一层一层） -->
-  <g class="ly" data-d="1">${flatsSVG}</g>
-  <!-- 台面 -->
-  <g class="ly" data-d=".30">
-    <path d="M0 ${GY} L390 ${GY} L390 546 L0 546 Z" fill="#0F0A13"/>
-    <path d="M0 ${GY} L390 ${GY}" stroke="${tint}" stroke-width="1.6" opacity=".55"/>
-    <rect y="${GY}" width="390" height="${546-GY}" fill="url(#hw2)" opacity=".6"/>
+  <g class="ly" data-d=".10">${stars}</g>
+  <g class="ly" data-d=".10">
+    <circle cx="306" cy="76" r="24" fill="${C.paper}" opacity=".10"/>
+    <circle cx="306" cy="76" r="16" fill="${C.paper}"/>
+    <path d="M295 71 L317 69.6" stroke="${C.ink}" stroke-width="1" opacity=".6"/>
   </g>
-  <!-- 浮尘 -->
-  <g class="ly" data-d=".7">${motes}</g>
-  <!-- 台口：拱 + 两侧垂幕 + 前沿 -->
-  <g class="ly" data-d="1.0">
-    <path class="archline" pathLength="1" d="M${rimL} 470 L${rimL} 150 a${(rimR-rimL)/2} ${(rimR-rimL)/2} 0 0 1 ${rimR-rimL} 0 L${rimR} 470"
-      fill="none" stroke="${C.violet}" stroke-width="3"/>
-    <path d="M${rimL+12} 470 L${rimL+12} 152 a${(rimR-rimL)/2-12} ${(rimR-rimL)/2-12} 0 0 1 ${rimR-rimL-24} 0 L${rimR-12} 470"
-      fill="none" stroke="${C.violetD}" stroke-width="1.2"/>
-    <!-- 垂幕 -->
-    <g class="curtain" data-side="L">
-      <path d="M0 0 H46 Q38 120 52 250 Q60 360 44 470 L0 470 Z" fill="${C.ink}"/></g>
-    <g class="curtain" data-side="R">
-      <path d="M390 0 H344 Q352 120 338 250 Q330 360 346 470 L390 470 Z" fill="${C.ink}"/></g>
-    <path d="M46 0 Q38 120 52 250 Q60 360 44 470" fill="none" stroke="${C.violet}" stroke-width="2"/>
-    <path d="M344 0 Q352 120 338 250 Q330 360 346 470" fill="none" stroke="${C.violet}" stroke-width="2"/>
-    <g class="curtain" data-side="L">
-    ${[0,1,2,3].map(i=>`<path d="M${14+i*9} 0 Q${6+i*9} 200 ${16+i*9} 470" fill="none" stroke="${C.violetD}" stroke-width="1" opacity=".5"/>`).join('')}</g>
-    <g class="curtain" data-side="R">
-    ${[0,1,2,3].map(i=>`<path d="M${376-i*9} 0 Q${384-i*9} 200 ${374-i*9} 470" fill="none" stroke="${C.violetD}" stroke-width="1" opacity=".5"/>`).join('')}</g>
-    <!-- 台口前沿（挡板） -->
-    <path d="M0 470 L390 470 L390 546 L0 546 Z" fill="${C.ink}"/>
-    <path d="M0 470 L390 470" stroke="${C.violet}" stroke-width="2.4"/>
-    <path d="M0 480 L390 480" stroke="${C.violetD}" stroke-width="1" opacity=".6"/>
+  <g class="ly" data-d=".16">${hills}</g>
+  <g class="ly" data-d=".9">${flatsSVG}</g>
+  <g class="ly" data-d=".28">
+    <path d="M0 ${GY} L390 ${GY} L390 546 L0 546 Z" fill="#221A36"/>
+    <path d="M0 ${GY} L390 ${GY}" stroke="${tint}" stroke-width="1.4" opacity=".5"/>
+    <rect y="${GY}" width="390" height="${546 - GY}" fill="url(#hw2)" opacity=".55"/>
   </g>
+  <g class="ly" data-d=".62">${motes}</g>
   </svg>`;
 }
 
-/* 世界 = 牌意 → 亮度/主色/母题 → 立牌升起 */
+/* 世界 = 牌意 → 亮度/主色/母题 */
 function worldSpec(cards, revs) {
   let light = 0, tints = [], motifs = [];
   cards.forEach((c, i) => {
@@ -806,9 +797,9 @@ async function startDeal() {
   await wait(420);
   const stage = $('#cards'); stage.innerHTML = '';
   const W = 390, n = spread;
-  const cw = n >= 5 ? 56 : 74, ch = cw * 1.59, gap = n >= 5 ? 14 : 25;
+  const cw = n >= 5 ? 54 : 68, ch = cw * 1.59, gap = n >= 5 ? 15 : 26;
   const total = n * cw + (n - 1) * gap, x0 = (W - total) / 2;
-  const topY = 168;
+  const topY = 226;
 
   const els = [];
   for (let i = 0; i < n; i++) {
@@ -843,47 +834,44 @@ async function startDeal() {
 
 let picked = 0;
 async function pick(el, i, els) {
-  if (state !== 'pick' || el.dataset.done) return;
-  el.dataset.done = '1';
-  picked++;
+  if (state !== 'pick') return;
+  state = 'ritual';
   if (navigator.vibrate) navigator.vibrate(20);
-  // 反馈：一圈扩散
   const rp = document.createElement('span'); rp.className = 'ripple';
-  el.appendChild(rp); setTimeout(() => rp.remove(), 600);
-  el.classList.remove('live');
-  // 飞近
-  el.style.zIndex = 20 + picked;
-  el.style.transform = `translateY(-26px) scale(1.22)`;
-  el.style.cursor = 'default';
-  // 周围慢慢变黑（逐张加深，但不是瞬间）
-  $('#dimmer').style.background = `rgba(10,7,9,${(.26 + picked * .15).toFixed(2)})`;
-  if (picked === 1) { clearTxt(); line('牌 已 经 到 你 手 里 。', 'ochre'); }
-  else if (picked < spread) { clearTxt(); line('还 有 ' + (spread - picked) + ' 张 。', 'dim'); }
-  if (picked === spread) {
-    LOG.push('flip'); state = 'flip';
-    clearTxt();
-    await wait(700);
-    line('牌 已 揭 晓 。', 'ochre');
-    await wait(500);
-    for (let k = 0; k < els.length; k++) {
-      await reveal(els[k], k);
-      await wait(240);
-    }
-    // 等最后一张的翻面动画完全走完，再进黑场
-    await wait(760);
-    LOG.push('riseWorld>');
-    await riseWorld();
+  el.appendChild(rp); setTimeout(() => rp.remove(), 620);
+  els.forEach(e => { e.classList.remove('live'); e.onclick = null; });
+  clearTxt();
+  line('牌 已 经 到 你 手 里 。', 'ochre');
+  // 三张依次浮到面前
+  for (let k = 0; k < els.length; k++) {
+    els[k].style.zIndex = 20 + k;
+    els[k].style.transform = 'translateY(-24px) scale(1.2)';
+    await wait(120);
   }
+  await wait(430);
+  // 周围慢慢变黑
+  $('#dimmer').style.transition = 'background 900ms ease';
+  $('#dimmer').style.background = 'rgba(10,7,9,.62)';
+  await wait(720);
+  // 依次翻开，每张等动画走完
+  for (let k = 0; k < els.length; k++) {
+    await reveal(els[k], k);
+    await wait(150);
+  }
+  await wait(560);
+  LOG.push('riseWorld>');
+  await riseWorld();
 }
 
 async function reveal(el, i) {
   const c = chosen[i], rev = reverses[i];
   const front = el.querySelector('.front');
-  const url = await linocut(imgUrl(c.id), hex2rgb(ELEM[c.suit].tint));
+  const url = (typeof FACE !== 'undefined' && FACE[c.id]) || (await linocut(imgUrl(c.id), hex2rgb(ELEM[c.suit].tint)));
   front.innerHTML = `<img src="${url}" alt="${c.label || c.name}" style="${rev ? 'transform:rotate(180deg)' : ''}">`;
   el.classList.add('flip');
-  el.style.transform = `translateY(-26px) scale(1.22) rotateY(180deg)`;
-  await wait(980);
+  el.style.transition = 'transform 820ms cubic-bezier(.2,.55,.25,1)';
+  el.style.transform = 'translateY(-18px) scale(1.12) rotateY(180deg)';
+  await wait(860);
 }
 
 async function riseWorld() {
@@ -910,6 +898,7 @@ async function riseWorld() {
 }
 
 function playStage() {
+  try {
   const art = $('#art'), fg = $('#fg');
   // 幕布从两侧合拢（在前景）
   fg.querySelectorAll('.curtain').forEach((g, i) => {
@@ -957,6 +946,7 @@ function playStage() {
       }, dur + 40);
     }, base);
   });
+  } catch (e) { window.LOG && window.LOG.push('playStage ERR ' + e.message); }
 }
 
 async function readCards() {
@@ -1007,4 +997,14 @@ async function reset() {
   await intro();
 }
 
+window.__world = (seed = 5) => {
+  const pool = [...CARDS].sort((a, b) => (a.id * 7919 % 97) - (b.id * 7919 % 97)).slice(0, 3);
+  chosen = pool; reverses = [false, false, false];
+  const spec = worldSpec(chosen, reverses);
+  setScene(sceneWorld(spec, seed));
+  setForeground(fgWorld(spec.tints[0] || C.violet));
+  cam.z = 1; cam.x = 0; cam.y = 0; applyCam(0);
+  playStage();
+  window.LOG.push('forceWorld');
+};
 boot();
