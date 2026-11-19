@@ -1,5 +1,5 @@
 // 星尘·古牌 Service Worker：HTML 走网络优先，静态资源走缓存优先
-const CACHE = 'xingchen-v3.1';
+const CACHE = 'xingchen-v3.2';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {

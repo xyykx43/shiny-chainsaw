@@ -1,338 +1,663 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>星尘古牌 · 78张塔罗在线占卜</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-<meta name="description" content="星尘·古牌：78 张完整塔罗牌库，三牌、二牌抉择、五牌深入三种牌阵，正逆位详细解读，支持历史复盘与收藏。">
-<meta name="theme-color" content="#1a1612">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="icon" href="./00.png" type="image/png">
-<link rel="apple-touch-icon" href="./00.png">
-<link rel="manifest" href="./manifest.json">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="星尘·古牌">
-<meta property="og:title" content="✦ 星尘·古牌 ✦ 78张塔罗在线占卜">
-<meta property="og:description" content="78 张完整塔罗牌库，三种牌阵，正逆位详细解读。一次抽牌，认真回答你心里的那个问题。">
-<meta property="og:image" content="https://xyykx43.github.io/shiny-chainsaw/00.png">
-<meta property="og:url" content="https://xyykx43.github.io/shiny-chainsaw/">
-<meta name="twitter:description" content="78 张完整塔罗牌库，三种牌阵，正逆位详细解读。">
-<meta name="twitter:image" content="https://xyykx43.github.io/shiny-chainsaw/00.png">
-<style>
-@font-face{font-family:"Xingchen Serif";src:url("./assets/fonts/noto-serif-sc-subset.woff2") format("woff2");font-display:swap}
-:root{--serif:"Xingchen Serif","Songti SC","Noto Serif CJK SC",Georgia,serif;
-  --gold:#c8a567;--paper:#f7edd6;--ink:#241a12;--px:0px;--py:0px}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#060403}
-body{font-family:var(--serif);color:#f0e4c8}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>✦ 星尘·古牌 ✦ · 78张塔罗在线占卜</title>
+    <meta name="description" content="星尘·古牌：78 张完整塔罗牌库，三牌、二牌抉择、五牌深入三种牌阵，正逆位详细解读，支持历史复盘与收藏。">
+    <meta name="theme-color" content="#1a1612">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="canonical" href="https://xyykx43.github.io/shiny-chainsaw/">
+    <link rel="icon" href="./00.png" type="image/png">
+    <link rel="apple-touch-icon" href="./00.png">
+    <link rel="manifest" href="./manifest.json">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="星尘·古牌">
+    <meta property="og:title" content="✦ 星尘·古牌 ✦ 78张塔罗在线占卜">
+    <meta property="og:description" content="78 张完整塔罗牌库，三种牌阵，正逆位详细解读。一次抽牌，认真回答你心里的那个问题。">
+    <meta property="og:image" content="https://xyykx43.github.io/shiny-chainsaw/00.png">
+    <meta property="og:url" content="https://xyykx43.github.io/shiny-chainsaw/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="✦ 星尘·古牌 ✦ 78张塔罗在线占卜">
+    <meta name="twitter:description" content="78 张完整塔罗牌库，三种牌阵，正逆位详细解读。">
+    <meta name="twitter:image" content="https://xyykx43.github.io/shiny-chainsaw/00.png">
+    <link rel="preload" as="image" href="./beibu.png">
+    <style>
+        /* ========== 完整样式（无删减） ========== */
+        :root {
+            --bg-page: #1a1612;
+            --bg-card: #fdf8f0;
+            --text-primary: #2e2a24;
+            --text-secondary: #6f5f4e;
+            --border-light: #e0d6c4;
+            --accent-gold: #b8a78d;
+            --accent-glow: #ecd8b4;
+            --shadow: 0 8px 20px rgba(0,0,0,0.1);
+            --overlay: rgba(0,0,0,0.75);
+            --card-back: #2e2a24;
+            --selected-glow: #ffcf4a;
+        }
+        body.dark {
+            --bg-page: #0f0e0a;
+            --bg-card: #1e1b15;
+            --text-primary: #e9e2d0;
+            --text-secondary: #b8a78d;
+            --border-light: #3a322a;
+            --accent-gold: #cbbf9a;
+            --accent-glow: #ecd8b4;
+            --shadow: 0 8px 20px rgba(0,0,0,0.6);
+            --overlay: rgba(0,0,0,0.9);
+            --card-back: #1f1b16;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-page);
+            font-family: 'Georgia', 'Times New Roman', 'PingFang SC', 'Microsoft YaHei', serif;
+            transition: background 0.4s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            color: var(--text-primary);
+        }
+        .tarot-wrapper { max-width: 1000px; width: 100%; margin: 0 auto; }
+        .top-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 20px;
+            gap: 8px;
+        }
+        .top-bar button, .top-bar select, .mode-switch { width: 100%; text-align: center; }
+        button, .quick-tag, select, .enter-btn, .btn-draw, .mode-btn {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-glow);
+            padding: 7px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: transform 0.1s ease, background 0.2s;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        button:active, .quick-tag:active, .mode-btn:active, .select-card:active, .card-container:active { transform: scale(0.96); }
+        button::after, .btn-draw::after, .mode-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        button:active::after, .btn-draw:active::after, .mode-btn:active::after { width: 200px; height: 200px; }
+        .mode-group { display: flex; gap: 8px; margin-bottom: 8px; }
+        .mode-btn { flex: 1; background: rgba(0,0,0,0.2); }
+        .mode-btn.active { background: var(--accent-gold); color: #1a1612; border-color: var(--accent-gold); }
 
-/* ===== 场景 ===== */
-.scene{position:fixed;inset:0;z-index:0;overflow:hidden}
-.scene-bg,.scene-world{position:absolute;inset:-6%;background-position:center;background-size:cover;
-  transition:opacity 1s ease,transform 7s cubic-bezier(.16,.8,.24,1),filter 3s ease}
-.scene-bg{background-image:url("./assets/scene/keyart/room.jpg");filter:brightness(.6) saturate(.9);
-  transform:translate3d(calc(var(--px)*.6),calc(var(--py)*.6),0) scale(1.04)}
-body.entered .scene-bg{transform:translate3d(calc(var(--px)*.6),calc(var(--py)*.6),0) scale(1.10)}
-.scene-world{background-image:url("./assets/scene/keyart/world.jpg");opacity:0;filter:brightness(.55) saturate(.9);
-  transform:scale(1.14)}
-body.fate .scene-bg{opacity:0}
-body.fate .scene-world{opacity:1;transform:scale(1.0);filter:brightness(.68) saturate(.95)}
-.scene-fg{position:absolute;left:-16%;right:-16%;z-index:1;pointer-events:none;opacity:.8;
-  background:url("./assets/scene/keyart/fg-thorn.webp") center top/150% no-repeat;
-  filter:brightness(.4) blur(1.1px);
-  transform:translate3d(calc(var(--px)*2.4),calc(var(--py)*2.4),0)}
-.scene-veil{position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(115% 70% at 50% 40%,transparent 26%,rgba(8,5,4,.86) 100%),
-             linear-gradient(180deg,rgba(8,5,4,.6),transparent 20%,transparent 76%,rgba(8,5,4,.92))}
-.scene-grain{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.12;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
-.blackout{position:fixed;inset:0;z-index:40;background:#050302;opacity:0;pointer-events:none;
-  transition:opacity .55s ease}
-.blackout.on{opacity:1}
+        .cover {
+            background: #1e1914;
+            border-radius: 48px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(236,216,180,0.2) inset, 0 0 0 2px rgba(0,0,0,0.2);
+            padding: 12% 5%;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        .cover h1 {
+            font-size: clamp(1.8rem, 10vw, 3.2rem);
+            letter-spacing: 0.06em;
+            color: #ecd8b4;
+            margin-bottom: 0.5em;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            font-weight: 400;
+            word-break: keep-all;
+            white-space: normal;
+            line-height: 1.3;
+        }
+        .cover .star-line {
+            font-size: clamp(0.9rem, 5vw, 1.4rem);
+            letter-spacing: 0.5em;
+            color: #cbbf9a;
+            margin-bottom: 1.2rem;
+            opacity: 0.9;
+        }
+        .cover p {
+            font-size: clamp(0.8rem, 4vw, 1rem);
+            color: #d9cba3;
+            margin: 1rem 0 2rem 0;
+            background: rgba(0,0,0,0.3);
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.03em;
+        }
+        .enter-btn {
+            background: rgba(236,216,180,0.12);
+            border: 1px solid #ecd8b4;
+            color: #f3e6c9;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: clamp(1rem, 5vw, 1.2rem);
+            letter-spacing: 0.1em;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            font-weight: 500;
+            width: auto;
+            min-width: 160px;
+        }
+        .enter-btn:active {
+            transform: scale(0.96);
+            background: rgba(236,216,180,0.3);
+        }
+        @media (max-width: 550px) {
+            .cover { padding: 15% 6%; border-radius: 32px; }
+            .cover h1 { letter-spacing: 0.04em; }
+            .cover .star-line { letter-spacing: 0.3em; }
+            .enter-btn { padding: 0.8rem 1.2rem; min-width: 130px; }
+        }
 
-/* ===== 封面 ===== */
-.cover{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:14px;text-align:center;padding:0 10%}
-.cover .star-line{display:none}
-.cover h1{font-size:clamp(26px,8.6vw,40px);font-weight:400;letter-spacing:.18em;color:#f5e9cb;
-  text-shadow:0 3px 26px rgba(0,0,0,.95)}
-.cover p{font-size:11px;letter-spacing:.18em;color:rgba(240,226,196,.75);text-shadow:0 2px 12px #000}
-.enter-btn{margin-top:8px;padding:11px 34px;border:1px solid rgba(240,226,196,.7);border-radius:2px;
-  background:rgba(18,10,6,.6);color:#f6ead0;font-family:inherit;font-size:12px;letter-spacing:.34em;
-  text-indent:.34em;cursor:pointer}
+        .divination-pane {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 32px 24px 48px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease, transform 0.6s ease;
+            pointer-events: none;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        .divination-pane.active { display: block; opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .question-area {
+            margin-bottom: 28px;
+            background: rgba(0,0,0,0.02);
+            padding: 14px 16px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--border-light);
+        }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 9px 36px 9px 14px;
+            border-radius: 28px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        .clear-input { position: absolute; right: 14px; cursor: pointer; color: var(--text-secondary); font-size: 1rem; }
+        .quick-tag {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            display: inline-block;
+            margin: 3px;
+        }
+        .btn-draw {
+            background: none;
+            border: 1px solid var(--accent-gold);
+            padding: 9px 32px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin: 14px 0;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+        }
+        .spread-area, .revealed-area {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .card-container {
+            width: 150px;
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .card-container:active { transform: scale(0.97); }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transform-style: preserve-3d;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        .card-container.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: relative;
+            width: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 12px 8px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-front { transform: rotateY(180deg); }
+        .card-back {
+            background: var(--card-back);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            overflow: hidden;
+        }
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .card-name { font-weight: bold; font-size: 1rem; margin-bottom: 6px; }
+        .card-orient { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .card-short { font-size: 0.8rem; line-height: 1.4; }
+        .card-front img { width: 100px; height: auto; border-radius: 12px; margin-bottom: 8px; background: #f0e9df; }
+        body.dark .card-front img { background: #2a251f; }
+        .select-area {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 20px 0;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 28px;
+        }
+        .select-card {
+            width: 100px;
+            height: 140px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border-radius: 12px;
+            background: var(--card-back);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .select-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .select-card.selected {
+            box-shadow: 0 0 0 3px var(--selected-glow), 0 0 0 6px rgba(255,207,74,0.3);
+            transform: scale(0.96);
+        }
+        .select-card:active { transform: scale(0.94); }
+        .select-card:hover { transform: translateY(-4px); }
+        .card-result {
+            width: 150px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        .card-result:hover { transform: translateY(-4px); }
+        .card-result img { width: 100px; border-radius: 12px; margin-bottom: 8px; }
+        .card-result .card-name { font-weight: bold; font-size: 1rem; }
+        .card-result .card-orient { font-size: 0.8rem; color: var(--text-secondary); }
+        .card-result .card-short { font-size: 0.8rem; margin-top: 6px; }
+        .reading-block {
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 1.2rem 1.4rem;
+            margin-top: 24px;
+            background: rgba(0,0,0,0.02);
+            backdrop-filter: blur(2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            line-height: 1.65;
+            font-size: 0.9rem;
+        }
+        body.dark .reading-block { background: rgba(255,255,255,0.03); }
+        .manual-panel {
+            background: rgba(0,0,0,0.02);
+            border: 1px dashed var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 12px 0;
+            display: none;
+        }
+        .manual-panel.active { display: block; }
+        .manual-panel input {
+            width: 60px;
+            padding: 6px;
+            margin: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            text-align: center;
+        }
+        .history-title { margin-top: 28px; font-size: 0.8rem; color: var(--text-secondary); }
+        .backup-bar { display: flex; gap: 8px; justify-content: center; align-items: center; margin: 18px 0 6px; flex-wrap: wrap; }
+        .history-search { width: 100%; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 4px 12px; color: var(--text-primary); margin-bottom: 8px; }
+        .history-list { list-style: none; margin-top: 10px; max-height: 200px; overflow-y: auto; }
+        .history-list li { display: flex; justify-content: space-between; align-items: center; border-left: 2px solid var(--border-light); padding: 6px 10px; margin-bottom: 6px; cursor: pointer; font-size: 0.8rem; }
+        .history-list li:hover { background: rgba(0,0,0,0.03); }
+        .delete-history { background: none; border: none; color: #e67e22; cursor: pointer; font-size: 0.8rem; margin-left: 8px; }
+        .favorites-panel {
+            background: rgba(0,0,0,0.02);
+            border-radius: 14px;
+            padding: 14px;
+            margin-top: 16px;
+            border: 1px solid var(--border-light);
+            display: none;
+        }
+        .favorites-panel.active { display: block; }
+        .favorites-panel li { cursor: pointer; padding: 4px 0; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+        .today-card {
+            background: linear-gradient(135deg, var(--accent-gold), #cbbf9a);
+            color: #1a1612;
+            padding: 8px 16px;
+            border-radius: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 6px 16px;
+            color: #f2e3c9;
+            cursor: pointer;
+            z-index: 200;
+            font-size: 0.75rem;
+        }
+        .toast-msg {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #ffefcf;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.25s;
+            pointer-events: none;
+            z-index: 300;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.25s;
+        }
+        .modal.active { visibility: visible; opacity: 1; }
+        .modal-content {
+            background: var(--bg-card);
+            max-width: 450px;
+            width: 90%;
+            padding: 28px;
+            border-radius: 24px;
+            text-align: left;
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 0.9rem;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content button {
+            margin-top: 16px;
+            background: none;
+            border: 1px solid var(--accent-gold);
+            color: var(--text-primary);
+            padding: 6px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .footer-disclaimer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 32px;
+            color: var(--text-secondary);
+        }
+        .share-card-container {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 560px;
+            background: #fdf8f0;
+            border-radius: 28px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+            font-family: 'Georgia', 'Times New Roman', 'PingFang SC', 'Microsoft YaHei', serif;
+            z-index: -1;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .share-card-inner {
+            padding: 28px 28px;
+            background: #fdf8f0;
+            color: #2e2a24;
+        }
+        .share-title { text-align: center; border-bottom: 1px solid #e0d6c4; padding-bottom: 12px; margin-bottom: 20px; }
+        .share-title h2 { color: #b8a070; font-size: 26px; margin: 0; }
+        .share-spread-name { font-size: 14px; color: #8b7a66; margin-top: 4px; }
+        .share-question {
+            background: #f3ede3;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
+            color: #2e2a24;
+        }
+        .share-card-item { margin-bottom: 20px; border-left: 4px solid #b8a78d; padding-left: 14px; }
+        .share-card-position { font-weight: bold; font-size: 16px; margin-bottom: 6px; color: #2e2a24; }
+        .share-card-meaning { font-size: 13px; line-height: 1.5; color: #2e2a24; }
+        .share-interpretation {
+            background: #e8e0d2;
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: 16px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #2e2a24;
+        }
+        .share-footer { text-align: center; font-size: 10px; color: #b8a78d; margin-top: 20px; }
+        .candy-donate-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: #f7b731;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2e2a24;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s, background 0.2s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            backdrop-filter: none;
+            border: none;
+        }
+        .candy-donate-btn:hover { transform: scale(1.05); background: #ffcf4a; }
+        .candy-donate-btn:active { transform: scale(0.96); }
+        .donate-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+        }
+        .donate-modal-content {
+            background-color: var(--bg-card);
+            border-radius: 28px;
+            max-width: 340px;
+            width: 90%;
+            padding: 24px 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+            font-family: inherit;
+        }
+        .donate-close {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .donate-close:hover { color: var(--text-primary); }
+        .donate-modal-content h3 { font-size: 1.4rem; margin-bottom: 8px; color: var(--text-primary); }
+        .donate-modal-content p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; }
+        .donate-qrcodes { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .donate-qrcode-item { text-align: center; }
+        .donate-qrcode-item img { width: 160px; height: 160px; border-radius: 16px; border: 1px solid var(--border-light); background: white; padding: 8px; }
+        .donate-qrcode-item span { display: block; margin-top: 6px; font-size: 12px; color: var(--text-secondary); }
+        @media (max-width: 550px) {
+            .candy-donate-btn { bottom: 80px; right: 16px; padding: 6px 12px; font-size: 12px; }
+            .donate-qrcode-item img { width: 140px; height: 140px; }
+            .card-container { width: 110px; }
+            .card-front img { width: 80px; }
+            .select-card { width: 70px; height: 100px; }
+            .card-result { width: 110px; }
+            .card-result img { width: 70px; }
+        }
 
-/* ===== 舞台 ===== */
-#divinationPane{position:fixed;inset:0;z-index:15;display:none}
-#divinationPane.active{display:block}
-.page{position:absolute;inset:0;display:none;flex-direction:column;
-  padding:max(16px,3.4vh) 12px calc(78px + env(safe-area-inset-bottom))}
-.page.on{display:flex;animation:pageIn .6s cubic-bezier(.2,.85,.25,1)}
-@keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+        .guestbook-buttons {
+            margin: 30px 0 20px;
+            text-align: center;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .guestbook-btn {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-glow);
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: transform 0.1s ease, background 0.2s;
+            font-family: inherit;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .guestbook-btn:active { transform: scale(0.96); }
+        .guestbook-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin: 10px 0;
+        }
 
-.plate{background:linear-gradient(180deg,rgba(253,246,229,.97),rgba(240,228,203,.97));
-  border-radius:10px;padding:18px 16px;width:100%;max-width:430px;margin:0 auto;color:var(--ink);
-  box-shadow:0 30px 60px -30px #000,inset 0 0 0 1px rgba(140,114,69,.5),
-             inset 0 0 0 6px rgba(255,252,240,.5),inset 0 0 0 7px rgba(140,114,69,.25);
-  max-height:100%;overflow-y:auto}
-.plate-title{text-align:center;font-size:12px;letter-spacing:.44em;text-indent:.44em;color:#6b5334;
-  padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid rgba(140,114,69,.4)}
-
-/* 提问 */
-.today-card{text-align:center;font-size:.74rem;line-height:1.8;color:#5b4a36;
-  border-top:1px solid rgba(140,114,69,.25);border-bottom:1px solid rgba(140,114,69,.25);
-  padding:9px 4px;margin-bottom:14px;cursor:pointer}
-.slips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
-.quick-tag{background:rgba(255,252,240,.8);border:1px solid rgba(140,114,69,.45);border-radius:2px;
-  color:#4a3620;font-family:inherit;font-size:.78rem;letter-spacing:.12em;padding:8px 14px;cursor:pointer}
-.input-wrapper{position:relative;display:flex;align-items:center;margin-bottom:12px}
-#questionInput{width:100%;background:transparent;border:none;border-bottom:1px solid rgba(140,114,69,.5);
-  padding:10px 30px 10px 4px;color:var(--ink);font-family:inherit;font-size:.92rem;text-align:center}
-#questionInput:focus{outline:none;border-bottom-color:#8c6a34}
-.clear-input{position:absolute;right:6px;color:#8c7245;cursor:pointer}
-#spreadSelect,#themeToggleBtn{width:100%;background:rgba(255,252,240,.8);border:1px solid rgba(140,114,69,.45);
-  border-radius:2px;color:#4a3620;font-family:inherit;font-size:.78rem;padding:9px;margin-bottom:10px}
-.mode-group{display:flex;gap:8px;margin-bottom:14px}
-.mode-btn{flex:1;background:rgba(255,252,240,.8);border:1px solid rgba(140,114,69,.45);border-radius:2px;
-  color:#5b4a36;font-family:inherit;font-size:.76rem;padding:9px;cursor:pointer}
-.mode-btn.active{background:#8c6a34;color:#fdf5e0;border-color:#8c6a34}
-.row.center{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
-.btn-draw{padding:11px 20px;border:1px solid rgba(140,114,69,.55);border-radius:2px;
-  background:rgba(255,252,240,.85);color:#3a2c1c;font-family:inherit;font-size:.82rem;letter-spacing:.2em;
-  text-indent:.2em;cursor:pointer}
-.btn-draw.small{font-size:.72rem;letter-spacing:.1em}
-.manual-panel{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(140,114,69,.3)}
-.manual-panel.active{display:block}
-.manual-panel input{width:56px;margin:4px;padding:6px;text-align:center;border-radius:4px;
-  border:1px solid rgba(140,114,69,.4);background:rgba(255,252,240,.8);font-family:inherit;color:var(--ink)}
-
-/* 牌阵 */
-#resultArea{flex:1;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
-.spread-area{display:flex;flex-wrap:nowrap;justify-content:center;gap:10px;padding:4px}
-.card-container{width:calc((100% - 20px)/3);max-width:104px;perspective:800px;
-  animation:dealIn .68s cubic-bezier(.22,.9,.28,1) both}
-.card-container:nth-child(2){animation-delay:.12s}
-.card-container:nth-child(3){animation-delay:.24s}
-.card-container:nth-child(4){animation-delay:.36s}
-.card-container:nth-child(5){animation-delay:.48s}
-@keyframes dealIn{0%{opacity:0;transform:translateY(44px) rotate(-8deg)}
-  65%{opacity:1;transform:translateY(-5px) rotate(1.5deg)}100%{opacity:1;transform:none}}
-.card-inner{position:relative;width:100%;transform-style:preserve-3d;
-  transition:transform .64s cubic-bezier(.34,1.4,.5,1)}
-.card-container.flipped .card-inner{transform:rotateY(180deg)}
-.card-front,.card-back{backface-visibility:hidden;border-radius:3px;
-  border:1px solid rgba(140,114,69,.6);background:#f7edd6;box-shadow:0 14px 26px -16px rgba(0,0,0,.9)}
-.card-front{position:absolute;inset:0;transform:rotateY(180deg);display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-start;padding:8px 6px;overflow:hidden}
-.card-back{position:relative;display:block;width:100%;height:100%;min-height:150px;overflow:hidden}
-.card-back img,.card-front img{width:100%;display:block}
-.card-front img{max-height:74px;width:auto;object-fit:contain;margin-bottom:5px;
-  filter:saturate(.6) sepia(.15) contrast(1.04)}
-.card-name{font-size:.78rem}
-.card-orient{font-size:.6rem;color:#8c7245}
-.card-short{font-size:.56rem;line-height:1.4;color:#5b4a36;
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-
-/* 解读 */
-.reading-block{background:#fbf3dc;border-radius:8px;padding:16px 14px;margin:10px 2px;
-  font-size:.84rem;line-height:1.9;color:var(--ink);
-  box-shadow:inset 0 0 0 1px rgba(140,114,69,.45),inset 0 0 0 5px rgba(255,252,240,.55);
-  animation:sheetUp 1s cubic-bezier(.2,.85,.25,1) both}
-@keyframes sheetUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
-
-/* 柜 */
-.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.tools-grid button{background:rgba(255,252,240,.8);border:1px solid rgba(140,114,69,.45);border-radius:2px;
-  color:#3a2c1c;font-family:inherit;font-size:.74rem;padding:10px 6px;cursor:pointer}
-.history-title{display:flex;align-items:center;gap:8px;margin:10px 0 6px;font-size:.72rem;color:#6b5334}
-.rule-title{letter-spacing:.2em}
-.history-search{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(140,114,69,.4);
-  padding:6px 2px;font-family:inherit;font-size:.78rem;color:var(--ink)}
-.history-list{list-style:none;max-height:120px;overflow-y:auto;font-size:.74rem}
-.history-list li{border-left:2px solid rgba(140,114,69,.4);padding:6px 8px;margin-bottom:5px;
-  display:flex;justify-content:space-between;gap:6px;cursor:pointer;color:#4a3620}
-.favorites-panel{display:none;margin-top:10px;font-size:.76rem}
-.favorites-panel.active{display:block}
-.favorites-panel ul{list-style:none;margin-top:6px}
-.favorites-panel li{padding:5px 0;border-bottom:1px solid rgba(140,114,69,.25);cursor:pointer}
-.changelog-panel{margin-top:12px;border:1px solid rgba(140,114,69,.3);border-radius:4px;overflow:hidden}
-.changelog-header{padding:9px 12px;display:flex;justify-content:space-between;cursor:pointer;
-  font-size:.74rem;color:#6b5334;background:rgba(255,252,240,.6)}
-.changelog-content{max-height:0;overflow:hidden;transition:max-height .3s;padding:0 12px;font-size:.72rem}
-.changelog-content.open{max-height:260px;overflow-y:auto;padding:8px 12px}
-.guestbook-buttons{display:flex;gap:10px;justify-content:center;margin:14px 0 8px}
-.guestbook-btn{border:1px solid rgba(140,114,69,.45);border-radius:2px;padding:8px 14px;
-  font-size:.72rem;color:#4a3620;text-decoration:none;background:rgba(255,252,240,.7)}
-.guestbook-note,.footer-disclaimer{text-align:center;font-size:.64rem;color:#7a6446;line-height:1.8}
-
-/* 页签 */
-.ribbon{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;
-  padding:8px 0 calc(12px + env(safe-area-inset-bottom));z-index:16;
-  background:linear-gradient(180deg,transparent,rgba(6,4,3,.88) 44%)}
-.ribbon button{background:rgba(14,10,7,.62);border:1px solid rgba(200,165,103,.32);border-radius:2px;
-  color:rgba(240,228,200,.82);font-family:inherit;font-size:12px;letter-spacing:.3em;text-indent:.3em;
-  padding:9px 22px;cursor:pointer}
-.ribbon button.on{background:rgba(200,165,103,.9);color:#14100c;border-color:rgba(200,165,103,.9)}
-
-/* 浮层 */
-.toast-msg{position:fixed;left:50%;top:12%;transform:translateX(-50%);z-index:60;
-  background:rgba(12,8,6,.9);color:#f2e6c9;border:1px solid rgba(200,165,103,.5);border-radius:2px;
-  padding:8px 18px;font-size:.76rem;opacity:0;transition:opacity .25s;pointer-events:none}
-.modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
-  background:rgba(5,3,2,.82);visibility:hidden;opacity:0;transition:.25s}
-.modal.active{visibility:visible;opacity:1}
-.modal-content{background:#fbf3dc;color:var(--ink);border-radius:10px;padding:22px;width:88%;max-width:420px;
-  max-height:78vh;overflow-y:auto;font-size:.86rem;line-height:1.9;
-  box-shadow:inset 0 0 0 6px rgba(255,252,240,.6),inset 0 0 0 7px rgba(140,114,69,.4)}
-.modal-content button{margin-top:14px;width:100%;padding:9px;border:1px solid rgba(140,114,69,.5);
-  border-radius:2px;background:rgba(255,252,240,.8);font-family:inherit;cursor:pointer}
-.candy-donate-btn{position:fixed;right:12px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:45;
-  background:rgba(14,10,7,.7);border:1px solid rgba(200,165,103,.35);border-radius:2px;
-  color:rgba(240,228,200,.8);font-size:.68rem;padding:7px 12px;cursor:pointer}
-.donate-modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
-  background:rgba(5,3,2,.86)}
-.donate-modal-content{background:#fbf3dc;color:var(--ink);border-radius:10px;padding:22px;
-  width:86%;max-width:330px;text-align:center;position:relative}
-.donate-close{position:absolute;right:14px;top:8px;font-size:22px;cursor:pointer;color:#8c7245}
-.donate-qrcode-item img{width:150px;height:150px;border-radius:6px;border:1px solid rgba(140,114,69,.4);
-  background:#fff;padding:6px;margin-top:10px}
-.share-card-container{position:fixed;left:-9999px;top:0}
-
-body.fate #fullInterpretation{position:absolute;left:0;right:0;
-  bottom:calc(74px + env(safe-area-inset-bottom));max-height:46vh;overflow:hidden;z-index:5}
-body.fate .reading-block{max-height:46vh;overflow-y:auto;margin:0 8px}
-body.fate .spread-area{position:relative;z-index:6}
-body.fate #resultArea{justify-content:flex-start;padding-top:9vh}
-
-body.fate .card-short{display:none}
-body.fate .card-front{padding:7px 5px}
-body.fate .card-front img{max-height:92px;margin-bottom:6px}
-body.fate .card-name{font-size:.82rem;margin-bottom:2px}
-body.fate .card-orient{font-size:.62rem}
-body.fate #resultArea{padding-top:11vh}
-body.fate .spread-area{max-width:380px;margin:0 auto}
-body.fate .card-name{color:#2b2118}
-body.fate .card-orient{color:#8c7245}
-.card-front{color:#2b2118}
-</style>
+        .changelog-panel {
+            margin: 20px 0 10px;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            background: rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+        .changelog-header {
+            padding: 12px 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: var(--accent-gold);
+            background: rgba(0,0,0,0.03);
+            transition: background 0.2s;
+        }
+        .changelog-header:hover { background: rgba(0,0,0,0.06); }
+        .changelog-icon { font-size: 1.2rem; }
+        .changelog-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 18px;
+            background: rgba(0,0,0,0.01);
+        }
+        .changelog-content.open {
+            max-height: 500px;
+            padding: 12px 18px 18px;
+            overflow-y: auto;
+        }
+        .changelog-content p { margin: 8px 0; font-size: 0.75rem; }
+        .changelog-content ul { margin: 6px 0 6px 20px; font-size: 0.8rem; }
+        .contact-links a { color: var(--accent-gold); text-decoration: none; margin-right: 16px; }
+        .version-badge { font-size: 0.65rem; background: var(--accent-gold); color: #1a1612; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
+    </style>
 </head>
 <body>
-<div class="scene">
-  <div class="scene-bg" id="sceneBg"></div>
-  <div class="scene-fg"></div>
-  <div class="scene-world" id="sceneWorld"></div>
-  <div class="scene-veil"></div>
-  <div class="scene-grain"></div>
-</div>
-<div class="blackout" id="blackout"></div>
-
-<div id="coverLayer" class="cover">
-  <h1>星尘古牌</h1>
-  <p>七十八张 · 一次一问</p>
-  <button id="enterBtn" class="enter-btn">入 内 问 牌</button>
-</div>
-
-<div id="divinationPane" class="divination-pane">
-  <section class="page on" data-p="ask">
-    <div class="plate">
-      <div class="plate-title">写 下 你 的 问 题</div>
-      <div id="todayCard" class="today-card">今日古牌 · 点击查看</div>
-      <div class="slips">
-        <button data-quick="感情发展" class="quick-tag">感情</button>
-        <button data-quick="事业方向" class="quick-tag">事业</button>
-        <button data-quick="财运状况" class="quick-tag">财运</button>
-        <button data-quick="人际关系" class="quick-tag">人际</button>
-        <button data-quick="学业进展" class="quick-tag">学业</button>
-        <button data-quick="自我成长" class="quick-tag">成长</button>
-      </div>
-      <div class="input-wrapper">
-        <input type="text" id="questionInput" placeholder="或自己写一句" autocomplete="off">
-        <span id="clearInputBtn" class="clear-input">✕</span>
-      </div>
-      <select id="spreadSelect">
-        <option value="3">三牌 · 过去 现在 未来</option>
-        <option value="2">二牌 · 抉择</option>
-        <option value="5">五牌 · 深入</option>
-      </select>
-      <div class="mode-group">
-        <button id="modeStandardBtn" class="mode-btn active">标准翻牌</button>
-        <button id="ModeSelectBtn" class="mode-btn">选牌模式</button>
-      </div>
-      <div class="row center">
-        <button id="drawBtn" class="btn-draw">开 始 翻 牌</button>
-        <button id="toggleManualBtn" class="btn-draw small">自选编号</button>
-      </div>
-      <div id="manualPanel" class="manual-panel">
-        <p style="text-align:center;font-size:.72rem;color:#6b5334;">输入编号 1~78</p>
-        <div id="manualInputs" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;"></div>
-        <div class="row center"><button id="manualDrawBtn" class="btn-draw">开 牌</button></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="page" data-p="cards">
-    <div id="resultArea"></div>
-  </section>
-
-  <section class="page" data-p="tools">
-    <div class="plate">
-      <div class="plate-title">柜</div>
-      <div class="tools-grid">
-        <button id="themeToggleBtn">深色 · 护眼</button>
-        <button id="clearHistoryBtn">清空历史</button>
-        <button id="exportBtn">分享文本</button>
-        <button id="shareImageBtn">分享图片</button>
-        <button id="favoriteBtn">收藏本局</button>
-        <button id="toggleFavBtn">我的收藏</button>
-        <button id="backupBtn">备份数据</button>
-        <button id="importBtn">导入备份</button>
-      </div>
-      <div id="favoritesPanel" class="favorites-panel">
-        <strong>我的收藏 <button id="exportFavBtn" style="font-size:.7rem;">导出</button></strong>
-        <ul id="favList"></ul>
-      </div>
-      <div class="history-title"><span class="rule-title">占卜历史</span>
-        <input type="text" id="historySearch" class="history-search" placeholder="搜索">
-      </div>
-      <ul id="historyList" class="history-list"><li>—— 暂无 ——</li></ul>
-      <div class="changelog-panel">
-        <div class="changelog-header" id="changelogHeader"><span>更新日志</span><span>▼</span></div>
-        <div class="changelog-content" id="changelogContent">
-          <p><strong>版本</strong></p>
-          <ul><li>v3 书页舞台：一屏一幕，拍照式镜头</li><li>v2 版画场景与胶片调</li></ul>
-        </div>
-      </div>
-      <div class="guestbook-buttons">
-        <a href="https://docs.qq.com/form/page/DWURYVXBSTHdQb0dj" class="guestbook-btn" target="_blank">我要留言</a>
-        <a href="https://docs.qq.com/smartsheet/DWWdUYXpIY2hrRGhU" class="guestbook-btn" target="_blank">查看留言</a>
-      </div>
-      <div class="guestbook-note">匿名 · 无需登录</div>
-      <div class="footer-disclaimer">心理娱乐参考 · 请理性看待</div>
-    </div>
-    <input type="file" id="importFile" accept="application/json,.json" style="display:none">
-  </section>
-
-  <nav class="ribbon">
-    <button data-go="ask" class="on">问</button>
-    <button data-go="cards">牌</button>
-    <button data-go="tools">柜</button>
-  </nav>
-</div>
-
-<div id="shareCardContainer" class="share-card-container"></div>
-<div id="toastMsg" class="toast-msg"></div>
-<div id="cardModal" class="modal"><div class="modal-content" id="modalTextContent"></div></div>
-<div id="candyDonateBtn" class="candy-donate-btn">请我吃颗糖</div>
-<div id="donateModal" class="donate-modal">
-  <div class="donate-modal-content">
-    <span class="donate-close">&times;</span>
-    <h3>谢谢支持</h3>
-    <p>如果这些解语对你有用，请我吃颗糖。</p>
-    <div class="donate-qrcodes"><div class="donate-qrcode-item">
-      <img id="donateQr" src="" alt="赞赏码"><span>赞赏码</span></div></div>
-  </div>
-</div>
-
+<!-- ========== 环境检测与降级提示（完美优化） ========== -->
 <script>
 (function() {
     // 检测是否为微信内置浏览器
@@ -361,6 +686,135 @@ body.fate .card-orient{color:#8c7245}
     }
 })();
 </script>
+
+<div class="tarot-wrapper">
+    <div id="coverLayer" class="cover">
+        <div class="star-line">✧*̣̩  ✦  ✧*̣̩</div>
+        <h1>✧*̣̩ 星尘·古牌 *̣̩✧</h1>
+        <div class="star-line">⋆｡°✩  🃟  ✩°｡⋆</div>
+        <p style="color:#b8a78d;">𓂀 78张古牌 · 原版解语 · 星辰指引 𓂀</p>
+        <button id="enterBtn" class="enter-btn">✧ 入内 ✧</button>
+    </div>
+    <div id="divinationPane" class="divination-pane">
+        <div class="mode-group">
+            <button id="modeStandardBtn" class="mode-btn active">🎴 标准翻牌</button>
+            <button id="ModeSelectBtn" class="mode-btn">🎲 选牌模式</button>
+        </div>
+        <div class="top-bar">
+            <button id="themeToggleBtn">🌙 深色 · 护眼</button>
+            <button id="clearHistoryBtn">🗑️ 清空历史</button>
+            <button id="exportBtn">📋 分享文本</button>
+            <button id="shareImageBtn">📸 分享图片</button>
+            <button id="favoriteBtn">⭐ 收藏</button>
+            <button id="toggleFavBtn">📖 查看收藏</button>
+            <select id="spreadSelect">
+                <option value="3">🃟 三牌 · 过去现在未来</option>
+                <option value="2">⚖️ 二牌 · 抉择</option>
+                <option value="5">🔮 五牌 · 深入</option>
+            </select>
+        </div>
+        <div id="todayCard" class="today-card">✨ 今日古牌指引 ✨ 点击查看</div>
+        <div class="question-area">
+            <label style="font-size:0.8rem;">•͈ᴗ⁃͈ ✧ 你想问什么？</label>
+            <div class="input-wrapper">
+                <input type="text" id="questionInput" placeholder="例如：感情发展 / 工作选择" autocomplete="off">
+                <span id="clearInputBtn" class="clear-input">✕</span>
+            </div>
+            <div style="margin-top:8px;">
+                <button data-quick="感情发展" class="quick-tag">✿ 感情</button>
+                <button data-quick="事业方向" class="quick-tag">✿ 事业</button>
+                <button data-quick="财运状况" class="quick-tag">✿ 财运</button>
+                <button data-quick="人际关系" class="quick-tag">✿ 人际</button>
+                <button data-quick="学业进展" class="quick-tag">✿ 学业</button>
+                <button data-quick="自我成长" class="quick-tag">✿ 成长</button>
+            </div>
+        </div>
+        <div style="text-align:center;">
+            <button id="drawBtn" class="btn-draw">✨ 开始翻牌 ✨</button>
+            <button id="toggleManualBtn" class="btn-draw" style="font-size:0.8rem;">🎴 自选编号</button>
+        </div>
+
+        <div class="changelog-panel">
+            <div class="changelog-header" id="changelogHeader">
+                <span class="changelog-icon">❁ 更新日志 ❁</span>
+                <span>▼</span>
+            </div>
+            <div class="changelog-content" id="changelogContent">
+                <p><strong>📜 版本历史</strong></p>
+                <ul>
+                    <li><strong>v0.1 - 2026.06.01</strong>：基础框架搭建，实现78张牌库、标准翻牌模式、手动选牌基础功能。</li>
+                    <li><strong>v0.2 - 2026.06.01</strong>：加入完整牌意库（大阿卡纳+小阿卡纳+宫廷牌），正逆位解释各具特色。</li>
+                    <li><strong>v0.3 - 2026.06.02</strong>：新增深色/浅色模式切换，优化卡片翻牌动画和震动反馈。</li>
+                    <li><strong>v0.4 - 2026.06.02</strong>：添加历史记录与收藏功能，支持复盘与导出JSON。</li>
+                    <li><strong>v0.5 - 2026.06.02</strong>：上线每日古牌指引（基于日期随机种子），增加分享文本和分享图片功能。</li>
+                    <li><strong>v0.6 - 2026.06.12</strong>：修复自选编号锁，改为首次翻牌后解锁，优化选牌模式界面。</li>
+                    <li><strong>v0.7 - 2026.06.02</strong>：扩充话术库，增加「直白提醒」「星尘指引」「星之低语」三层建议。</li>
+                    <li><strong>v0.8 - 2026.06.02</strong>：集成腾讯文档留言板，匿名互动；增加捐赠打赏入口。</li>
+                    <li><strong>v0.9 - 2026.06.02</strong>：多牌阵支持（二牌抉择、五牌深入），牌阵位置自动适配。</li>
+                    <li><strong>v1.0 - 2026.06.02</strong>：首个稳定版，修复分享图片牌背显示问题，优化图片跨域加载。</li>
+                    <li><strong>v1.3 - 2026.11.19</strong>：可用性与可读性——新增「备份数据 / 导入备份」（历史 + 收藏 + 主题一次导出，换机可恢复，导入自动去重）；新增「全部翻开」按钮，五牌阵不必逐张点击；次要文字颜色加深（对比度 3.91 → 5.4，达到 WCAG AA），正文与备注字号整体上调一档。</li>
+                    <li><strong>v1.2 - 2026.11.19</strong>：逻辑修复——盲抽改为洗牌后不重复取牌（原三牌阵约 3.8%、五牌阵约 12.3% 概率抽到同一张牌，现为 0）；修复分享图片时图片未就绪导致的空白；移除已失效的网易云背景音乐外链（链接返回网页而非音频），音乐按钮一并下线；同一问题 30 秒内重复抽牌时给出提示。</li>
+                    <li><strong>v1.1 - 2026.11.19</strong>：性能与加载优化——牌面图改为同源直连（移除第三方图床代理，实测由超时变为 1-3 秒）；截图库改为点击「分享图片」时才按需加载，首屏不再等待外网脚本；补齐页面描述、分享卡片（OG）与主题色等元信息；新增 PWA 离线安装（manifest + Service Worker + 图标）；牌背图预加载。</li>
+                    <li><strong>v1.5 - 2026.06.02</strong>：自选编号功能完善，支持输入多个编号一次性开牌，增加输入框防呆校验。</li>
+                    <li><strong>v2.0 - 2026.06.03</strong>：全面重构解读引擎，整合能量总结、逆位过半提醒、元素分析，话术动态匹配问题场景。</li>
+                    <li><strong>v3.0 - 2026.06.03</strong>：正式版——所有已知bug修复，分享图片完美生成，牌意库与话术库达到完美预期。</li>
+                </ul>
+                <p><strong>📢 如有建议或需求，欢迎通过留言板交流～</strong></p>
+                <p style="margin-top:12px; font-size:0.8rem; color:var(--text-secondary);">⭐ 感谢使用星尘古牌，愿星尘指引你的道路。</p>
+            </div>
+        </div>
+
+        <div id="manualPanel" class="manual-panel">
+            <p>📝 请输入卡牌编号 (1~78)，每个位置一个</p>
+            <div id="manualInputs" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
+            <button id="manualDrawBtn" class="btn-draw">✦ 开牌 ✦</button>
+        </div>
+        <div id="resultArea" class="result-area" style="opacity:0;"></div>
+        <div id="favoritesPanel" class="favorites-panel">
+            <strong>★ 我的收藏 <button id="exportFavBtn" style="font-size:0.7rem;">📎 导出JSON</button></strong>
+            <ul id="favList"></ul>
+        </div>
+        <div class="backup-bar"><button id="backupBtn" class="quick-tag">💾 备份数据</button><button id="importBtn" class="quick-tag">📥 导入备份</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></div>
+        <div class="history-title">▼ 占卜历史 <input type="text" id="historySearch" class="history-search" placeholder="🔍 搜索历史..."></div>
+        <ul class="history-list" id="historyList"><li>—— 暂无 ——</li></ul>
+
+        <!-- 腾讯文档留言板 - 已替换为你提供的两个新链接 -->
+        <div class="guestbook-buttons">
+            <a href="https://docs.qq.com/form/page/DWURYVXBSTHdQb0dj" class="guestbook-btn" target="_blank">📝 我要留言</a>
+            <a href="https://docs.qq.com/smartsheet/DWWdUYXpIY2hrRGhU" class="guestbook-btn" target="_blank">👀 查看留言</a>
+        </div>
+        <div class="guestbook-note">
+            ✨ 点击「我要留言」写下你的想法（匿名，无需登录）<br>
+            💬 点击「查看留言」浏览大家的寄语
+        </div>
+
+        <div class="footer-disclaimer">
+            ✧ 心理娱乐参考，请理性看待 ✧<br>
+            ❁ 严谨封建迷信，仅个人娱乐 ❁
+        </div>
+    </div>
+</div>
+
+<div id="shareCardContainer" class="share-card-container"></div>
+
+<div id="toastMsg" class="toast-msg"></div>
+<div id="cardModal" class="modal"><div class="modal-content" id="modalTextContent"></div></div>
+<div id="candyDonateBtn" class="candy-donate-btn">🍬 ´ₒ⦁⩊⦁ₒ` 🍬</div>
+<div id="donateModal" class="donate-modal">
+    <div class="donate-modal-content">
+        <span class="donate-close">&times;</span>
+        <h3>🍭 谢谢支持 🍭</h3>
+        <p>如果古牌的解语对你有帮助，请我吃颗糖～ 随意打赏，心意最大 ✨</p>
+        <div class="donate-qrcodes">
+            <div class="donate-qrcode-item">
+                <img id="donateQr" src="" alt="赞赏码">
+                <span>🍬 赞赏码</span>
+            </div>
+        </div>
+        <p style="margin-top: 16px; font-size: 12px;">🌟 •͈ᴗ⁃͈ ✧你的支持是我继续更新的动力 🌟</p>
+    </div>
+</div>
+
 <script>
 // ==================== 图片配置 ====================
 const IMAGE_BASE_URL = './';
@@ -656,16 +1110,6 @@ function standardDraw(manualCards) {
             const allContainers = document.querySelectorAll('.card-container');
             const allFlipped = Array.from(allContainers).every(c => c.classList.contains('flipped'));
             if(allFlipped) {
-                if(!document.body.classList.contains('fate')){
-                    var bo=document.getElementById('blackout');
-                    bo.classList.add('on');
-                    setTimeout(function(){
-                        document.body.classList.add('fate');
-                        var ra=document.getElementById('resultArea');
-                        if(ra) setTimeout(function(){ ra.scrollIntoView({behavior:'smooth',block:'start'}); }, 260);
-                    }, 600);
-                    setTimeout(function(){ bo.classList.remove('on'); }, 1100);
-                }
                 const interp = generateFullInterpretation(cards, revs, q, spread);
                 const interpDiv = document.getElementById('fullInterpretation');
                 interpDiv.innerHTML = `<div class="reading-block">${interp.replace(/\n/g,'<br>')}</div>`;
@@ -848,7 +1292,7 @@ function loadState(){ let h=localStorage.getItem('tarot_history'); if(h) try{ hi
 function saveSession(){ if(currentCards.length) sessionStorage.setItem('current_session',JSON.stringify({cards:currentCards.map(c=>c.id), reverses:currentReverses, question:currentQuestion, spread:currentSpread})); }
 
 document.getElementById('changelogHeader').addEventListener('click', () => { const content = document.getElementById('changelogContent'); content.classList.toggle('open'); const icon = document.querySelector('#changelogHeader span:last-child'); icon.textContent = content.classList.contains('open') ? '▲' : '▼'; });
-document.getElementById('enterBtn').onclick=()=>{ document.body.classList.add('entered'); document.getElementById('coverLayer').style.display='none'; document.getElementById('divinationPane').classList.add('active');  loadState(); showTodayCard(); };
+document.getElementById('enterBtn').onclick=()=>{ document.getElementById('coverLayer').style.display='none'; document.getElementById('divinationPane').classList.add('active'); document.getElementById('bgm').play().catch(()=>{}); loadState(); showTodayCard(); };
 document.getElementById('drawBtn').onclick=()=>drawCards(null);
 document.getElementById('themeToggleBtn').onclick=()=>{ document.body.classList.toggle('dark'); localStorage.setItem('tarot_dark',document.body.classList.contains('dark')?'1':'0'); };
 document.getElementById('clearHistoryBtn').onclick=()=>{ history=[]; localStorage.removeItem('tarot_history'); renderHistory(); showToast("历史清空"); };
@@ -933,78 +1377,10 @@ if (donateBtn) donateBtn.onclick = () => { donateModal.style.display = 'flex'; }
 if (closeDonate) closeDonate.onclick = () => { donateModal.style.display = 'none'; };
 window.onclick = (event) => { if (event.target === donateModal) donateModal.style.display = 'none'; };
 
-// ===== 场景视差 =====
-(function(){
-    window.addEventListener('pointermove',function(e){
-        var x=(e.clientX/window.innerWidth-0.5), y=(e.clientY/window.innerHeight-0.5);
-        document.documentElement.style.setProperty('--px',(x*16).toFixed(1)+'px');
-        document.documentElement.style.setProperty('--py',(y*12).toFixed(1)+'px');
-    },{passive:true});
-})();
-
-// ===== v8 书页导航 =====
-(function(){
-    var pane=document.getElementById('divinationPane');
-    if(!pane) return;
-    var pages=Array.prototype.slice.call(document.querySelectorAll('.page'));
-    var ribbon=document.querySelectorAll('.ribbon button');
-    function show(name){
-        pages.forEach(function(pg){ pg.classList.toggle('on', pg.getAttribute('data-p')===name); });
-        Array.prototype.forEach.call(ribbon,function(b){ b.classList.toggle('on', b.getAttribute('data-go')===name); });
-        document.body.setAttribute('data-page',name);
-    }
-    Array.prototype.forEach.call(ribbon,function(b){
-        b.addEventListener('click',function(){ show(b.getAttribute('data-go')); });
-    });
-    window.__page=show;
-    var db=document.getElementById('drawBtn');
-    if(db) db.addEventListener('click',function(){ setTimeout(function(){ show('cards'); },120); });
-    var md=document.getElementById('manualDrawBtn');
-    if(md) md.addEventListener('click',function(){ setTimeout(function(){ show('cards'); },200); });
-    show('ask');
-})();
-
-
-// 结果页：解读底页上拉
-(function(){
-    var obs=new MutationObserver(function(){
-        if(!document.body.classList.contains('fate')) return;
-        var rb=document.querySelector('.reading-block');
-        if(rb && !rb.__wired){
-            rb.__wired=true;
-            rb.addEventListener('click',function(){ rb.classList.toggle('open'); });
-        }
-    });
-    obs.observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true,childList:true});
-})();
 // PWA：注册 Service Worker（仅 HTTPS 生效，本地打开自动跳过）
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
 }
-</script>
-<script>
-(function(){
-  // 视差
-  window.addEventListener('pointermove',function(e){
-    var x=(e.clientX/window.innerWidth-0.5), y=(e.clientY/window.innerHeight-0.5);
-    document.documentElement.style.setProperty('--px',(x*16).toFixed(1)+'px');
-    document.documentElement.style.setProperty('--py',(y*12).toFixed(1)+'px');
-  },{passive:true});
-  // 页签
-  var pages=document.querySelectorAll('.page');
-  var btns=document.querySelectorAll('.ribbon button');
-  function show(n){
-    Array.prototype.forEach.call(pages,function(p){p.classList.toggle('on',p.getAttribute('data-p')===n);});
-    Array.prototype.forEach.call(btns,function(b){b.classList.toggle('on',b.getAttribute('data-go')===n);});
-    document.body.setAttribute('data-page',n);
-  }
-  Array.prototype.forEach.call(btns,function(b){b.addEventListener('click',function(){show(b.getAttribute('data-go'));});});
-  var db=document.getElementById('drawBtn');
-  if(db) db.addEventListener('click',function(){ setTimeout(function(){show('cards');},140); });
-  var mb=document.getElementById('manualDrawBtn');
-  if(mb) mb.addEventListener('click',function(){ setTimeout(function(){show('cards');},220); });
-  window.__page=show;
-})();
 </script>
 </body>
 </html>
