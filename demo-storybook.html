@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0810">
+<title>星尘古牌 · 分层原型</title>
+<style>
+  :root{
+    --ink:#0a0810;
+    --far:#3a2d52;
+    --mid:#1b1526;
+    --gold:#c8a567;
+    --gold-dim:#8c7245;
+    --paper:#f3e6cc;
+    --serif:"Songti SC","Noto Serif SC","Source Han Serif SC",Georgia,serif;
+    --px:0px; --py:0px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:#06040a;color:var(--paper);font-family:var(--serif);
+    overflow:hidden;display:flex;align-items:center;justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- 舞台 ---------- */
+  .stage{
+    position:relative;width:100%;height:100dvh;max-width:520px;
+    overflow:hidden;isolation:isolate;
+    background:radial-gradient(120% 80% at 50% 8%,#2a2140,#0d0a16 62%,#06040a);
+  }
+
+  .layer{position:absolute;inset:-5%;will-change:transform;pointer-events:none}
+  .sky{z-index:1}
+  .far{z-index:2}
+  .fog.a{z-index:3}
+  .mid{z-index:4}
+  .fog.b{z-index:5}
+  .arch{z-index:32;inset:0}  /* 拱窗不做出血，坐标与内容层一一对应 */
+  .fg{z-index:34}
+  .layer svg{display:block;width:100%;height:100%}
+
+  /* 天空 */
+  .sky{inset:-5%;background:
+      radial-gradient(60% 34% at 50% 30%,rgba(210,168,120,.20),transparent 70%),
+      radial-gradient(90% 60% at 50% 96%,rgba(120,70,70,.28),transparent 72%),
+      linear-gradient(180deg,#1a1738 0%,#241b3a 44%,#3a2b40 70%,#20161f 100%)}
+  .sky::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(46% 26% at 50% 26%,rgba(255,225,170,.16),transparent 70%)}
+
+  /* 雾带 */
+  .fog{position:absolute;left:-30%;width:160%;height:22%;filter:blur(18px);opacity:.5;pointer-events:none}
+  .fog.a{top:56%;background:radial-gradient(closest-side,rgba(190,190,215,.20),transparent)}
+  .fog.b{top:72%;height:26%;background:radial-gradient(closest-side,rgba(170,165,190,.16),transparent);opacity:.42}
+
+  /* 内容窗 */
+  .content{
+    position:absolute;left:50%;top:0;bottom:0;transform:translateX(-50%);
+    width:min(64%,284px);z-index:36;pointer-events:none;
+  }
+
+  .intro{
+    position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:18px;cursor:pointer;
+    background:radial-gradient(70% 50% at 50% 42%,rgba(10,8,16,.35),rgba(6,4,10,.88));
+    transition:opacity .7s ease,visibility .7s;
+  }
+  .intro.hide{opacity:0;visibility:hidden}
+  .intro-kicker{font-size:11px;letter-spacing:.55em;text-indent:.55em;color:rgba(226,208,170,.62)}
+  .intro h1{
+    font-size:clamp(26px,8vw,38px);font-weight:400;letter-spacing:.2em;text-indent:.2em;
+    color:#f4e7c8;text-shadow:0 2px 24px rgba(200,165,103,.45);
+  }
+  .intro-rule{width:88px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);position:relative}
+  .intro-rule::after{content:"";position:absolute;left:50%;top:-3px;width:7px;height:7px;
+    transform:translateX(-50%) rotate(45deg);background:#d9bd8c;box-shadow:0 0 12px rgba(217,189,140,.9)}
+  .intro p{font-size:12px;line-height:2;letter-spacing:.16em;color:rgba(226,208,170,.78);text-align:center}
+  .intro-btn{
+    margin-top:10px;padding:11px 30px;border:1px solid rgba(217,189,140,.7);
+    background:linear-gradient(180deg,rgba(214,176,110,.22),rgba(214,176,110,.05));
+    color:#f6ead0;font-family:var(--serif);font-size:13px;letter-spacing:.32em;text-indent:.32em;
+    border-radius:2px;cursor:pointer;
+    box-shadow:0 0 0 4px rgba(217,189,140,.07),0 12px 26px -12px #000;
+  }
+
+  /* 牌 */
+  .cards{position:absolute;left:0;right:0;bottom:36%;display:flex;justify-content:center;gap:12px;
+    pointer-events:auto;transition:transform .9s cubic-bezier(.3,.8,.3,1)}
+  .card{
+    width:clamp(58px,17vw,76px);aspect-ratio:.62;
+    perspective:700px;cursor:pointer;
+    transition:transform .35s ease;
+  }
+  .card-inner{
+    position:relative;width:100%;height:100%;transform-style:preserve-3d;
+    transition:transform .62s cubic-bezier(.4,.1,.2,1);
+    border-radius:3px;
+  }
+  .card.flipped .card-inner{transform:rotateY(180deg)}
+  .face{
+    position:absolute;inset:0;backface-visibility:hidden;border-radius:3px;overflow:hidden;
+    border:1px solid rgba(200,165,103,.55);
+    box-shadow:0 14px 26px -14px #000,inset 0 0 0 3px rgba(255,240,210,.05);
+    background:#160f1e;
+  }
+  .face img{width:100%;height:100%;object-fit:cover;display:block}
+  .face.back{background:#120d18}
+  .face.back img{opacity:.92}
+  .face.front{transform:rotateY(180deg);background:linear-gradient(180deg,#2b2438,#150f1d)}
+  .card.flipped .face.front{box-shadow:0 0 22px -6px rgba(200,165,103,.55),0 14px 26px -14px #000}
+
+  /* 解读页 */
+  .sheet{
+    position:absolute;left:0;right:0;bottom:0;width:100%;pointer-events:auto;
+    background:linear-gradient(180deg,#fbf1d8,#e8d7b2 88%);
+    color:#2b2118;border-radius:4px 4px 0 0;
+    border:1px solid rgba(140,114,69,.75);border-bottom:none;
+    box-shadow:0 -22px 44px -22px rgba(0,0,0,.9),inset 0 0 0 5px rgba(255,252,240,.5),inset 0 0 0 6px rgba(140,114,69,.35);
+    padding:18px 18px calc(24px + env(safe-area-inset-bottom));
+    transform:translateY(104%);
+    transition:transform .95s cubic-bezier(.25,.85,.3,1);
+  }
+  .stage.revealed .sheet{transform:translateY(0)}
+  .stage.revealed .cards{transform:translateY(-58px)}
+  .sheet-title{
+    text-align:center;font-size:13px;letter-spacing:.42em;text-indent:.42em;color:#5b4426;
+    padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid rgba(140,114,69,.45);
+  }
+  .sheet-row{display:flex;gap:10px;align-items:baseline;font-size:12.5px;line-height:2;color:#3a2c1c}
+  .sheet-row b{flex:none;font-weight:400;color:#8c7245;letter-spacing:.2em;font-size:11px}
+  .sheet-note{margin-top:14px;font-size:10.5px;letter-spacing:.18em;text-align:center;color:#7a6446}
+
+  .replay{
+    position:absolute;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:70;
+    padding:8px 16px;border:1px solid rgba(200,165,103,.45);background:rgba(10,8,16,.72);
+    color:rgba(240,223,184,.9);font-family:var(--serif);font-size:11px;letter-spacing:.24em;
+    border-radius:2px;opacity:0;visibility:hidden;transition:opacity .4s .6s,visibility .4s .6s;
+  }
+  .stage.revealed .replay{opacity:1;visibility:visible}
+
+  /* 暗角 */
+  .vignette{
+    position:absolute;inset:0;z-index:40;pointer-events:none;
+    background:
+      radial-gradient(120% 70% at 50% 40%,transparent 46%,rgba(4,3,8,.72) 100%),
+      linear-gradient(180deg,rgba(4,3,8,.55),transparent 22%,transparent 74%,rgba(4,3,8,.8));
+  }
+
+  /* 尘埃 */
+  .dust{position:absolute;inset:0;z-index:35;pointer-events:none;overflow:hidden}
+  .dust i{position:absolute;width:2px;height:2px;border-radius:50%;
+    background:rgba(244,230,200,.75);animation:float linear infinite}
+  @keyframes float{from{transform:translateY(0);opacity:0}10%{opacity:.8}to{transform:translateY(-120px);opacity:0}}
+
+  @media (prefers-reduced-motion: reduce){
+    .layer{transform:none !important}
+    .dust{display:none}
+    .card-inner,.sheet{transition-duration:.01ms}
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- 1 天空 -->
+  <div class="layer sky" data-depth="0.16">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="#efe0bc">
+        <circle cx="32" cy="72" r="1.1" opacity=".7"/><circle cx="86" cy="40" r=".8" opacity=".45"/>
+        <circle cx="140" cy="96" r="1.3" opacity=".75"/><circle cx="196" cy="34" r=".7" opacity=".4"/>
+        <circle cx="252" cy="88" r="1" opacity=".6"/><circle cx="312" cy="52" r="1.2" opacity=".7"/>
+        <circle cx="360" cy="118" r=".8" opacity=".5"/><circle cx="48" cy="164" r=".9" opacity=".5"/>
+        <circle cx="118" cy="186" r=".7" opacity=".38"/><circle cx="286" cy="176" r=".9" opacity=".5"/>
+        <circle cx="352" cy="212" r=".7" opacity=".35"/><circle cx="66" cy="246" r="1" opacity=".55"/>
+        <circle cx="230" cy="228" r=".7" opacity=".4"/><circle cx="332" cy="286" r=".8" opacity=".4"/>
+      </g>
+      <g fill="#f7eacb" opacity=".9">
+        <path d="M140 92 l2.6 7.4 7.4 2.6 -7.4 2.6 -2.6 7.4 -2.6 -7.4 -7.4 -2.6 7.4 -2.6z" opacity=".8"/>
+      </g>
+      <g>
+        <circle cx="204" cy="168" r="62" fill="#e8cfa0" opacity=".10"/>
+        <circle cx="204" cy="168" r="42" fill="#e8cfa0" opacity=".12"/>
+        <path d="M196 128a34 34 0 1 0 16 64 28 28 0 1 1 -16 -64z" fill="#f0dfb4" opacity=".95"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 2 远景 -->
+  <div class="layer far" data-depth="0.34">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M-20 540 L34 476 L74 516 L120 452 L168 512 L212 466 L262 520 L306 470 L352 516 L400 474 L410 880 L-20 880 Z"
+            fill="var(--far)" stroke="rgba(150,120,170,.28)" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <!-- 雾 -->
+  <div class="fog a" data-depth="0.46"></div>
+
+  <!-- 3 中景：废墟与枯林 -->
+  <div class="layer mid" data-depth="0.6">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="var(--mid)" stroke="rgba(190,150,140,.22)" stroke-width="1">
+        <path d="M262 700 L280 500 L298 700 Z"/>
+        <path d="M304 700 L316 566 L328 700 Z"/>
+        <rect x="270" y="596" width="20" height="104"/>
+      </g>
+      <g fill="#e0b877" opacity=".55">
+        <rect x="277" y="536" width="5" height="10" rx="2"/>
+        <rect x="277" y="566" width="5" height="10" rx="2"/>
+        <rect x="312" y="606" width="4" height="8" rx="2"/>
+      </g>
+      <g fill="var(--mid)">
+        <path d="M34 700 L34 560 L60 620 L60 546 L86 618 L86 700 Z"/>
+        <path d="M96 700 L96 586 L118 640 L118 700 Z"/>
+        <path d="M356 700 L356 556 L380 626 L380 700 Z"/>
+        <path d="M322 700 L322 604 L344 654 L344 700 Z"/>
+      </g>
+      <path d="M0 690 C90 672 250 672 390 694 L390 880 L0 880 Z" fill="var(--mid)"/>
+    </svg>
+  </div>
+
+  <div class="fog b" data-depth="0.5"></div>
+
+  <!-- 内容 -->
+  <div class="content">
+    <div class="cards" id="cards">
+      <div class="card" data-i="0">
+        <div class="card-inner">
+          <div class="face back"><img src="./beibu.png" alt=""></div>
+          <div class="face front"><img src="./00.png" alt=""></div>
+        </div>
+      </div>
+      <div class="card" data-i="1">
+        <div class="card-inner">
+          <div class="face back"><img src="./beibu.png" alt=""></div>
+          <div class="face front"><img src="./02.png" alt=""></div>
+        </div>
+      </div>
+      <div class="card" data-i="2">
+        <div class="card-inner">
+          <div class="face back"><img src="./beibu.png" alt=""></div>
+          <div class="face front"><img src="./10.png" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet" id="sheet">
+      <div class="sheet-title">星尘古牌</div>
+      <div class="sheet-row"><b>过去</b><span>你把选择交给了别人，那也是一种勇敢。</span></div>
+      <div class="sheet-row"><b>现在</b><span>两扇门都在你面前，门后的光还不一样长。</span></div>
+      <div class="sheet-row"><b>未来</b><span>光会从你亲手推开的那一扇里照进来。</span></div>
+      <div class="sheet-note">✦ 轻触任意一张牌，可看到完整解语 ✦</div>
+    </div>
+  </div>
+
+  <!-- 4 拱窗（近景层） -->
+  <div class="layer arch" data-depth="0.92">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <mask id="windowMask">
+          <rect width="390" height="844" fill="#fff"/>
+          <path d="M66 844 L66 470 C66 386 118 336 195 322 C272 336 324 386 324 470 L324 844 Z" fill="#000"/>
+        </mask>
+      </defs>
+      <rect width="390" height="844" fill="#0a0810" mask="url(#windowMask)"/>
+      <g fill="none" stroke-linejoin="round">
+        <path d="M66 844 L66 470 C66 386 118 336 195 322 C272 336 324 386 324 470 L324 844"
+              stroke="rgba(150,116,150,.55)" stroke-width="4"/>
+        <path d="M76 844 L76 472 C76 394 124 348 195 335 C266 348 314 394 314 472 L314 844"
+              stroke="rgba(200,165,103,.28)" stroke-width="1.5"/>
+      </g>
+      <g stroke="rgba(120,96,130,.20)" stroke-width="1.2">
+        <path d="M0 560 H66"/><path d="M324 560 H390"/>
+        <path d="M0 640 H66"/><path d="M324 640 H390"/>
+        <path d="M0 720 H66"/><path d="M324 720 H390"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 5 前景栏杆 -->
+  <div class="layer fg" data-depth="1.15">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="#050409">
+        <rect x="0" y="792" width="390" height="52"/>
+        <rect x="0" y="754" width="390" height="9" rx="3"/>
+        <g>
+          <rect x="26" y="762" width="7" height="32" rx="3"/>
+          <rect x="58" y="762" width="7" height="32" rx="3"/>
+          <rect x="90" y="762" width="7" height="32" rx="3"/>
+          <rect x="293" y="762" width="7" height="32" rx="3"/>
+          <rect x="325" y="762" width="7" height="32" rx="3"/>
+          <rect x="357" y="762" width="7" height="32" rx="3"/>
+        </g>
+        <path d="M8 754 L14 726 L20 754 Z"/>
+        <path d="M370 754 L376 726 L382 754 Z"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 尘埃 -->
+  <div class="dust" id="dust"></div>
+
+  <!-- 暗角 -->
+  <div class="vignette"></div>
+
+  <!-- 开场 -->
+  <div class="intro" id="intro">
+    <div class="intro-kicker">七十八张</div>
+    <h1>星尘古牌</h1>
+    <div class="intro-rule"></div>
+    <p>翻一张牌，问一件放在心里太久的事</p>
+    <button class="intro-btn" id="startBtn">入内问牌</button>
+  </div>
+
+  <button class="replay" id="replayBtn">重新开始</button>
+</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const intro = document.getElementById('intro');
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const layers = Array.from(document.querySelectorAll('.layer'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 尘埃
+  const dust = document.getElementById('dust');
+  for (let i = 0; i < 14; i++) {
+    const d = document.createElement('i');
+    d.style.left = (6 + Math.random() * 88) + '%';
+    d.style.top = (52 + Math.random() * 44) + '%';
+    d.style.animationDuration = (7 + Math.random() * 8).toFixed(1) + 's';
+    d.style.animationDelay = (-Math.random() * 12).toFixed(1) + 's';
+    d.style.opacity = (0.25 + Math.random() * 0.5).toFixed(2);
+    dust.appendChild(d);
+  }
+
+  // 视差：自动缓慢摆动 + 指针偏移
+  let px = 0, py = 0, tx = 0, ty = 0;
+  function onMove(e){
+    const r = stage.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    tx = x * 26; ty = y * 18;
+  }
+  stage.addEventListener('pointermove', onMove);
+  stage.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+
+  function tick(t){
+    px += (tx - px) * 0.06;
+    py += (ty - py) * 0.06;
+    const sx = Math.sin(t / 5200) * 5 + px;
+    const sy = Math.cos(t / 6800) * 4 + py;
+    for (const l of layers){
+      const d = parseFloat(l.dataset.depth || '0.3');
+      l.style.transform = 'translate3d(' + (sx * d).toFixed(2) + 'px,' + (sy * d).toFixed(2) + 'px,0)';
+    }
+    const fogA = document.querySelector('.fog.a');
+    const fogB = document.querySelector('.fog.b');
+    if (fogA) fogA.style.transform = 'translate3d(' + (Math.sin(t / 9000) * 34).toFixed(1) + 'px,0,0)';
+    if (fogB) fogB.style.transform = 'translate3d(' + (Math.cos(t / 12000) * 46).toFixed(1) + 'px,0,0)';
+    requestAnimationFrame(tick);
+  }
+  if (!reduce) requestAnimationFrame(tick);
+
+  // 序列
+  let started = false;
+  function play(){
+    if (started) return;
+    started = true;
+    intro.classList.add('hide');
+    cards.forEach((c, i) => {
+      setTimeout(() => c.classList.add('flipped'), 260 + i * 420);
+    });
+    setTimeout(() => stage.classList.add('revealed'), 260 + cards.length * 420 + 520);
+  }
+  function reset(){
+    stage.classList.remove('revealed');
+    cards.forEach(c => c.classList.remove('flipped'));
+    intro.classList.remove('hide');
+    started = false;
+  }
+
+  document.getElementById('startBtn').addEventListener('click', play);
+  intro.addEventListener('click', play);
+  cards.forEach(c => c.addEventListener('click', () => { if (!started) play(); else c.classList.toggle('flipped'); }));
+  document.getElementById('replayBtn').addEventListener('click', reset);
+})();
+</script>
+</body>
+</html>
