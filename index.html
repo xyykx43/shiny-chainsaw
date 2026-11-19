@@ -1048,6 +1048,7 @@ function generateFullInterpretation(cards, reverses, question, spread) {
 
 // ==================== 全局变量与核心逻辑（完整保留） ====================
 let history = [], favorites = [], currentCards = [], currentReverses = [], currentQuestion = "", currentSpread = 3, musicPlaying = false, isDrawing = false;
+let lastDrawQuestion = "", lastDrawAt = 0;
 let audioCtx = null;
 let currentMode = "standard";
 let currentSelection = [], currentCandidates = [], selectionNeeded = 3;
