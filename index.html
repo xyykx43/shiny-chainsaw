@@ -28,7 +28,7 @@
             --bg-page: #1a1612;
             --bg-card: #fdf8f0;
             --text-primary: #2e2a24;
-            --text-secondary: #8b7a66;
+            --text-secondary: #6f5f4e;
             --border-light: #e0d6c4;
             --accent-gold: #b8a78d;
             --accent-glow: #ecd8b4;
@@ -76,7 +76,7 @@
             color: var(--accent-glow);
             padding: 7px 14px;
             border-radius: 40px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             cursor: pointer;
             backdrop-filter: blur(6px);
             transition: transform 0.1s ease, background 0.2s;
@@ -167,7 +167,7 @@
             .cover { padding: 15% 6%; border-radius: 32px; }
             .cover h1 { letter-spacing: 0.04em; }
             .cover .star-line { letter-spacing: 0.3em; }
-            .enter-btn { padding: 0.7rem 1.2rem; min-width: 130px; }
+            .enter-btn { padding: 0.8rem 1.2rem; min-width: 130px; }
         }
 
         .divination-pane {
@@ -206,7 +206,7 @@
             border: 1px solid var(--border-light);
             padding: 5px 14px;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             cursor: pointer;
             color: var(--text-primary);
             display: inline-block;
@@ -283,7 +283,7 @@
         }
         .card-name { font-weight: bold; font-size: 1rem; margin-bottom: 6px; }
         .card-orient { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 8px; }
-        .card-short { font-size: 0.7rem; line-height: 1.4; }
+        .card-short { font-size: 0.8rem; line-height: 1.4; }
         .card-front img { width: 100px; height: auto; border-radius: 12px; margin-bottom: 8px; background: #f0e9df; }
         body.dark .card-front img { background: #2a251f; }
         .select-area {
@@ -336,8 +336,8 @@
         .card-result:hover { transform: translateY(-4px); }
         .card-result img { width: 100px; border-radius: 12px; margin-bottom: 8px; }
         .card-result .card-name { font-weight: bold; font-size: 1rem; }
-        .card-result .card-orient { font-size: 0.7rem; color: var(--text-secondary); }
-        .card-result .card-short { font-size: 0.7rem; margin-top: 6px; }
+        .card-result .card-orient { font-size: 0.8rem; color: var(--text-secondary); }
+        .card-result .card-short { font-size: 0.8rem; margin-top: 6px; }
         .reading-block {
             border: 1px solid var(--border-light);
             border-radius: 20px;
@@ -370,11 +370,12 @@
             text-align: center;
         }
         .history-title { margin-top: 28px; font-size: 0.8rem; color: var(--text-secondary); }
+        .backup-bar { display: flex; gap: 8px; justify-content: center; align-items: center; margin: 18px 0 6px; flex-wrap: wrap; }
         .history-search { width: 100%; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 4px 12px; color: var(--text-primary); margin-bottom: 8px; }
         .history-list { list-style: none; margin-top: 10px; max-height: 200px; overflow-y: auto; }
         .history-list li { display: flex; justify-content: space-between; align-items: center; border-left: 2px solid var(--border-light); padding: 6px 10px; margin-bottom: 6px; cursor: pointer; font-size: 0.8rem; }
         .history-list li:hover { background: rgba(0,0,0,0.03); }
-        .delete-history { background: none; border: none; color: #e67e22; cursor: pointer; font-size: 0.7rem; margin-left: 8px; }
+        .delete-history { background: none; border: none; color: #e67e22; cursor: pointer; font-size: 0.8rem; margin-left: 8px; }
         .favorites-panel {
             background: rgba(0,0,0,0.02);
             border-radius: 14px;
@@ -417,7 +418,7 @@
             color: #ffefcf;
             padding: 6px 16px;
             border-radius: 40px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             opacity: 0;
             transition: opacity 0.25s;
             pointer-events: none;
@@ -464,7 +465,7 @@
             width: 100%;
         }
         .footer-disclaimer {
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             text-align: center;
             margin-top: 32px;
             color: var(--text-secondary);
@@ -612,7 +613,7 @@
         .guestbook-btn:active { transform: scale(0.96); }
         .guestbook-note {
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
             margin: 10px 0;
         }
@@ -650,7 +651,7 @@
             overflow-y: auto;
         }
         .changelog-content p { margin: 8px 0; font-size: 0.75rem; }
-        .changelog-content ul { margin: 6px 0 6px 20px; font-size: 0.7rem; }
+        .changelog-content ul { margin: 6px 0 6px 20px; font-size: 0.8rem; }
         .contact-links a { color: var(--accent-gold); text-decoration: none; margin-right: 16px; }
         .version-badge { font-size: 0.65rem; background: var(--accent-gold); color: #1a1612; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
     </style>
@@ -730,7 +731,7 @@
         </div>
         <div style="text-align:center;">
             <button id="drawBtn" class="btn-draw">✨ 开始翻牌 ✨</button>
-            <button id="toggleManualBtn" class="btn-draw" style="font-size:0.7rem;">🎴 自选编号</button>
+            <button id="toggleManualBtn" class="btn-draw" style="font-size:0.8rem;">🎴 自选编号</button>
         </div>
 
         <div class="changelog-panel">
@@ -751,13 +752,15 @@
                     <li><strong>v0.8 - 2026.06.02</strong>：集成腾讯文档留言板，匿名互动；增加捐赠打赏入口。</li>
                     <li><strong>v0.9 - 2026.06.02</strong>：多牌阵支持（二牌抉择、五牌深入），牌阵位置自动适配。</li>
                     <li><strong>v1.0 - 2026.06.02</strong>：首个稳定版，修复分享图片牌背显示问题，优化图片跨域加载。</li>
+                    <li><strong>v1.3 - 2026.11.19</strong>：可用性与可读性——新增「备份数据 / 导入备份」（历史 + 收藏 + 主题一次导出，换机可恢复，导入自动去重）；新增「全部翻开」按钮，五牌阵不必逐张点击；次要文字颜色加深（对比度 3.91 → 5.4，达到 WCAG AA），正文与备注字号整体上调一档。</li>
+                    <li><strong>v1.2 - 2026.11.19</strong>：逻辑修复——盲抽改为洗牌后不重复取牌（原三牌阵约 3.8%、五牌阵约 12.3% 概率抽到同一张牌，现为 0）；修复分享图片时图片未就绪导致的空白；移除已失效的网易云背景音乐外链（链接返回网页而非音频），音乐按钮一并下线；同一问题 30 秒内重复抽牌时给出提示。</li>
                     <li><strong>v1.1 - 2026.11.19</strong>：性能与加载优化——牌面图改为同源直连（移除第三方图床代理，实测由超时变为 1-3 秒）；截图库改为点击「分享图片」时才按需加载，首屏不再等待外网脚本；补齐页面描述、分享卡片（OG）与主题色等元信息；新增 PWA 离线安装（manifest + Service Worker + 图标）；牌背图预加载。</li>
                     <li><strong>v1.5 - 2026.06.02</strong>：自选编号功能完善，支持输入多个编号一次性开牌，增加输入框防呆校验。</li>
                     <li><strong>v2.0 - 2026.06.03</strong>：全面重构解读引擎，整合能量总结、逆位过半提醒、元素分析，话术动态匹配问题场景。</li>
                     <li><strong>v3.0 - 2026.06.03</strong>：正式版——所有已知bug修复，分享图片完美生成，牌意库与话术库达到完美预期。</li>
                 </ul>
                 <p><strong>📢 如有建议或需求，欢迎通过留言板交流～</strong></p>
-                <p style="margin-top:12px; font-size:0.7rem; color:var(--text-secondary);">⭐ 感谢使用星尘古牌，愿星尘指引你的道路。</p>
+                <p style="margin-top:12px; font-size:0.8rem; color:var(--text-secondary);">⭐ 感谢使用星尘古牌，愿星尘指引你的道路。</p>
             </div>
         </div>
 
@@ -768,9 +771,10 @@
         </div>
         <div id="resultArea" class="result-area" style="opacity:0;"></div>
         <div id="favoritesPanel" class="favorites-panel">
-            <strong>★ 我的收藏 <button id="exportFavBtn" style="font-size:0.6rem;">📎 导出JSON</button></strong>
+            <strong>★ 我的收藏 <button id="exportFavBtn" style="font-size:0.7rem;">📎 导出JSON</button></strong>
             <ul id="favList"></ul>
         </div>
+        <div class="backup-bar"><button id="backupBtn" class="quick-tag">💾 备份数据</button><button id="importBtn" class="quick-tag">📥 导入备份</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"></div>
         <div class="history-title">▼ 占卜历史 <input type="text" id="historySearch" class="history-search" placeholder="🔍 搜索历史..."></div>
         <ul class="history-list" id="historyList"><li>—— 暂无 ——</li></ul>
 
@@ -792,8 +796,7 @@
 </div>
 
 <div id="shareCardContainer" class="share-card-container"></div>
-<audio id="bgm" loop preload="none"><source src="https://music.163.com/song/media/outer/url?id=2015896805.mp3" type="audio/mpeg"></audio>
-<div id="musicCtrl" class="music-control">🔇 音乐关</div>
+
 <div id="toastMsg" class="toast-msg"></div>
 <div id="cardModal" class="modal"><div class="modal-content" id="modalTextContent"></div></div>
 <div id="candyDonateBtn" class="candy-donate-btn">🍬 ´ₒ⦁⩊⦁ₒ` 🍬</div>
@@ -1060,14 +1063,22 @@ function standardDraw(manualCards) {
     let q = document.getElementById('questionInput').value.trim();
     if(!q) { showToast("请写下问题"); return; }
     if(isDrawing) return;
+    const nowTs = Date.now();
+    if (q === lastDrawQuestion && nowTs - lastDrawAt < 30000) showToast("同一问题刚抽过，先让牌意沉淀一下");
+    lastDrawQuestion = q; lastDrawAt = nowTs;
     isDrawing=true; setTimeout(()=>isDrawing=false,1200);
     vibShort(); playShuffleSound();
-    if(!musicPlaying){ document.getElementById('bgm').play().then(()=>{ musicPlaying=true; document.getElementById('musicCtrl').innerHTML="🎵 音乐开"; }).catch(()=>{}); }
     let spread = parseInt(document.getElementById('spreadSelect').value);
     currentSpread = spread;
     let cards, revs;
     if(manualCards) { cards=manualCards; revs=cards.map(()=>Math.random()<0.5); }
-    else { cards=[]; revs=[]; for(let i=0;i<spread;i++){ cards.push(allCards[Math.floor(Math.random()*allCards.length)]); revs.push(Math.random()<0.5); } }
+    else {
+        // 洗牌后取前 N 张，避免同一牌阵出现重复牌
+        const pool = allCards.slice();
+        for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+        cards = pool.slice(0, spread);
+        revs = cards.map(() => Math.random() < 0.5);
+    }
     currentCards=cards; currentReverses=revs; currentQuestion=q;
     let area = document.getElementById('resultArea');
     area.style.opacity='0';
@@ -1085,9 +1096,11 @@ function standardDraw(manualCards) {
             </div>
         </div>`;
     }
-    html += `</div><div id="fullInterpretation" style="display:none;"></div>`;
+    html += `</div><div style="text-align:center;margin:16px 0;"><button id="flipAllBtn" class="btn-draw" style="font-size:0.8rem;">✦ 全部翻开 ✦</button></div><div id="fullInterpretation" style="display:none;"></div>`;
     area.innerHTML = html;
     area.style.opacity='1';
+    const flipAllBtn = document.getElementById('flipAllBtn');
+    if (flipAllBtn) flipAllBtn.onclick = () => { document.querySelectorAll('.card-container:not(.flipped)').forEach(c => c.click()); flipAllBtn.style.display = 'none'; };
     document.querySelectorAll('.card-container').forEach(container => {
         container.addEventListener('click', function(e) {
             if(this.classList.contains('flipped')) return;
@@ -1117,9 +1130,11 @@ function startSelectMode() {
     const q = document.getElementById('questionInput').value.trim();
     if(!q) { showToast("请写下问题"); return; }
     if(isDrawing) return;
+    const nowTs = Date.now();
+    if (q === lastDrawQuestion && nowTs - lastDrawAt < 30000) showToast("同一问题刚抽过，先让牌意沉淀一下");
+    lastDrawQuestion = q; lastDrawAt = nowTs;
     isDrawing=true; setTimeout(()=>isDrawing=false,1200);
     vibShort(); playShuffleSound();
-    if(!musicPlaying){ document.getElementById('bgm').play().then(()=>{ musicPlaying=true; document.getElementById('musicCtrl').innerHTML="🎵 音乐开"; }).catch(()=>{}); }
     const spread = parseInt(document.getElementById('spreadSelect').value);
     selectionNeeded = spread;
     currentSpread = spread;
@@ -1141,7 +1156,7 @@ function startSelectMode() {
     for(let i=0; i<currentCandidates.length; i++) {
         html += `<div class="select-card" data-idx="${i}"><img src="${getBackImageUrl()}" alt="牌背"></div>`;
     }
-    html += `</div><div style="text-align:center; margin-top:10px;"><span id="selectionCount">已选 0 / ${spread}</span> <button id="resetSelectionBtn" class="btn-draw" style="font-size:0.7rem;">重置选择</button></div>`;
+    html += `</div><div style="text-align:center; margin-top:10px;"><span id="selectionCount">已选 0 / ${spread}</span> <button id="resetSelectionBtn" class="btn-draw" style="font-size:0.8rem;">重置选择</button></div>`;
     area.innerHTML = html;
     area.style.opacity='1';
     const cardsDiv = document.querySelectorAll('.select-card');
@@ -1215,7 +1230,6 @@ function manualDrawCards(manualCards) {
     if(isDrawing) return;
     isDrawing=true; setTimeout(()=>isDrawing=false,1200);
     vibShort(); playShuffleSound();
-    if(!musicPlaying){ document.getElementById('bgm').play().then(()=>{ musicPlaying=true; document.getElementById('musicCtrl').innerHTML="🎵 音乐开"; }).catch(()=>{}); }
     let spread = parseInt(document.getElementById('spreadSelect').value);
     currentSpread = spread;
     let cards = manualCards;
@@ -1270,9 +1284,9 @@ function ensureHtml2Canvas() {
     });
     return html2canvasPromise;
 }
-async function generateShareImage() { if (!currentCards.length) { showToast("请先翻牌"); return; } vibShort(); showToast("正在生成图片..."); try { await ensureHtml2Canvas(); } catch (e) { showToast("截图组件加载失败，请改用「分享文本」"); return; } const container = document.createElement('div'); container.style.background = '#fdf8f0'; container.style.padding = '24px'; container.style.borderRadius = '28px'; container.style.maxWidth = '700px'; container.style.margin = '0 auto'; container.style.fontFamily = "'Georgia', 'Times New Roman', 'PingFang SC', 'Microsoft YaHei', serif"; container.style.color = '#2e2a24'; const header = document.createElement('div'); header.style.textAlign = 'center'; header.style.marginBottom = '20px'; header.style.borderBottom = '1px solid #e0d6c4'; header.style.paddingBottom = '12px'; header.innerHTML = `<h2 style="color:#b8a070; margin:0;">✧ 星尘古牌 ✧</h2><div style="font-size:14px; color:#8b7a66;">${currentSpread===3?"三牌 · 过去现在未来":(currentSpread===2?"二牌 · 抉择":"五牌 · 深入")}</div><div style="font-size:14px; color:#8b7a66;">问题：${currentQuestion}</div><div style="font-size:12px; color:#8b7a66;">${new Date().toLocaleString()}</div>`; container.appendChild(header); const cardsDiv = document.createElement('div'); cardsDiv.style.display = 'flex'; cardsDiv.style.flexWrap = 'wrap'; cardsDiv.style.justifyContent = 'center'; cardsDiv.style.gap = '20px'; cardsDiv.style.margin = '20px 0'; for (let i = 0; i < currentCards.length; i++) { const card = currentCards[i]; const rev = currentReverses[i]; const imgUrl = getCardImageUrl(card.id); const meaningShort = (cardMeanings[card.name] ? (rev ? cardMeanings[card.name].rev : cardMeanings[card.name].up) : "").substring(0, 80); const cardDiv = document.createElement('div'); cardDiv.style.background = '#fff'; cardDiv.style.border = '1px solid #e0d6c4'; cardDiv.style.borderRadius = '16px'; cardDiv.style.padding = '12px'; cardDiv.style.width = '150px'; cardDiv.style.textAlign = 'center'; cardDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'; cardDiv.innerHTML = `<img src="${imgUrl}" style="width:100px; border-radius:12px; margin-bottom:8px;"><div style="font-weight:bold; font-size:1rem;">${card.name}</div><div style="font-size:0.7rem; color:#8b7a66; margin:4px 0;">${rev ? '逆位' : '正位'}</div><div style="font-size:0.7rem; line-height:1.4;">${meaningShort}...</div>`; cardsDiv.appendChild(cardDiv); } container.appendChild(cardsDiv); const fullInterp = generateFullInterpretation(currentCards, currentReverses, currentQuestion, currentSpread); const interpDiv = document.createElement('div'); interpDiv.style.border = '1px solid #e0d6c4'; interpDiv.style.borderRadius = '20px'; interpDiv.style.padding = '1.2rem 1.4rem'; interpDiv.style.marginTop = '24px'; interpDiv.style.background = 'rgba(0,0,0,0.02)'; interpDiv.style.lineHeight = '1.65'; interpDiv.style.fontSize = '0.9rem'; interpDiv.innerHTML = fullInterp.replace(/\n/g, '<br>'); container.appendChild(interpDiv); const tempContainer = document.createElement('div'); tempContainer.style.position = 'fixed'; tempContainer.style.top = '-9999px'; tempContainer.style.left = '-9999px'; tempContainer.appendChild(container); document.body.appendChild(tempContainer); try { const imgs = tempContainer.querySelectorAll('img'); for (let img of imgs) { if (!img.complete || img.naturalWidth === 0) { await new Promise(resolve => { img.onload = resolve; img.onerror = resolve; }); } img.crossOrigin = "Anonymous"; } const canvas = await html2canvas(tempContainer, { scale: 2, backgroundColor: '#fdf8f0', useCORS: true, logging: false }); const url = canvas.toDataURL('image/png'); const a = document.createElement('a'); a.href = url; a.download = `星尘古牌_${Date.now()}.png`; a.click(); showToast("图片已保存"); } catch (err) { console.error(err); showToast("生成图片失败，可尝试使用「分享文本」"); } finally { document.body.removeChild(tempContainer); } }
+async function generateShareImage() { if (!currentCards.length) { showToast("请先翻牌"); return; } vibShort(); showToast("正在生成图片..."); try { await ensureHtml2Canvas(); } catch (e) { showToast("截图组件加载失败，请改用「分享文本」"); return; } const container = document.createElement('div'); container.style.background = '#fdf8f0'; container.style.padding = '24px'; container.style.borderRadius = '28px'; container.style.maxWidth = '700px'; container.style.margin = '0 auto'; container.style.fontFamily = "'Georgia', 'Times New Roman', 'PingFang SC', 'Microsoft YaHei', serif"; container.style.color = '#2e2a24'; const header = document.createElement('div'); header.style.textAlign = 'center'; header.style.marginBottom = '20px'; header.style.borderBottom = '1px solid #e0d6c4'; header.style.paddingBottom = '12px'; header.innerHTML = `<h2 style="color:#b8a070; margin:0;">✧ 星尘古牌 ✧</h2><div style="font-size:14px; color:#8b7a66;">${currentSpread===3?"三牌 · 过去现在未来":(currentSpread===2?"二牌 · 抉择":"五牌 · 深入")}</div><div style="font-size:14px; color:#8b7a66;">问题：${currentQuestion}</div><div style="font-size:12px; color:#8b7a66;">${new Date().toLocaleString()}</div>`; container.appendChild(header); const cardsDiv = document.createElement('div'); cardsDiv.style.display = 'flex'; cardsDiv.style.flexWrap = 'wrap'; cardsDiv.style.justifyContent = 'center'; cardsDiv.style.gap = '20px'; cardsDiv.style.margin = '20px 0'; for (let i = 0; i < currentCards.length; i++) { const card = currentCards[i]; const rev = currentReverses[i]; const imgUrl = getCardImageUrl(card.id); const meaningShort = (cardMeanings[card.name] ? (rev ? cardMeanings[card.name].rev : cardMeanings[card.name].up) : "").substring(0, 80); const cardDiv = document.createElement('div'); cardDiv.style.background = '#fff'; cardDiv.style.border = '1px solid #e0d6c4'; cardDiv.style.borderRadius = '16px'; cardDiv.style.padding = '12px'; cardDiv.style.width = '150px'; cardDiv.style.textAlign = 'center'; cardDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'; cardDiv.innerHTML = `<img src="${imgUrl}" style="width:100px; border-radius:12px; margin-bottom:8px;"><div style="font-weight:bold; font-size:1rem;">${card.name}</div><div style="font-size:0.8rem; color:#8b7a66; margin:4px 0;">${rev ? '逆位' : '正位'}</div><div style="font-size:0.8rem; line-height:1.4;">${meaningShort}...</div>`; cardsDiv.appendChild(cardDiv); } container.appendChild(cardsDiv); const fullInterp = generateFullInterpretation(currentCards, currentReverses, currentQuestion, currentSpread); const interpDiv = document.createElement('div'); interpDiv.style.border = '1px solid #e0d6c4'; interpDiv.style.borderRadius = '20px'; interpDiv.style.padding = '1.2rem 1.4rem'; interpDiv.style.marginTop = '24px'; interpDiv.style.background = 'rgba(0,0,0,0.02)'; interpDiv.style.lineHeight = '1.65'; interpDiv.style.fontSize = '0.9rem'; interpDiv.innerHTML = fullInterp.replace(/\n/g, '<br>'); container.appendChild(interpDiv); const tempContainer = document.createElement('div'); tempContainer.style.position = 'fixed'; tempContainer.style.top = '-9999px'; tempContainer.style.left = '-9999px'; tempContainer.appendChild(container); document.body.appendChild(tempContainer); try { const imgs = tempContainer.querySelectorAll('img'); for (let img of imgs) { if (!img.complete || img.naturalWidth === 0) { await new Promise(resolve => { img.onload = resolve; img.onerror = resolve; }); } img.crossOrigin = "Anonymous"; } const canvas = await html2canvas(tempContainer, { scale: 2, backgroundColor: '#fdf8f0', useCORS: true, logging: false }); const url = canvas.toDataURL('image/png'); const a = document.createElement('a'); a.href = url; a.download = `星尘古牌_${Date.now()}.png`; a.click(); showToast("图片已保存"); } catch (err) { console.error(err); showToast("生成图片失败，可尝试使用「分享文本」"); } finally { document.body.removeChild(tempContainer); } }
 function updateManualInputs(){ let spread=parseInt(document.getElementById('spreadSelect').value); document.getElementById('manualInputs').innerHTML=Array.from({length:spread},(_,i)=>`<input type="number" min="1" max="78" placeholder="${i+1}" class="manual-input">`).join(''); }
-function showTodayCard(){ let seed=Math.floor(Date.now()/(1000*60*60*24)); let rng=(s)=>{ let x=Math.sin(s)*10000; return x-Math.floor(x); }; let idx=Math.floor(rng(seed)*allCards.length); let card=allCards[idx]; let isRev=rng(seed+1)<0.5; let meaning=cardMeanings[card.name]?(isRev?cardMeanings[card.name].rev:cardMeanings[card.name].up):""; document.getElementById('todayCard').innerHTML=`✨ 今日古牌：${card.name} ${isRev?'逆位':'正位'} ✨<br><span style="font-size:0.7rem;">${meaning.substring(0,60)}...</span>`; document.getElementById('todayCard').onclick=()=>{ document.getElementById('modalTextContent').innerHTML=`<strong>${card.name} · ${isRev?'逆位':'正位'}</strong><p>${meaning}</p><button id="closeModalBtn">关闭</button>`; document.getElementById('cardModal').classList.add('active'); document.getElementById('closeModalBtn').onclick=()=>{ document.getElementById('cardModal').classList.remove('active'); }; }; }
+function showTodayCard(){ let seed=Math.floor(Date.now()/(1000*60*60*24)); let rng=(s)=>{ let x=Math.sin(s)*10000; return x-Math.floor(x); }; let idx=Math.floor(rng(seed)*allCards.length); let card=allCards[idx]; let isRev=rng(seed+1)<0.5; let meaning=cardMeanings[card.name]?(isRev?cardMeanings[card.name].rev:cardMeanings[card.name].up):""; document.getElementById('todayCard').innerHTML=`✨ 今日古牌：${card.name} ${isRev?'逆位':'正位'} ✨<br><span style="font-size:0.8rem;">${meaning.substring(0,60)}...</span>`; document.getElementById('todayCard').onclick=()=>{ document.getElementById('modalTextContent').innerHTML=`<strong>${card.name} · ${isRev?'逆位':'正位'}</strong><p>${meaning}</p><button id="closeModalBtn">关闭</button>`; document.getElementById('cardModal').classList.add('active'); document.getElementById('closeModalBtn').onclick=()=>{ document.getElementById('cardModal').classList.remove('active'); }; }; }
 function loadState(){ let h=localStorage.getItem('tarot_history'); if(h) try{ history=JSON.parse(h); renderHistory(); }catch(e){} let f=localStorage.getItem('tarot_favorites'); if(f) try{ favorites=JSON.parse(f); renderFavorites(); }catch(e){} let sess=sessionStorage.getItem('current_session'); if(sess) try{ let d=JSON.parse(sess); currentCards=d.cards.map(id=>allCards.find(c=>c.id===id)).filter(Boolean); currentReverses=d.reverses; currentQuestion=d.question; currentSpread=d.spread; if(currentCards.length) drawCards(currentCards); }catch(e){} }
 function saveSession(){ if(currentCards.length) sessionStorage.setItem('current_session',JSON.stringify({cards:currentCards.map(c=>c.id), reverses:currentReverses, question:currentQuestion, spread:currentSpread})); }
 
@@ -1306,10 +1320,50 @@ manualDrawBtn.addEventListener('click', (e) => {
     if(cards.some(c => !c)){ showToast("无效的卡牌编号，请确认1~78"); return; }
     manualDrawCards(cards);
 });
-document.getElementById('musicCtrl').onclick=async()=>{ let bgm=document.getElementById('bgm'); if(musicPlaying){ bgm.pause(); musicPlaying=false; document.getElementById('musicCtrl').innerHTML="🔇 音乐关"; }else{ try{ await bgm.play(); musicPlaying=true; document.getElementById('musicCtrl').innerHTML="🎵 音乐开"; }catch(e){ showToast("请先交互"); } } };
+// 背景音乐外链已失效，暂时移除；如需要可换成本地 mp3 再接入
 document.getElementById('cardModal').onclick=e=>{ if(e.target===document.getElementById('cardModal')) document.getElementById('cardModal').classList.remove('active'); };
 document.getElementById('spreadSelect').onchange=()=>{ vibShort(); updateManualInputs(); };
 document.getElementById('historySearch').addEventListener('input',()=>renderHistory());
+// 全量备份 / 导入（历史 + 收藏 + 主题）
+document.getElementById('backupBtn').onclick = () => {
+    const data = { app: '星尘·古牌', version: 2, exportedAt: new Date().toISOString(), history, favorites, dark: document.body.classList.contains('dark') };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `星尘古牌_备份_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast("备份已导出");
+};
+document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
+document.getElementById('importFile').onchange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const d = JSON.parse(reader.result);
+            const seen = new Set(history.map(h => h.time + '|' + h.question + '|' + (h.cards || []).join(',')));
+            (Array.isArray(d.history) ? d.history : []).forEach(h => {
+                const key = h.time + '|' + h.question + '|' + (h.cards || []).join(',');
+                if (!seen.has(key)) { seen.add(key); history.push(h); }
+            });
+            history = history.slice(0, 200);
+            if (Array.isArray(d.favorites)) {
+                const fseen = new Set(favorites.map(f => f.time + '|' + f.question));
+                d.favorites.forEach(f => { const k = f.time + '|' + f.question; if (!fseen.has(k)) { fseen.add(k); favorites.push(f); } });
+                favorites = favorites.slice(-50);
+            }
+            localStorage.setItem('tarot_history', JSON.stringify(history));
+            localStorage.setItem('tarot_favorites', JSON.stringify(favorites));
+            renderHistory(); renderFavorites();
+            showToast(`已导入 ${history.length} 条历史 / ${favorites.length} 条收藏`);
+        } catch (err) { showToast("文件格式不对"); }
+        e.target.value = '';
+    };
+    reader.readAsText(file);
+};
 document.getElementById('exportFavBtn').onclick=()=>{ let dataStr=JSON.stringify(favorites); let blob=new Blob([dataStr],{type:'application/json'}); let url=URL.createObjectURL(blob); let a=document.createElement('a'); a.href=url; a.download='tarot_favorites.json'; a.click(); URL.revokeObjectURL(url); };
 let touchStartX=0; document.getElementById('questionInput').addEventListener('touchstart',e=>{ touchStartX=e.touches[0].clientX; }); document.getElementById('questionInput').addEventListener('touchend',e=>{ let diff=e.changedTouches[0].clientX-touchStartX; if(diff<-50) document.getElementById('questionInput').value=''; });
 (function(){ if(localStorage.getItem('tarot_dark')==='1') document.body.classList.add('dark'); updateManualInputs(); loadState(); setInterval(()=>{ if(currentCards.length) saveSession(); },3000); })();
