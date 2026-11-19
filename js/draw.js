@@ -23,7 +23,7 @@ function standardDraw(manualCards) {
     area.style.opacity='0';
     let html = `<div class="spread-area" id="spreadArea">`;
     for(let i=0;i<spread;i++) {
-        html += `<div class="card-container" data-idx="${i}" data-flipped="false">
+        html += `<div class="card-container" data-idx="${i}" data-flipped="false" style="--i:${i};--tilt:${((i-(spread-1)/2)*2.5).toFixed(1)}deg">
             <div class="card-inner">
                 <div class="card-front">
                     <img src="${getCardImageUrl(cards[i].id)}" loading="lazy" onerror="this.style.display='none'">
@@ -48,14 +48,26 @@ function standardDraw(manualCards) {
             const allContainers = document.querySelectorAll('.card-container');
             const allFlipped = Array.from(allContainers).every(c => c.classList.contains('flipped'));
             if(allFlipped) {
-                const interp = generateFullInterpretation(cards, revs, q, spread);
-                const interpDiv = document.getElementById('fullInterpretation');
-                interpDiv.innerHTML = `<div class="reading-block">${interp.replace(/\n/g,'<br>')}</div>`;
-                interpDiv.style.display = 'block';
-                history.unshift({question:q, cards:cards.map(c=>c.id), reverses:revs, spread:spread, interp:interp, time:new Date().toLocaleString()});
-                if(history.length>30) history.pop();
-                localStorage.setItem('tarot_history', JSON.stringify(history));
-                renderHistory();
+                // 镜头：牌行拉远一瞬 + 黑场，再揭示解读
+                const row = document.getElementById('spreadArea');
+                const flash = document.createElement('div'); flash.className = 'blackout';
+                document.body.appendChild(flash);
+                row.style.transition = 'transform .5s ease, opacity .4s ease';
+                row.style.transform = 'scale(.955)'; row.style.opacity = '.9';
+                requestAnimationFrame(() => requestAnimationFrame(() => flash.classList.add('on')));
+                setTimeout(() => {
+                    const interp = generateFullInterpretation(cards, revs, q, spread);
+                    const interpDiv = document.getElementById('fullInterpretation');
+                    interpDiv.innerHTML = `<div class="reading-block">${interp.replace(/\n/g,'<br>')}</div>`;
+                    interpDiv.style.display = 'block';
+                    history.unshift({question:q, cards:cards.map(c=>c.id), reverses:revs, spread:spread, interp:interp, time:new Date().toLocaleString()});
+                    if(history.length>30) history.pop();
+                    localStorage.setItem('tarot_history', JSON.stringify(history));
+                    renderHistory();
+                    row.style.transform = ''; row.style.opacity = '';
+                    flash.classList.remove('on');
+                    setTimeout(() => flash.remove(), 400);
+                }, 300);
             }
         });
     });

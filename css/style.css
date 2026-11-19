@@ -629,3 +629,20 @@
         .changelog-content ul { margin: 6px 0 6px 20px; font-size: 0.8rem; }
         .contact-links a { color: var(--accent-gold); text-decoration: none; margin-right: 16px; }
         .version-badge { font-size: 0.65rem; background: var(--accent-gold); color: #1a1612; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
+/* ===== 镜头语言（原版风格之上的动效增强） ===== */
+@keyframes coverLeave { 0% { opacity:1; transform:none; } 100% { opacity:0; transform:scale(1.07); } }
+.cover.leaving { animation: coverLeave .5s cubic-bezier(.4,0,.6,1) forwards; }
+
+@keyframes dealIn {
+  0% { opacity:0; transform: translateY(34px) scale(.82) rotate(var(--tilt,0deg)); }
+  55% { opacity:1; }
+  100% { opacity:1; transform:none; }
+}
+.card-container { animation: dealIn .6s cubic-bezier(.22,.68,.3,1) backwards; animation-delay: calc(var(--i,0) * 90ms); }
+.card-container.flipped { transform: translateY(-5px); }
+
+@keyframes readingIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+.reading-block { animation: readingIn .7s ease backwards; }
+
+.blackout { position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; z-index:99; transition:opacity .28s ease; }
+.blackout.on { opacity:.92; }

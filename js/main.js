@@ -1,7 +1,19 @@
 document.getElementById('changelogHeader').addEventListener('click', () => { const content = document.getElementById('changelogContent'); content.classList.toggle('open'); const icon = document.querySelector('#changelogHeader span:last-child'); icon.textContent = content.classList.contains('open') ? '▲' : '▼'; });
-document.getElementById('enterBtn').onclick=()=>{ document.getElementById('coverLayer').style.display='none'; document.getElementById('divinationPane').classList.add('active'); document.getElementById('bgm').play().catch(()=>{}); loadState(); showTodayCard(); };
+document.getElementById('enterBtn').onclick = () => {
+    const cover = document.getElementById('coverLayer'), pane = document.getElementById('divinationPane');
+    if (cover.classList.contains('leaving')) return;
+    cover.classList.add('leaving');
+    setTimeout(() => {
+        cover.style.display = 'none';
+        pane.classList.add('active');
+        startBgm();
+        loadState(); showTodayCard();
+    }, 520);
+};
 document.getElementById('drawBtn').onclick=()=>drawCards(null);
 document.getElementById('themeToggleBtn').onclick=()=>{ document.body.classList.toggle('dark'); localStorage.setItem('tarot_dark',document.body.classList.contains('dark')?'1':'0'); };
+const bgmBtn = document.getElementById('bgmToggleBtn');
+if (bgmBtn) { bgmBtn.textContent = bgmOn ? '🎵 音乐 · 开' : '🔇 音乐 · 关'; bgmBtn.onclick = () => toggleBgm(bgmBtn); }
 document.getElementById('clearHistoryBtn').onclick=()=>{ history=[]; localStorage.removeItem('tarot_history'); renderHistory(); showToast("历史清空"); };
 document.getElementById('exportBtn').onclick=exportResult;
 document.getElementById('shareImageBtn').onclick=generateShareImage;
