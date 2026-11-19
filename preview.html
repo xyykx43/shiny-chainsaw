@@ -63,15 +63,21 @@ body{
 }
 .cover::before{content:"";position:absolute;inset:9px;border:1px solid rgba(169,139,79,.55);pointer-events:none;}
 .cover::after{content:"";position:absolute;inset:15px;border:1px solid rgba(169,139,79,.24);pointer-events:none;}
+.cover .cn-corner{position:absolute;width:22px;height:22px;opacity:.8;}
+.cover .cn-corner.tl{top:6px;left:6px;}
+.cover .cn-corner.tr{top:6px;right:6px;transform:rotate(90deg);}
+.cover .cn-corner.br{bottom:6px;right:6px;transform:rotate(180deg);}
+.cover .cn-corner.bl{bottom:6px;left:6px;transform:rotate(270deg);}
+.cover .seal{margin-top:26px;opacity:.9;}
 .cover.open{transform:rotateY(-172deg);opacity:0;}
 .cover .top{font-family:var(--latin);font-size:.54rem;letter-spacing:.46em;color:var(--brass);text-transform:uppercase;}
-.cover h1{margin-top:26px;font-size:clamp(1.7rem,7.2vw,2.3rem);font-weight:500;letter-spacing:.3em;text-indent:.3em;color:var(--paper-2);line-height:1.4;}
+.cover h1{margin-top:26px;font-size:clamp(1.55rem,6.6vw,2.1rem);font-weight:500;letter-spacing:.26em;text-indent:.26em;color:var(--paper-2);line-height:1.4;white-space:nowrap;}
 .cover .lat{margin-top:14px;font-family:var(--latin);font-size:.54rem;letter-spacing:.4em;color:var(--brass);text-transform:uppercase;opacity:.9;}
 .cover .rule{display:flex;align-items:center;gap:10px;width:64%;margin:24px auto 0;}
 .cover .rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(169,139,79,.7),transparent);}
 .cover .rule b{width:4px;height:4px;background:var(--brass);transform:rotate(45deg);}
-.cover .sub{margin-top:20px;font-size:.72rem;letter-spacing:.34em;text-indent:.34em;color:rgba(239,229,206,.6);}
-.cover .tap{margin-top:auto;font-family:var(--latin);font-size:.52rem;letter-spacing:.34em;color:rgba(169,139,79,.8);text-transform:uppercase;
+.cover .sub{margin-top:18px;font-size:.72rem;letter-spacing:.34em;text-indent:.34em;color:rgba(239,229,206,.6);}
+.cover .tap{margin-top:34px;font-family:var(--latin);font-size:.52rem;letter-spacing:.34em;color:rgba(169,139,79,.8);text-transform:uppercase;
   animation:breathe 3.4s ease-in-out infinite;}
 @keyframes breathe{0%,100%{opacity:.4;}50%{opacity:1;}}
 
@@ -86,7 +92,6 @@ body{
   box-shadow:0 30px 70px -40px #000;
   transform-origin:left center;
   transform-style:preserve-3d;
-  backface-visibility:hidden;
   overflow:hidden;
   will-change:transform;
 }
@@ -94,6 +99,13 @@ body{
 .sheet.turning-in{transition:transform .82s cubic-bezier(.44,.06,.28,1);}
 
 /* 纸纹 / 压边 */
+.page{backface-visibility:hidden;}          /* 转过 90° 后正文消失 */
+.backside{position:absolute;inset:0;z-index:5;pointer-events:none;
+  transform:rotateY(180deg);backface-visibility:hidden;
+  background:linear-gradient(200deg,#F3EAD6,#E6DBC1 60%,#DFD3B7);
+  box-shadow:inset 0 0 46px rgba(90,74,56,.26);}
+.backside::after{content:"";position:absolute;inset:0;opacity:.18;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/></filter><rect width='170' height='170' filter='url(%23b)' opacity='.4'/></svg>");}
 .sheet .grain{position:absolute;inset:0;pointer-events:none;opacity:.20;mix-blend-mode:multiply;z-index:6;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/></filter><rect width='170' height='170' filter='url(%23p)' opacity='.42'/></svg>");}
 .sheet .edge{position:absolute;inset:0;pointer-events:none;z-index:6;
@@ -118,7 +130,8 @@ body{
 .corner.bl{bottom:5px;left:5px;transform:rotate(270deg);}
 
 /* 页内布局 */
-.page{position:absolute;inset:0;display:flex;flex-direction:column;padding:26px 20px 18px;z-index:3;}
+.page{position:absolute;inset:0;display:flex;flex-direction:column;padding:24px 18px 16px;z-index:3;}
+.main{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;}
 .runhead{display:flex;justify-content:space-between;font-family:var(--latin);font-size:.5rem;
   letter-spacing:.28em;text-transform:uppercase;color:var(--ink-2);opacity:.7;padding:0 8px;}
 .plateno{margin-top:16px;text-align:center;font-family:var(--latin);font-size:.56rem;letter-spacing:.42em;
@@ -126,29 +139,29 @@ body{
 
 /* 画面 */
 .art{
-  position:relative;margin:12px auto 0;width:min(66%,230px);
-  border:1px solid rgba(43,33,24,.5);padding:6px;background:rgba(255,255,255,.4);
-  box-shadow:0 14px 30px -22px rgba(43,33,24,.9);
+  position:relative;margin:10px auto 0;width:min(74%,286px);aspect-ratio:3/5;
+  border:1px solid rgba(43,33,24,.55);padding:5px;background:rgba(255,255,255,.45);
+  box-shadow:0 16px 34px -24px rgba(43,33,24,.95);
   overflow:hidden;
 }
 .art::before{content:"";position:absolute;inset:3px;border:1px solid rgba(169,139,79,.6);z-index:2;pointer-events:none;}
-.art img{display:block;width:100%;height:auto;
-  filter:sepia(.12) contrast(1.04) saturate(.9);
-  transform:scale(1.06);transition:transform 6s ease-out;}
-.sheet.enter .art img{transform:scale(1);}
+.art img{display:block;width:100%;height:100%;object-fit:cover;
+  transform:scale(1.10);   /* 裁掉牌图自带的白色纸边与印字，交给下面的说明条 */
+  filter:sepia(.10) contrast(1.03) saturate(.92);}
 .art .glaze{position:absolute;inset:0;z-index:3;pointer-events:none;
   background:radial-gradient(120% 80% at 50% 0%,transparent 45%,rgba(60,44,30,.28) 100%);}
 
 /* 旁白带 */
 .band{
-  margin-top:16px;position:relative;
-  background:linear-gradient(180deg,rgba(30,22,18,.92),rgba(22,16,13,.94));
-  color:var(--paper-2);padding:12px 14px 13px;text-align:center;
-  box-shadow:0 10px 24px -18px #000;
+  width:min(74%,286px);margin:0 auto;position:relative;
+  background:linear-gradient(180deg,rgba(34,25,20,.96),rgba(24,17,13,.97));
+  color:var(--paper-2);padding:11px 12px 12px;text-align:center;
+  box-shadow:0 12px 26px -20px #000;
+  border-top:1px solid rgba(169,139,79,.55);
 }
 .band .en{font-family:var(--latin);font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;
   color:rgba(230,208,164,.75);margin-bottom:7px;}
-.band .cn{font-size:.92rem;line-height:1.85;letter-spacing:.06em;}
+.band .cn{font-size:.84rem;line-height:1.75;letter-spacing:.04em;}
 
 /* 逐条浮现 */
 .rise{opacity:0;transform:translateY(14px);}
@@ -160,10 +173,10 @@ body{
 @keyframes riseIn{to{opacity:1;transform:none;}}
 
 /* 牌说 */
-.moral{margin-top:auto;padding-top:14px;font-size:.78rem;line-height:1.9;color:var(--ink-2);
-  border-top:1px solid rgba(43,33,24,.18);}
+.moral{margin:16px auto 0;width:min(74%,286px);padding-top:12px;font-size:.78rem;line-height:1.9;
+  color:var(--ink-2);border-top:1px solid rgba(43,33,24,.18);}
 .moral b{color:var(--rubric);font-weight:400;letter-spacing:.18em;margin-right:6px;}
-.folio{margin-top:10px;text-align:center;font-family:var(--latin);font-size:.54rem;
+.folio{padding:10px 0 2px;text-align:center;font-family:var(--latin);font-size:.54rem;
   letter-spacing:.36em;color:var(--ink-2);opacity:.7;}
 
 /* 提问页 */
@@ -177,7 +190,7 @@ body{
 .stamp{padding:6px 13px;border:1px solid rgba(140,58,46,.5);background:transparent;color:var(--rubric);
   font-family:var(--serif);font-size:.72rem;letter-spacing:.14em;cursor:pointer;transition:all .3s;}
 .stamp.on{background:var(--rubric);color:var(--paper-2);}
-.drawzone{margin-top:auto;padding-top:24px;text-align:center;}
+.drawzone{margin-top:28px;padding-top:0;text-align:center;}
 .drawzone button{padding:14px 42px;background:transparent;border:1px solid var(--rubric);color:var(--rubric);
   font-family:var(--serif);font-size:.84rem;letter-spacing:.34em;text-indent:.34em;cursor:pointer;transition:all .35s;}
 .drawzone button:active{background:var(--rubric);color:var(--paper-2);}
@@ -213,10 +226,15 @@ body{
   <!-- 封面 -->
   <section class="cover" id="cover">
     <div class="top">Liber Sortium</div>
-    <h1>星尘<br>古牌</h1>
+    <h1>星尘·古牌</h1>
     <div class="lat">The Book of Gilded Arcana</div>
     <div class="rule"><i></i><b></b><i></i></div>
     <p class="sub">一次只问一件事</p>
+    <div class="seal"><svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+      <circle cx="23" cy="23" r="21" stroke="rgba(169,139,79,.55)" stroke-width=".8"/>
+      <circle cx="23" cy="23" r="16.5" stroke="rgba(169,139,79,.3)" stroke-width=".6"/>
+      <path d="M23 11 L25.6 20.4 L35 23 L25.6 25.6 L23 35 L20.4 25.6 L11 23 L20.4 20.4 Z" fill="rgba(169,139,79,.75)"/>
+    </svg></div>
     <div class="tap">tap to open</div>
   </section>
 
@@ -229,6 +247,7 @@ body{
       <div class="corner br"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
       <div class="corner bl"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
       <div class="page" id="bodyA"></div>
+      <div class="backside"></div>
       <div class="grain"></div><div class="edge"></div>
       <div class="spine-shade"></div><div class="sweep"></div>
     </article>
@@ -240,6 +259,7 @@ body{
       <div class="corner br"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
       <div class="corner bl"><svg viewBox="0 0 24 24" fill="none"><path d="M1 13 V1 H13" stroke="rgba(140,58,46,.75)" stroke-width="1"/><path d="M4.5 9.5 V4.5 H9.5" stroke="rgba(169,139,79,.85)" stroke-width=".8"/><circle cx="5" cy="5" r="1.7" fill="rgba(140,58,46,.6)"/></svg></div>
       <div class="page" id="bodyB"></div>
+      <div class="backside"></div>
       <div class="grain"></div><div class="edge"></div>
       <div class="spine-shade"></div><div class="sweep"></div>
     </article>
@@ -289,6 +309,7 @@ let busy=false;
 function askHTML(){
   return `
     <div class="runhead"><span>Liber Sortium</span><span>Quaestio</span></div>
+    <div class="main">
     <div class="plateno">The Question</div>
     <div class="qwrap rise r1">
       <label>You ask</label>
@@ -302,16 +323,19 @@ function askHTML(){
     </div>
     <p class="rise r3" style="margin:18px 4px 0;font-size:.82rem;line-height:1.95;color:#5C4B39;text-align:center;">把问题写在纸上，牌才知道要回答什么。</p>
     <div class="drawzone rise r4"><button id="drawBtn">抽 牌</button></div>
+    </div>
     <div class="folio">— 序 —</div>`;
 }
 
 function cardHTML(c){
   return `
     <div class="runhead"><span>Liber Sortium</span><span>${c.lat}</span></div>
+    <div class="main">
     <div class="plateno rise r1">${c.no}</div>
     <div class="art rise r1"><img src="${c.img}" alt="${c.name}"><div class="glaze"></div></div>
     <div class="band rise r2"><div class="en">${c.en}</div><div class="cn">${c.cn}</div></div>
     <div class="moral rise r3"><b>牌 说</b>${c.moral}</div>
+    </div>
     <div class="folio rise r4">${c.folio}</div>`;
 }
 
@@ -386,6 +410,8 @@ function turn(dir){
   nextSheet.style.transform='rotateY(0deg)';
   nextSheet.style.zIndex=1;
   nextSheet.classList.remove('enter');
+  void nextSheet.offsetWidth;
+  nextSheet.classList.add('enter');   // 翻页过程中下一页就是可见的
   curSheet.style.zIndex=2;
 
   if(dir>0){
