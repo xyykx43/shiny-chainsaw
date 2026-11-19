@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050607">
+<title>M2 · 黑场连续</title>
+<style>
+@font-face{font-family:"Xingchen Serif";src:url("./assets/fonts/noto-serif-sc-subset.woff2") format("woff2");font-display:swap}
+:root{--serif:"Xingchen Serif","Songti SC","Noto Serif CJK SC",Georgia,serif}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#030405;overflow:hidden}
+body{font-family:var(--serif);color:#e8dcc4;display:flex;align-items:center;justify-content:center}
+.stage{position:relative;width:100%;height:100dvh;max-width:560px;overflow:hidden;background:#030405;isolation:isolate}
+.frame{position:absolute;inset:0;transition:opacity .8s ease}
+.frame svg{display:block;width:100%;height:100%}
+#worldSvg{opacity:0}
+#worldSvg.in{opacity:1}
+.rise{transition:transform 1.15s cubic-bezier(.3,.8,.25,1),opacity 1s ease}
+#worldSvg .lay-far{transform:translateY(26px);opacity:.0}
+#worldSvg .lay-mid{transform:translateY(34px);opacity:.0}
+#worldSvg .lay-near{transform:translateY(44px);opacity:.0}
+#worldSvg.in .lay-far{transform:none;opacity:1}
+#worldSvg.in .lay-mid{transform:none;opacity:1;transition-delay:.2s}
+#worldSvg.in .lay-near{transform:none;opacity:1;transition-delay:.42s}
+
+.veil{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;
+  transition:opacity .5s ease;z-index:20}
+.veil.on{opacity:1}
+.veil.out{opacity:0;transition-duration:.9s}
+
+/* 牌：两帧里坐标相同 */
+.cards{position:absolute;left:50%;top:706px;transform:translate(-50%,-50%);display:flex;gap:12px;z-index:15}
+.card{width:64px;height:102px;perspective:700px;cursor:pointer}
+.inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;
+  transition:transform .62s cubic-bezier(.4,.05,.2,1)}
+.card.flip .inner{transform:rotateY(180deg)}
+.f{position:absolute;inset:0;backface-visibility:hidden;border-radius:3px;border:1px solid rgba(200,165,103,.55);
+  box-shadow:0 18px 30px -16px #000}
+.f.back{background:linear-gradient(160deg,#1F1828,#14101C)}
+.f.back::after{content:"";position:absolute;left:50%;top:50%;width:22px;height:22px;transform:translate(-50%,-50%) rotate(45deg);
+  border:1px solid rgba(200,165,103,.45)}
+.f.front{transform:rotateY(180deg);background:linear-gradient(180deg,#F4E6C8,#E2CFA8);
+  border-color:rgba(126,95,50,.8);display:flex;align-items:center;justify-content:center}
+.f.front::after{content:"";width:26px;height:26px;border:1.5px solid rgba(126,95,50,.75);border-radius:50%}
+
+.ui{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);
+  z-index:40;display:flex;gap:8px}
+.ui button{padding:9px 22px;border:1px solid rgba(200,165,103,.4);border-radius:2px;background:rgba(8,7,11,.7);
+  color:rgba(240,228,200,.9);font-family:var(--serif);font-size:11px;letter-spacing:.24em;text-indent:.24em;cursor:pointer}
+.ui button:disabled{opacity:.35}
+.cap{position:absolute;left:0;right:0;top:calc(18px + env(safe-area-inset-top));z-index:30;text-align:center;
+  font-size:10.5px;letter-spacing:.4em;text-indent:.4em;color:rgba(240,230,208,.6);pointer-events:none;
+  text-shadow:0 1px 10px rgba(0,0,0,.8)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- 屋 -->
+  <div class="frame" id="roomSvg">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wallG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0A0F12"/><stop offset=".42" stop-color="#131A1E"/>
+          <stop offset=".78" stop-color="#0B1013"/><stop offset="1" stop-color="#060809"/>
+        </linearGradient>
+        <pattern id="damask" width="78" height="96" patternUnits="userSpaceOnUse">
+          <g fill="none" stroke="#C8A567" stroke-opacity=".10" stroke-width="1">
+            <path d="M39 8 C50 20 50 34 39 46 C28 34 28 20 39 8 Z"/>
+            <path d="M39 46 C50 58 50 72 39 84 C28 72 28 58 39 46 Z"/>
+            <path d="M0 90 C13 82 26 82 39 90 C52 98 65 98 78 90"/>
+          </g>
+        </pattern>
+        <linearGradient id="damFade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0A0F12" stop-opacity="1"/>
+          <stop offset=".15" stop-color="#0A0F12" stop-opacity="0"/>
+          <stop offset=".72" stop-color="#0A0F12" stop-opacity="0"/>
+          <stop offset="1" stop-color="#060809" stop-opacity="1"/>
+        </linearGradient>
+        <linearGradient id="velvet" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#170709"/><stop offset=".22" stop-color="#331116"/>
+          <stop offset=".44" stop-color="#1D0A0E"/><stop offset=".66" stop-color="#3B151B"/>
+          <stop offset=".86" stop-color="#1A080B"/><stop offset="1" stop-color="#100507"/>
+        </linearGradient>
+        <linearGradient id="nightSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1E2C3C"/><stop offset=".5" stop-color="#152231"/><stop offset="1" stop-color="#0A1119"/>
+        </linearGradient>
+        <radialGradient id="moonGlow"><stop offset="0" stop-color="#DDE8F4" stop-opacity=".5"/>
+          <stop offset="1" stop-color="#DDE8F4" stop-opacity="0"/></radialGradient>
+        <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1A2A23"/><stop offset=".35" stop-color="#101C17"/><stop offset="1" stop-color="#050907"/>
+        </linearGradient>
+        <radialGradient id="candlePool"><stop offset="0" stop-color="#FFC178" stop-opacity=".34"/>
+          <stop offset=".55" stop-color="#E09A4E" stop-opacity=".10"/>
+          <stop offset="1" stop-color="#E09A4E" stop-opacity="0"/></radialGradient>
+        <radialGradient id="vignette" cx=".5" cy=".46" r=".78">
+          <stop offset=".42" stop-color="#000" stop-opacity="0"/>
+          <stop offset="1" stop-color="#000" stop-opacity=".82"/></radialGradient>
+      </defs>
+
+      <rect width="390" height="844" fill="url(#wallG)"/>
+      <rect width="390" height="844" fill="url(#damask)"/>
+      <rect width="390" height="844" fill="url(#damFade)"/>
+      <rect x="0" y="606" width="390" height="238" fill="#07090B"/>
+      <rect x="0" y="606" width="390" height="2" fill="#C8A567" opacity=".18"/>
+
+      <!-- 窗 -->
+      <g transform="translate(140,168)">
+        <path d="M0 280 V70 C0 34 22 10 46 4 C70 10 92 34 92 70 V280 Z" fill="url(#nightSky)"/>
+        <circle cx="46" cy="74" r="34" fill="url(#moonGlow)"/>
+        <circle cx="46" cy="74" r="11" fill="#DDE6F0" opacity=".8"/>
+        <path d="M4 150 H88" stroke="#08090B" stroke-width="2"/>
+        <path d="M46 8 V280" stroke="#08090B" stroke-width="2.5"/>
+        <path d="M20 40 V280" stroke="#08090B" stroke-width="2"/>
+        <path d="M72 40 V280" stroke="#08090B" stroke-width="2"/>
+      </g>
+
+      <!-- 标本框 -->
+      <g transform="translate(246,178)" stroke="#C8A567" stroke-opacity=".24" stroke-width="1.2">
+        <rect x="0" y="0" width="62" height="76" rx="2" fill="#090C0E"/>
+        <rect x="70" y="0" width="62" height="76" rx="2" fill="#090C0E"/>
+        <rect x="0" y="84" width="62" height="76" rx="2" fill="#090C0E"/>
+        <rect x="70" y="84" width="62" height="76" rx="2" fill="#090C0E"/>
+        <rect x="0" y="168" width="62" height="76" rx="2" fill="#090C0E"/>
+        <rect x="70" y="168" width="62" height="76" rx="2" fill="#090C0E"/>
+      </g>
+
+      <!-- 帘：右缘曲线是山脊的前身 -->
+      <path id="curtainEdge" d="M0 0 H118 C108 140 120 280 110 420 C100 560 114 700 106 844 L0 844 Z" fill="url(#velvet)"/>
+      <g stroke="#000" stroke-opacity=".45" stroke-width="2" fill="none">
+        <path d="M20 0 C14 200 22 430 16 844"/><path d="M44 0 C38 210 48 440 42 844"/>
+        <path d="M68 0 C62 210 72 440 66 844"/><path d="M92 0 C86 200 96 430 90 844"/>
+      </g>
+
+      <!-- 桌：前沿是地平线的前身 -->
+      <path d="M0 626 C118 600 272 600 390 626 L390 844 L0 844 Z" fill="url(#cloth)"/>
+      <ellipse cx="195" cy="640" rx="196" ry="26" fill="#243A30" opacity=".55"/>
+      <path d="M0 636 C118 610 272 610 390 636" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="3"/>
+
+      <!-- 烛台 -->
+      <g transform="translate(195,556)">
+        <ellipse cx="0" cy="88" rx="46" ry="12" fill="#000" opacity=".55"/>
+        <path d="M-34 78 C-34 86 -18 90 0 90 C18 90 34 86 34 78 L30 74 L-30 74 Z" fill="#3A2B18"/>
+        <rect x="-5" y="34" width="10" height="42" fill="#4A3820"/>
+        <path d="M-30 32 L30 32 L23 24 L-23 24 Z" fill="#3A2B18"/>
+        <g fill="#E9DCB4"><rect x="-27" y="8" width="5" height="17" rx="2"/>
+          <rect x="-2.5" y="2" width="5" height="23" rx="2"/><rect x="22" y="10" width="5" height="15" rx="2"/></g>
+        <g fill="#FFC978"><ellipse cx="-24.5" cy="2" rx="3.2" ry="6.4"/>
+          <ellipse cx="0" cy="-5" rx="3.4" ry="7.4"/><ellipse cx="24.5" cy="4" rx="3" ry="5.8"/></g>
+        <circle cx="0" cy="0" r="86" fill="url(#candlePool)"/>
+      </g>
+
+      <rect width="390" height="844" fill="url(#vignette)"/>
+    </svg>
+  </div>
+
+  <!-- 世界 -->
+  <div class="frame" id="worldSvg">
+    <svg viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#3A2A3E"/><stop offset=".28" stop-color="#6B4A54"/>
+          <stop offset=".52" stop-color="#B07A66"/><stop offset=".72" stop-color="#D9A277"/>
+          <stop offset=".88" stop-color="#E8BC8E"/><stop offset="1" stop-color="#1A1013"/>
+        </linearGradient>
+        <radialGradient id="sunCore" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#FFFDF2"/><stop offset=".6" stop-color="#FFEBC8"/>
+          <stop offset="1" stop-color="#F8C98E"/></radialGradient>
+        <radialGradient id="sunHalo"><stop offset="0" stop-color="#FFE3B0" stop-opacity=".45"/>
+          <stop offset="1" stop-color="#FFC98C" stop-opacity="0"/></radialGradient>
+        <linearGradient id="soilG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4A3022"/><stop offset=".35" stop-color="#332017"/>
+          <stop offset=".72" stop-color="#26170F"/><stop offset="1" stop-color="#0D0705"/></linearGradient>
+        <radialGradient id="cardGlow"><stop offset="0" stop-color="#FFF3D8" stop-opacity=".30"/>
+          <stop offset="1" stop-color="#FFF3D8" stop-opacity="0"/></radialGradient>
+        <radialGradient id="vigW" cx=".5" cy=".44" r=".8">
+          <stop offset=".46" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".72"/></radialGradient>
+      </defs>
+
+      <rect width="390" height="844" fill="url(#skyG)"/>
+
+      <!-- 日：生在于窗框之内 -->
+      <circle cx="186" cy="320" r="84" fill="url(#sunHalo)" opacity=".8"/>
+      <circle cx="186" cy="320" r="50" fill="url(#sunCore)"/>
+
+      <!-- 远山：左峰落在帘缘的位置 -->
+      <g class="lay-far rise">
+        <path d="M-10 486 C40 452 78 470 112 452 C150 432 190 466 232 452 C272 440 306 468 344 456 C366 450 386 456 400 452 L400 844 L-10 844 Z"
+              fill="#9A6455" opacity=".5"/>
+      </g>
+
+      <!-- 中景：塔群 -->
+      <g class="lay-mid rise" fill="#2A1718">
+        <path d="M262 566 L272 470 L282 566 Z"/><rect x="258" y="556" width="28" height="70"/>
+        <path d="M300 588 L307 512 L314 588 Z"/><rect x="296" y="580" width="22" height="46"/>
+        <path d="M236 596 L243 540 L250 596 Z"/>
+        <g fill="#FFD9A0" opacity=".5">
+          <rect x="268" y="512" width="4" height="7" rx="2"/><rect x="268" y="532" width="4" height="7" rx="2"/>
+        </g>
+      </g>
+
+      <!-- 田野：上沿与桌沿同一条曲线 -->
+      <g class="lay-near rise">
+        <path d="M0 636 C118 610 272 610 390 636 L390 844 L0 844 Z" fill="url(#soilG)"/>
+        <g stroke="#000" stroke-opacity=".38" stroke-width="2.4" fill="none">
+          <path d="M195 636 C160 700 96 772 34 844"/><path d="M195 636 C176 706 150 780 118 844"/>
+          <path d="M195 636 C204 706 222 780 240 844"/><path d="M195 636 C226 710 280 788 330 844"/>
+        </g>
+        <g fill="#120B09">
+          <path d="M0 844 Q10 792 4 758 Q16 800 26 844 Z"/><path d="M28 844 Q34 780 30 742 Q46 794 54 844 Z"/>
+          <path d="M330 844 Q338 788 332 754 Q350 798 356 844 Z"/><path d="M362 844 Q356 798 366 764 Q372 804 380 844 Z"/>
+        </g>
+      </g>
+
+      <!-- 牌：坐标与屋里完全一致 -->
+      <ellipse cx="195" cy="700" rx="132" ry="82" fill="url(#cardGlow)"/>
+
+      <!-- 窗拱的残影：一根相同的线 -->
+      <path d="M140 448 V238 C140 202 162 178 186 172 C210 178 232 202 232 238 V448"
+            fill="none" stroke="#FFEAC2" stroke-opacity=".10" stroke-width="1.5"/>
+
+      <rect width="390" height="844" fill="url(#vigW)"/>
+    </svg>
+  </div>
+
+  <!-- 牌（两帧共用） -->
+  <div class="cards" id="cards">
+    <div class="card"><div class="inner"><div class="f back"></div><div class="f front"></div></div></div>
+    <div class="card"><div class="inner"><div class="f back"></div><div class="f front"></div></div></div>
+    <div class="card"><div class="inner"><div class="f back"></div><div class="f front"></div></div></div>
+  </div>
+
+  <div class="veil" id="veil"></div>
+  <div class="cap" id="cap">屋里 · 三张牌倒扣</div>
+
+  <div class="ui">
+    <button id="drawBtn">翻 牌</button>
+    <button id="replayBtn" disabled>重 放</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var veil = document.getElementById('veil');
+  var worldEl = document.getElementById('worldSvg');
+  var roomEl = document.getElementById('roomSvg');
+  var cap = document.getElementById('cap');
+  var drawBtn = document.getElementById('drawBtn');
+  var replayBtn = document.getElementById('replayBtn');
+  var timers = [];
+  var busy = false;
+
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+
+  function reset(){
+    clearTimers();
+    busy = false;
+    cards.forEach(function(c){ c.classList.remove('flip'); });
+    worldEl.classList.remove('in');
+    veil.className = 'veil';
+    roomEl.style.opacity = '1';
+    cap.textContent = '屋里 · 三张牌倒扣';
+    drawBtn.disabled = false;
+    replayBtn.disabled = true;
+  }
+
+  function play(){
+    if (busy) return;
+    busy = true;
+    drawBtn.disabled = true;
+
+    // 1) 逐张翻牌
+    cards.forEach(function(c, i){
+      later(function(){ c.classList.add('flip'); }, 220 + i * 420);
+    });
+
+    // 2) 黑场
+    later(function(){
+      cap.textContent = '';
+      veil.classList.add('on');
+    }, 1900);
+
+    // 3) 黑场中换景
+    later(function(){
+      worldEl.classList.add('in');
+      later(function(){ veil.classList.remove('on'); }, 320);
+      cap.textContent = '牌意的世界';
+    }, 2450);
+
+    // 4) 收束
+    later(function(){
+      replayBtn.disabled = false;
+      busy = false;
+    }, 4200);
+  }
+
+  drawBtn.addEventListener('click', play);
+  replayBtn.addEventListener('click', reset);
+  // 允许点牌翻
+  cards.forEach(function(c){
+    c.addEventListener('click', function(){
+      if (busy) return;
+      c.classList.add('flip');
+      if (cards.every(function(x){ return x.classList.contains('flip'); })) play();
+    });
+  });
+  reset();
+})();
+</script>
+</body>
+</html>
