@@ -139,14 +139,14 @@ body{
 
 /* 画面 */
 .art{
-  position:relative;margin:10px auto 0;width:min(74%,286px);aspect-ratio:3/5;
+  position:relative;margin:10px auto 0;width:min(74%,286px);aspect-ratio:270/456;
   border:1px solid rgba(43,33,24,.55);padding:5px;background:rgba(255,255,255,.45);
   box-shadow:0 16px 34px -24px rgba(43,33,24,.95);
   overflow:hidden;
 }
 .art::before{content:"";position:absolute;inset:3px;border:1px solid rgba(169,139,79,.6);z-index:2;pointer-events:none;}
-.art img{display:block;width:100%;height:100%;object-fit:cover;
-  transform:scale(1.10);   /* 裁掉牌图自带的白色纸边与印字，交给下面的说明条 */
+.art img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 0;
+  /* 不用 transform 缩放：部分机型上会导致图片底部出现灰色未绘制块 */
   filter:sepia(.10) contrast(1.03) saturate(.92);}
 .art .glaze{position:absolute;inset:0;z-index:3;pointer-events:none;
   background:radial-gradient(120% 80% at 50% 0%,transparent 45%,rgba(60,44,30,.28) 100%);}
